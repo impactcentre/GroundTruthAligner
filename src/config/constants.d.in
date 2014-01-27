@@ -1,0 +1,4 @@
+
+module config;
+
+public string UIPATH = "@top_srcdir@/src/ui/images.ui";

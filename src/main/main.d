@@ -25,6 +25,8 @@ module main;
 import gtk.Main;
 import std.stdio;
 
+import config.constants;
+
 /**
  * Usage ./gladeText /path/to/your/glade/file.glade
  *

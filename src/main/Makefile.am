@@ -23,7 +23,7 @@ bin_PROGRAMS = d-images
 d_images_SOURCES  = main.d
 
 if DMD
-d_images_DFLAGS   = -gc -gs -unittest $(CORE_DEPS_CFLAGS)
+d_images_DFLAGS   = -I$(top_srcdir)/src -gc -gs -unittest $(CORE_DEPS_CFLAGS)
 d_images_LDFLAGS  = -gc -L-l:libsqlite3.so $(CORE_DEPS_LIBS)
 d_images_DOC      = -D -Ddoc
 else
