@@ -1,0 +1,47 @@
+
+
+######################
+# D language support #
+############################################################
+SUFFIXES = .d .di
+OBJEXT   = o
+DC       = @DC@
+CCLD     = $(DC)
+
+if DMD
+.d.o:
+	$(DC) $(DFLAGS) $(AM_DFLAGS) -c $< -of$@
+else
+.d.o:
+	$(DC) $(DFLAGS) $(AM_DFLAGS) -c $< -o $@
+endif
+############################################################
+
+#SUBDIRS = sqlite
+
+bin_PROGRAMS = d-images
+d_images_SOURCES  = main.d
+
+if DMD
+d_images_DFLAGS   = -gc -gs -unittest $(CORE_DEPS_CFLAGS)
+d_images_LDFLAGS  = -gc -L-l:libsqlite3.so $(CORE_DEPS_LIBS)
+d_images_DOC      = -D -Ddoc
+else
+d_images_DFLAGS   = -O2 $(CORE_DEPS_CFLAGS)
+d_images_LDFLAGS  = -lsqlite3 $(CORE_DEPS_LIBS)
+d_images_DOC      = -fdoc -fdoc-dir=doc
+endif
+
+DFLAGS       = $(d_images_DFLAGS)
+
+if DMD
+d_images_LINK     = $(CCLD) $(AM_DFLAGS) $(DFLAGS) $(d_images_LDFLAGS) $(LDFLAGS) -of$@
+else
+d_images_LINK     = $(CCLD) $(AM_DFLAGS) $(DFLAGS) $(d_images_LDFLAGS) $(LDFLAGS) -o $@
+endif
+
+# qdb : main.o
+# 	$(DC) $(qdb_LDFLAGS) -of$@
+
+doc:
+	$(DC) -c $(d_images_DOC) *.d
