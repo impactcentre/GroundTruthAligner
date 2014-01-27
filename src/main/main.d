@@ -35,16 +35,14 @@ int main(string[] args)
 
   Main.init(args);
 
-  if(args.length > 1)
-    {
-      writefln("Loading %s", args[1]);
-      gladefile = args[1];
-    }
-  else
-    {
-      writefln("No glade file specified, using default \"app.glade\"");
-      gladefile = "app.glade";
-    }
+  if(args.length > 1) {
+    writefln("Loading %s", args[1]);
+    gladefile = args[1];
+  }
+  else {
+    writefln("No glade file specified, using default \"app.glade\"");
+    gladefile = "app.glade";
+  }
 
   //scope auto app = new AppWindow (gladefile);
   Main.run();

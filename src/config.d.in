@@ -1,0 +1,4 @@
+
+module config;
+
+public string UIPATH = @UIPATH@;

@@ -9,6 +9,8 @@ AC_CONFIG_SRCDIR([src/main/main.d])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign dist-bzip2])
 AM_SILENT_RULES([yes])
 
+# AC_CONFIG_HEADER([src/config.d])
+
 # Checks for programs.
 AC_CHECK_PROGS(DC, dmd gdc ldc2)
 
