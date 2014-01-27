@@ -30,6 +30,7 @@ AC_CONFIG_FILES([
 	Makefile
 	src/Makefile
 	src/main/Makefile
+	src/gui/Makefile
 	src/config/constants.d
 ])
 

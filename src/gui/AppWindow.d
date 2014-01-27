@@ -1,6 +1,6 @@
 // -*- mode: d -*-
 /*
- *       main_window.d
+ *       MainWindow.d
  *
  *       Copyright 2014 Antonio-M. Corbi Bellot <antonio.corbi@ua.es>
  *     
@@ -22,7 +22,7 @@
 
 // gdc -I/usr/include/dmd/gtkd2 reparent.d -o reparent -lgtk-3 -L ~/Descargas/gtkd -l gtkd-2 -ldl
 
-module main_window;
+module AppWindow;
 
 import gtk.Builder;
 import gtk.Button, gtk.Entry, 
@@ -145,32 +145,4 @@ private:
   Button _bq;
   Button _bs;
   ImageMenuItem _imi;
-}
-
-
-/**
- * Usage ./gladeText /path/to/your/glade/file.glade
- *
- */
-int main(string[] args)
-{
-  string gladefile;
-
-  Main.init(args);
-
-  if(args.length > 1)
-    {
-      writefln("Loading %s", args[1]);
-      gladefile = args[1];
-    }
-  else
-    {
-      writefln("No glade file specified, using default \"app.glade\"");
-      gladefile = "app.glade";
-    }
-
-  scope auto app = new AppWindow (gladefile);
-  Main.run();
-
-  return 0;
 }

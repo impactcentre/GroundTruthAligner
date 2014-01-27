@@ -26,6 +26,7 @@ import gtk.Main;
 import std.stdio;
 
 import config.constants;
+import gui.AppWindow;
 
 /**
  * Usage ./gladeText /path/to/your/glade/file.glade
@@ -42,11 +43,11 @@ int main(string[] args)
     gladefile = args[1];
   }
   else {
-    writefln("No glade file specified, using default \"app.glade\"");
-    gladefile = "app.glade";
+    gladefile = UIPATH;
+    writefln("·> No glade file specified, using [%s]",gladefile);
   }
 
-  //scope auto app = new AppWindow (gladefile);
+  scope auto app = new AppWindow (gladefile);
   Main.run();
 
   return 0;

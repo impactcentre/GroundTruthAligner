@@ -1,3 +1,3 @@
 
-SUBDIRS = main
+SUBDIRS = main gui
 

@@ -1,5 +1,5 @@
 
-all-am: libsql3.a
+all-am: libgui.a
 
-libsql3.a:
-	$(DC) -lib -of$@ *.d
+libgui.a:
+	$(DC) -lib $$(pkg-config --cflags gtkd2) -of$@ *.d
