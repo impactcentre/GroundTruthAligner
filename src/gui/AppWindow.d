@@ -1,6 +1,6 @@
 // -*- mode: d -*-
 /*
- *       MainWindow.d
+ *       AppWindow.d
  *
  *       Copyright 2014 Antonio-M. Corbi Bellot <antonio.corbi@ua.es>
  *     
@@ -25,9 +25,10 @@
 module AppWindow;
 
 import gtk.Builder;
-import gtk.Button, gtk.Entry, 
-  gtk.ImageMenuItem, gtk.Box;
 import gtk.Main;
+import gtk.Button; 
+import gtk.ImageMenuItem;
+import gtk.Box;
 import gtk.Widget;
 import gtk.Window;
 
@@ -51,13 +52,13 @@ public:
 
     _gf = gladefile;
 
-    writeln ("Calling load_ui.");
+    debug writeln ("Calling load_ui.");
     load_ui ();
 
-    writeln ("Calling super.");
+    debug writeln ("Calling super.");
     super ("App Window");
 
-    writeln ("Calling prepare_ui.");
+    debug writeln ("Calling prepare_ui.");
     prepare_ui ();
 
   }
@@ -69,10 +70,7 @@ public:
     writeln ("Destroying AppWindow!");
   }
 
-  // The callback
-  void show_text (Button b) { 
-    writefln ("[%s]", _e.getText ()); 
-  }
+  // The callbacks...
 
 private:
 
@@ -85,7 +83,7 @@ private:
 
     if( !_b.addFromFile (_gf) )
       {
-	writefln("Oops, could not create Glade object, check your glade file ;)");
+	debug writefln("Oops, could not create Glade object, check your glade file ;)");
 	exit(1);
       }
   }
@@ -98,19 +96,13 @@ private:
       //w.addOnHide( delegate void(Widget aux){ exit(0); } );
       addOnHide( delegate void(Widget aux){ Main.quit(); } );
 
-      _e = cast(Entry) _b.getObject("wentry_text");
-
-      _bq = cast(Button) _b.getObject("wbutton_quit");
+      _bq = cast(Button) _b.getObject("button_quit");
       if(_bq !is null) {
 	//b.addOnClicked( delegate void (Button) { Main.quit(); }  );
 	_bq.addOnClicked( (b) =>  Main.quit()  );
       }
 
-      _bs = cast(Button) _b.getObject("wbutton_show");
-      //if(_bs !is null) _bs.addOnClicked( (b) =>  show_text(b)  );
-      if(_bs !is null) _bs.addOnClicked( delegate void (Button b) {show_text(b);}  );
-
-      _imi = cast(ImageMenuItem) _b.getObject("wmenuitem_quit");
+      _imi = cast(ImageMenuItem) _b.getObject("imenuitem_quit");
       if (_imi !is null) _imi.addOnActivate ( (mi) => Main.quit() );
 
       //b1.reparent (cast(Widget) this);
@@ -123,7 +115,7 @@ private:
     }
     else
       {
-	writefln("No window?");
+	debug writefln("No window?");
 	exit(1);
       }
   }
@@ -132,7 +124,7 @@ private:
   // Class invariant //
   /////////////////////
   invariant () {
-    writeln ("\tChecking invariant.");
+    debug writeln ("\tChecking invariant.");
     assert (_b !is null, "Builder is null!!");
   }
   
@@ -141,8 +133,6 @@ private:
   //////////
   Builder _b;
   string _gf;
-  Entry _e;
   Button _bq;
-  Button _bs;
   ImageMenuItem _imi;
 }
