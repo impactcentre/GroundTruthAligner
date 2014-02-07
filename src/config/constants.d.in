@@ -1,4 +1,4 @@
 
 module constants;
 
-public string UIPATH = "@abs_top_srcdir@/src/ui/images.ui";
+public string UIPATH = "@abs_top_srcdir@/src/ui/ialign.ui";

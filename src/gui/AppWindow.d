@@ -25,8 +25,10 @@
 module AppWindow;
 
 import gtk.Builder;
-import gtk.Button, gtk.Entry, 
-  gtk.ImageMenuItem, gtk.Box;
+import gtk.Button;
+import gtk.Entry;
+import gtk.ImageMenuItem;
+import gtk.Box;
 import gtk.Main;
 import gtk.Widget;
 import gtk.Window;
