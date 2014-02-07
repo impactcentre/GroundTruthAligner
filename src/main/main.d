@@ -44,7 +44,7 @@ int main(string[] args)
   }
   else {
     gladefile = UIPATH;
-    writefln("·> No glade file specified, using [%s]",gladefile);
+    debug writefln("·> No glade file specified, using [%s]",gladefile);
   }
 
   scope auto app = new AppWindow (gladefile);
