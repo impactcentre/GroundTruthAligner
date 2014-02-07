@@ -12,6 +12,8 @@ AM_SILENT_RULES([yes])
 # AC_CONFIG_HEADER([src/config.d])
 
 # Checks for programs.
+AC_PROG_RANLIB
+AM_PROG_AR
 AC_CHECK_PROGS(DC, dmd gdc ldc2)
 
 AM_CONDITIONAL([DMD], [test x$DC = xdmd])
