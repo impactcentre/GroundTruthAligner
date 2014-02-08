@@ -11,6 +11,6 @@ noinst_LIBRARIES = libgui.a
 libgui_a_SOURCES = AppWindow.d
 
 libgui_a_DFLAGS = \
-	$$(pkg-config --cflags gtkd2)
+	$$(pkg-config --cflags gtkd2) -gc -gs
 
 AM_DFLAGS = $(libgui_a_DFLAGS)

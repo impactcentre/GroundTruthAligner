@@ -22,7 +22,7 @@
 
 // gdc -I/usr/include/dmd/gtkd2 reparent.d -o reparent -lgtk-3 -L ~/Descargas/gtkd -l gtkd-2 -ldl
 
-module AppWindow;
+module gui.AppWindow;
 
 import gtk.Builder;
 import gtk.AccelGroup;
@@ -37,8 +37,10 @@ import gtk.Paned;
 import gtk.FileChooserButton;
 import gtk.FileChooserIF;
 import gtk.FileFilter;
+
 import gdk.Pixbuf;
 import gdk.Cairo;
+import gdk.Event;
 
 import cairo.Context;
 
@@ -124,7 +126,10 @@ private:
 
       // Drawing Area
       mpage_image = cast(DrawingArea) _b.getObject("page_image");
-      addOnDraw (&redraw_page);
+      if (mpage_image !is null) {
+	mpage_image.addOnDraw (&redraw_page);
+	mpage_image.addOnButtonPress (&button_press);
+      }
 
       //b1.reparent (cast(Widget) this);
       //alias this Widget;
@@ -189,37 +194,48 @@ private:
     }
   }
 
+  ///////////////
+  // Callbacks //
+  ///////////////
   private bool redraw_page (Context ctx, Widget w) {
-    //DrawingArea da = cast(DrawingArea) this;
-                       
+
+    /*
+    writeln ("\nDeberia redibujar imagen.");
+    writefln ("this = %s", this);
+    writefln ("w = %s\n", w);
+    */
+
     if (mpage_pxbf !is null) {
-      // 1- Draw scanned image
-      Context cr = createContext (mpage_image.getWindow());
-      setSourcePixbuf (cr, mpage_pxbf, 0.0, 0.0);
-      cr.paint ();
-
-      writeln ("Deberia redibujar imagen.");
-    } else {
-      // 2- Draw Arc
-      /* weak Gtk.StyleContext style_context = da.get_style_context ();
-      int height = da.get_allocated_height ();
-      int width = da.get_allocated_width ();
-      Gdk.RGBA color = style_context.get_color (0);
-      */
-      // Draw an arc:
-      /*double xc = width / 2.0;
-      double yc = height / 2.0;
-      double radius = int.min (width, height) / 2.0;
-      double angle1 = 0;
-      double angle2 = 2*Math.PI;
-
-      ctx.arc (xc, yc, radius, angle1, angle2);
-      Gdk.cairo_set_source_rgba (ctx, color);
-      ctx.fill ();*/
+      setSourcePixbuf (ctx, mpage_pxbf, 0.0, 0.0);
+      ctx.paint ();
     }
+
     return false;
   }
 
+  public bool button_press (Event ev, Widget w)
+  {
+
+    writefln ("The widget is: %s \n this: %s", w, this);
+    writefln ("bpress at x: %f , y: %f", ev.button.x, ev.button.y);
+
+    Context c = createContext (w.getWindow());
+    c.setSourceRgb(0, 0, 0);
+    c.moveTo(2, 2);
+    c.lineTo(17, 2);
+    c.moveTo(2, 5);
+    c.lineTo(12, 5);
+    c.moveTo(2, 8);
+    c.lineTo(17, 8);
+    c.moveTo(2, 11);
+    c.lineTo(12, 11);
+    c.stroke();
+
+    setSourcePixbuf (c, mpage_pxbf, 0.0, 0.0);
+    c.paint ();
+
+    return false;
+  }
 
   /////////////////////
   // Class invariant //
