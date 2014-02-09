@@ -7,10 +7,9 @@
 include ../d-support.mk
 
 noinst_LIBRARIES = libgui.a
-
 libgui_a_SOURCES = AppWindow.d
 
 libgui_a_DFLAGS = \
-	$$(pkg-config --cflags gtkd2) -gc -gs
+	$$(pkg-config --cflags gtkd2)
 
 AM_DFLAGS = $(libgui_a_DFLAGS)
