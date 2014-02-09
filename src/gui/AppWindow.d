@@ -76,13 +76,16 @@ public:
     debug writeln ("Calling prepare_ui.");
     prepare_ui ();
 
+    // The Paned is now visible...resize it.
+    mpaned.setPosition (mpaned.getAllocatedWidth()/2);
+
   }
   
   /////////////////
   // Destructor  //
   /////////////////
   ~this () {
-    writeln ("Destroying AppWindow!");
+    debug writeln ("Destroying AppWindow!");
   }
 
   // The callbacks...
@@ -131,7 +134,9 @@ private:
 	mpage_image.addOnButtonPress (&button_press);
       }
 
-      //b1.reparent (cast(Widget) this);
+      // The paned
+      mpaned = cast(Paned) _b.getObject ("paned");
+
       //alias this Widget;
       //alias Widget = this;
       b1.reparent ( this );
@@ -144,8 +149,8 @@ private:
       //writefln ("NGrupos: %u\n", agl.length);
 
       addAccelGroup (agl[0]);
-
       setResizable (false);
+
       showAll();
     }
     else {
@@ -167,7 +172,8 @@ private:
 
     mchooser.addOnSelectionChanged ( delegate void (FileChooserIF fc) {
 	auto uris = mchooser.getUris ();
-	writeln ("uris.typeid = ", typeid(uris));
+	debug writeln ("uris.typeid = ", typeid(uris));
+
 	//foreach (uri ; uris.toArray!(string,string)) {
 	for (int f = 0; f < uris.length(); f++) {
 	  auto uri = to!string (cast(char*) uris.nthData(f));
@@ -184,9 +190,9 @@ private:
     //fit_image ();
 
     if (mpage_pxbf !is null) {
-      writefln ("Pixbuf loaded:\nImage is %u X %u pixels\n", 
-		mpage_pxbf.getWidth(), 
-		mpage_pxbf.getHeight());
+      debug writefln ("Pixbuf loaded:\nImage is %u X %u pixels\n", 
+		      mpage_pxbf.getWidth(), 
+		      mpage_pxbf.getHeight());
 
       mpage_image.setSizeRequest (mpage_pxbf.getWidth(),
 				  mpage_pxbf.getHeight());
@@ -216,8 +222,8 @@ private:
   public bool button_press (Event ev, Widget w)
   {
 
-    writefln ("The widget is: %s \n this: %s", w, this);
-    writefln ("bpress at x: %f , y: %f", ev.button.x, ev.button.y);
+    debug writefln ("The widget is: %s \n this: %s", w, this);
+    debug writefln ("bpress at x: %f , y: %f", ev.button.x, ev.button.y);
 
     Context c = createContext (w.getWindow());
     c.setSourceRgb(0, 0, 0);
