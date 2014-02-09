@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([d-images], [1.0.0], [antonio.corbi@ua.es])
+AC_INIT([d-images],[1.0.0],[antonio.corbi@ua.es])
 
 AC_CONFIG_SRCDIR([src/main/main.d])
 
@@ -17,6 +17,19 @@ AM_PROG_AR
 AC_CHECK_PROGS(DC, dmd gdc ldc2)
 
 AM_CONDITIONAL([DMD], [test x$DC = xdmd])
+
+# Determine whether to compile with debug settings.  Essentially this just
+# disables compiler optimizations for now
+AC_ARG_ENABLE(debug-mode, [AS_HELP_STRING([--enable-debug-mode],[build with debug settings (no optimization, test coverage)])],,
+              [enable_debug_mode=no])
+AC_MSG_CHECKING(whether to compile with debug settings)
+if test "x$enable_debug_mode" = "xyes"; then
+    AC_MSG_RESULT(yes)
+    DFLAGS=["-gc -gs"]
+    AC_SUBST([DFLAGS])
+else
+    AC_MSG_RESULT(no)
+fi
 
 # Checks for libraries.
 

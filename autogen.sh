@@ -7,4 +7,4 @@ then
 fi
 
 autoreconf -f -i -Wall,error
-./configure
+./configure $@
