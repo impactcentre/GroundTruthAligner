@@ -55,6 +55,7 @@ import std.conv;
 import std.string;
 import std.array;
 import std.format;
+import std.math;
 
 /**
  * Class MainWindow:
@@ -84,6 +85,8 @@ public:
     // The Paned is now visible...resize it.
     mpaned.setPosition (mpaned.getAllocatedWidth()/2);
 
+    // Initial rotation angle is 0.0
+    mangle = 0.0;
   }
   
   /////////////////
@@ -231,10 +234,18 @@ private:
     debug writefln ("W: %f, H: %f", width, height);
 
     if (mpage_pxbf !is null) {
-      ctx.scale (0.5, 0.4);
-      ctx.translate (width, height);
-      ctx.rotate (30.0);
-      ctx.setSourcePixbuf (mpage_pxbf, 0.0, 0.0);
+      //ctx.scale (0.5, 0.4);
+
+
+      if (mangle != 0.0) {
+	//ctx.save ();
+	ctx.translate (width, height);
+	ctx.rotate (mangle);
+	//ctx.restore ();
+	ctx.setSourcePixbuf (mpage_pxbf, -width, -height);
+      } else
+	ctx.setSourcePixbuf (mpage_pxbf, 0.0, 0.0);
+
       ctx.paint ();
     }
 
@@ -243,10 +254,14 @@ private:
 
   private void rotate_image (Range r) {
 
+    auto alpha =  r.getValue();
     auto writer = appender!string();
-    formattedWrite(writer, "%6.2f", r.getValue());
+    formattedWrite(writer, "%6.2f", alpha);
 
     mdegrees.setText (writer.data);
+    mangle = alpha*PI/180.0;
+    mpage_image.queueDraw ();
+
     return;
   }
 
@@ -285,10 +300,11 @@ private:
   //////////
   // Data //
   //////////
-  Builder mbuilder;
-  string m_gf;
-  Button m_bq;
-  ImageMenuItem _imi;
+  double            mangle;
+  Builder           mbuilder;	/// The Gtk.Builder
+  string            m_gf;	/// Glade file
+  Button            m_bq;
+  ImageMenuItem     _imi;
   DrawingArea       mpage_image;
   Paned             mpaned;
   Scale             mscale;
