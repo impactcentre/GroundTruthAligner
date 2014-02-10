@@ -1,6 +1,6 @@
 // -*- mode: d -*-
 /*
- *       AppWindow.d
+ *       MainWindow.d
  *
  *       Copyright 2014 Antonio-M. Corbi Bellot <antonio.corbi@ua.es>
  *     
@@ -22,7 +22,7 @@
 
 // gdc -I/usr/include/dmd/gtkd2 reparent.d -o reparent -lgtk-3 -L ~/Descargas/gtkd -l gtkd-2 -ldl
 
-module gui.AppWindow;
+module gui.MainWindow;
 
 import gtk.Builder;
 import gtk.AccelGroup;
@@ -52,10 +52,10 @@ import std.conv;
 import std.string;
 
 /**
- * Class AppWindow:
+ * Class MainWindow:
  *
  */
-class AppWindow : Window {
+class MainWindow : Window {
   
 public:
   
@@ -64,14 +64,14 @@ public:
   /////////////////
   this (string gladefile) {
 
-    _gf = gladefile;
+    m_gf = gladefile;
     mpage_pxbf = null;
 
     debug writeln ("Calling load_ui.");
     load_ui ();
 
     debug writeln ("Calling super.");
-    super ("App Window");
+    super ("d-images mainWindow");
 
     debug writeln ("Calling prepare_ui.");
     prepare_ui ();
@@ -85,7 +85,7 @@ public:
   // Destructor  //
   /////////////////
   ~this () {
-    debug writeln ("Destroying AppWindow!");
+    debug writeln ("Destroying MainWindow!");
   }
 
   // The callbacks...
@@ -99,7 +99,7 @@ private:
   void load_ui () {
     _b = new Builder();
 
-    if( !_b.addFromFile (_gf) )
+    if( !_b.addFromFile (m_gf) )
       {
 	debug writefln("Oops, could not create Glade object, check your glade file ;)");
 	exit(1);
@@ -114,10 +114,10 @@ private:
       //w.addOnHide( delegate void(Widget aux){ exit(0); } );
       addOnHide( delegate void(Widget aux){ Main.quit(); } );
 
-      _bq = cast(Button) _b.getObject("button_quit");
-      if(_bq !is null) {
+      m_bq = cast(Button) _b.getObject("button_quit");
+      if(m_bq !is null) {
 	//b.addOnClicked( delegate void (Button) { Main.quit(); }  );
-	_bq.addOnClicked( (b) =>  Main.quit()  );
+	m_bq.addOnClicked( (b) =>  Main.quit()  );
       }
 
       _imi = cast(ImageMenuItem) _b.getObject("imenuitem_quit");
@@ -255,8 +255,8 @@ private:
   // Data //
   //////////
   Builder _b;
-  string _gf;
-  Button _bq;
+  string m_gf;
+  Button m_bq;
   ImageMenuItem _imi;
   DrawingArea       mpage_image;
   Paned             mpaned;
