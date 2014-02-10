@@ -34,6 +34,9 @@ import gtk.Widget;
 import gtk.Window;
 import gtk.DrawingArea;
 import gtk.Paned;
+import gtk.Scale;
+import gtk.Range;
+import gtk.Label;
 import gtk.FileChooserButton;
 import gtk.FileChooserIF;
 import gtk.FileFilter;
@@ -50,6 +53,8 @@ import std.stdio;
 import std.c.process;
 import std.conv;
 import std.string;
+import std.array;
+import std.format;
 
 /**
  * Class MainWindow:
@@ -97,9 +102,9 @@ private:
    * This function loads the UI from the glade file.
    */
   void load_ui () {
-    _b = new Builder();
+    mbuilder = new Builder();
 
-    if( !_b.addFromFile (m_gf) )
+    if( !mbuilder.addFromFile (m_gf) )
       {
 	debug writefln("Oops, could not create Glade object, check your glade file ;)");
 	exit(1);
@@ -107,35 +112,42 @@ private:
   }
 
   void prepare_ui () {
-    Box b1 = cast(Box) _b.getObject("box1");
+    Box b1 = cast(Box) mbuilder.getObject("box1");
 
     if (b1 !is null) {
       setTitle("This is a glade window");
       //w.addOnHide( delegate void(Widget aux){ exit(0); } );
       addOnHide( delegate void(Widget aux){ Main.quit(); } );
 
-      m_bq = cast(Button) _b.getObject("button_quit");
+      m_bq = cast(Button) mbuilder.getObject("button_quit");
       if(m_bq !is null) {
 	//b.addOnClicked( delegate void (Button) { Main.quit(); }  );
 	m_bq.addOnClicked( (b) =>  Main.quit()  );
       }
 
-      _imi = cast(ImageMenuItem) _b.getObject("imenuitem_quit");
+      _imi = cast(ImageMenuItem) mbuilder.getObject("imenuitem_quit");
       if (_imi !is null) _imi.addOnActivate ( (mi) => Main.quit() );
 
       // FileChooser button
-      mchooser = cast(FileChooserButton) _b.getObject("filechooserbutton");
+      mchooser = cast(FileChooserButton) mbuilder.getObject("filechooserbutton");
       init_filechooser_button ();
 
       // Drawing Area
-      mpage_image = cast(DrawingArea) _b.getObject("page_image");
+      mpage_image = cast(DrawingArea) mbuilder.getObject("page_image");
       if (mpage_image !is null) {
 	mpage_image.addOnDraw (&redraw_page);
 	mpage_image.addOnButtonPress (&button_press);
       }
 
       // The paned
-      mpaned = cast(Paned) _b.getObject ("paned");
+      mpaned = cast(Paned) mbuilder.getObject ("paned");
+
+      // The scale
+      mscale = cast(Scale) mbuilder.getObject ("scale");
+      mscale.addOnValueChanged (&rotate_image);
+
+      // The degrees label
+      mdegrees = cast(Label) mbuilder.getObject ("degrees");
 
       //alias this Widget;
       //alias Widget = this;
@@ -144,7 +156,7 @@ private:
       /*
        * Get the accel group created in glade.
        */
-      auto imw = _b.getObject ("image_window");
+      auto imw = mbuilder.getObject ("image_window");
       auto agl = AccelGroup.accelGroupsFromObject (imw).toArray!AccelGroup;
       //writefln ("NGrupos: %u\n", agl.length);
 
@@ -211,12 +223,31 @@ private:
     writefln ("w = %s\n", w);
     */
 
+    //auto d = mpaned.getChild1 ();
+    auto d = w;
+    auto width = d.getWidth () / 2.0;
+    auto height = d.getHeight () / 2.0;
+
+    debug writefln ("W: %f, H: %f", width, height);
+
     if (mpage_pxbf !is null) {
-      setSourcePixbuf (ctx, mpage_pxbf, 0.0, 0.0);
+      ctx.scale (0.5, 0.4);
+      ctx.translate (width, height);
+      ctx.rotate (30.0);
+      ctx.setSourcePixbuf (mpage_pxbf, 0.0, 0.0);
       ctx.paint ();
     }
 
     return false;
+  }
+
+  private void rotate_image (Range r) {
+
+    auto writer = appender!string();
+    formattedWrite(writer, "%6.2f", r.getValue());
+
+    mdegrees.setText (writer.data);
+    return;
   }
 
   public bool button_press (Event ev, Widget w)
@@ -248,18 +279,20 @@ private:
   /////////////////////
   invariant () {
     debug writeln ("\tChecking invariant.");
-    assert (_b !is null, "Builder is null!!");
+    assert (mbuilder !is null, "Builder is null!!");
   }
   
   //////////
   // Data //
   //////////
-  Builder _b;
+  Builder mbuilder;
   string m_gf;
   Button m_bq;
   ImageMenuItem _imi;
   DrawingArea       mpage_image;
   Paned             mpaned;
+  Scale             mscale;
+  Label             mdegrees;
   FileChooserButton mchooser;
   Pixbuf            mpage_pxbf;
 }

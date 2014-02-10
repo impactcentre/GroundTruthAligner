@@ -287,8 +287,8 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
-                            <property name="xpad">10</property>
-                            <property name="label" translatable="yes">0</property>
+                            <property name="xpad">21</property>
+                            <property name="label" translatable="yes">000,00</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
