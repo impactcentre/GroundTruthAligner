@@ -264,7 +264,8 @@
                       <object class="GtkBox" id="box4">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="spacing">2</property>
+                        <property name="spacing">10</property>
+                        <property name="baseline_position">bottom</property>
                         <child>
                           <object class="GtkScale" id="scale">
                             <property name="visible">True</property>
@@ -273,6 +274,7 @@
                             <property name="adjustment">adjustment_degrees</property>
                             <property name="round_digits">2</property>
                             <property name="digits">2</property>
+                            <property name="draw_value">False</property>
                             <signal name="change-value" handler="ui_main_window_rotate_image" swapped="no"/>
                           </object>
                           <packing>
@@ -283,17 +285,39 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="degrees">
+                          <object class="GtkFrame" id="frame2">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="halign">start</property>
-                            <property name="xpad">21</property>
-                            <property name="label" translatable="yes">000,00</property>
+                            <property name="label_xalign">0</property>
+                            <property name="shadow_type">in</property>
+                            <child>
+                              <object class="GtkAlignment" id="alignment2">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="left_padding">12</property>
+                                <child>
+                                  <object class="GtkLabel" id="degrees">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="xpad">21</property>
+                                    <property name="label" translatable="yes">000,00</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child type="label">
+                              <object class="GtkLabel" id="label2">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">&lt;b&gt;Angle:&lt;/b&gt;</property>
+                                <property name="use_markup">True</property>
+                              </object>
+                            </child>
                           </object>
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
-                            <property name="padding">4</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
