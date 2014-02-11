@@ -6,9 +6,9 @@ d_images_SOURCES  = main.d $(top_srcdir)/src/config/constants.d
 
 if DMD
 d_images_DFLAGS             = -I$(top_srcdir)/src $(CORE_DEPS_CFLAGS)
-d_images_LDFLAGS            = -L-L$(top_srcdir)/src/gui
-d_images_LDADD              = -L-l:libgui.a $(CORE_DEPS_LIBS)
-EXTRA_d_images_DEPENDENCIES = $(top_srcdir)/src/gui/libgui.a
+d_images_LDFLAGS            = -L-L$(top_srcdir)/src/mvc -L-L$(top_srcdir)/src/gui
+d_images_LDADD              = -L-l:libgui.a -L-l:libmvc.a $(CORE_DEPS_LIBS)
+EXTRA_d_images_DEPENDENCIES = $(top_srcdir)/src/gui/libgui.a $(top_srcdir)/src/mvc/libmvc.a
 d_images_DOC                = -D -Dd$(top_srcdir)/src/doc
 else
 d_images_DFLAGS   = -O2 $(CORE_DEPS_CFLAGS)

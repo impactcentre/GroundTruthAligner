@@ -57,11 +57,13 @@ import std.array;
 import std.format;
 import std.math;
 
+import mvc.modelview;
+
 /**
  * Class MainWindow:
  *
  */
-class MainWindow : Window {
+class MainWindow : Window, View {
   
 public:
   
@@ -96,7 +98,9 @@ public:
     debug writeln ("Destroying MainWindow!");
   }
 
-  // The callbacks...
+  public void update () {}
+  public void set_model (Model m) {}
+  public void update_model () {}
 
 private:
 
