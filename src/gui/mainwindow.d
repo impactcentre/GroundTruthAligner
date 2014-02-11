@@ -24,6 +24,9 @@
 
 module gui.MainWindow;
 
+/////////
+// GTK //
+/////////
 import gtk.Builder;
 import gtk.AccelGroup;
 import gtk.Main;
@@ -41,14 +44,26 @@ import gtk.FileChooserButton;
 import gtk.FileChooserIF;
 import gtk.FileFilter;
 
+/////////
+// GDK //
+/////////
 import gdk.Pixbuf;
 import gdk.Cairo;
 import gdk.Event;
 
+///////////
+// CAIRO //
+///////////
 import cairo.Context;
 
+/////////////
+// GOBJECT //
+/////////////
 import gobject.Type;
 
+////////////////
+// STD + CORE //
+////////////////
 import std.stdio;
 import std.c.process;
 import std.conv;
@@ -56,8 +71,16 @@ import std.string;
 import std.array;
 import std.format;
 import std.math;
+import core.memory: GC;		// We need to play with the garbage collector
 
+/////////
+// MVC //
+/////////
 import mvc.modelview;
+
+////////////////
+// Code begin //
+//////////////////////////////////////////////////////////////////////
 
 /**
  * Class MainWindow:
@@ -98,17 +121,21 @@ public:
     debug writeln ("Destroying MainWindow!");
   }
 
-  public void update () {}
-  public void set_model (Model m) {}
-  public void update_model () {}
+////////////////////
+// Public methods //
+////////////////////
+  public override void update () {}
+  public override void set_model (Model m) {}
+  public override void update_model () {}
 
-private:
-
+/////////////////////
+// Private methods //
+/////////////////////
   /**
    * UI loading:
    * This function loads the UI from the glade file.
    */
-  void load_ui () {
+  private void load_ui () {
     mbuilder = new Builder();
 
     if( !mbuilder.addFromFile (m_gf) )
@@ -118,7 +145,12 @@ private:
       }
   }
 
-  void prepare_ui () {
+  /**
+   * This function extracts the UI from the builder.
+   * It reparents the window created in glade to the window created in
+   * the code.
+   */
+  private void prepare_ui () {
     Box b1 = cast(Box) mbuilder.getObject("box1");
 
     if (b1 !is null) {
@@ -178,7 +210,9 @@ private:
     }
   }
   
-
+  /**
+   * This method creates a filter for the file chooser.
+   */
   private void init_filechooser_button () {
     /* Only Images */
     auto filter = new FileFilter;
@@ -204,7 +238,7 @@ private:
       );
   }
 
-  public void load_image (string filename) {
+  private void load_image (string filename) {
     mpage_pxbf = new Pixbuf (filename);
     //fit_image ();
 
@@ -223,23 +257,15 @@ private:
   // Callbacks //
   ///////////////
   private bool redraw_page (Context ctx, Widget w) {
-
-    /*
-    writeln ("\nDeberia redibujar imagen.");
-    writefln ("this = %s", this);
-    writefln ("w = %s\n", w);
-    */
-
     //auto d = mpaned.getChild1 ();
-    auto d = w;
-    auto width = d.getWidth () / 2.0;
-    auto height = d.getHeight () / 2.0;
+    auto width  = w.getWidth () / 2.0;
+    auto height = w.getHeight () / 2.0;
 
     debug writefln ("W: %f, H: %f", width, height);
 
     if (mpage_pxbf !is null) {
-      //ctx.scale (0.5, 0.4);
-
+      // Disable GC when rotating and painting the image
+      GC.disable();
 
       if (mangle != 0.0) {
 	//ctx.save ();
@@ -249,15 +275,16 @@ private:
 	ctx.setSourcePixbuf (mpage_pxbf, -width, -height);
       } else
 	ctx.setSourcePixbuf (mpage_pxbf, 0.0, 0.0);
-
       ctx.paint ();
+
+      // enable GC after rotating and painting the image
+      GC.enable();
     }
 
     return false;
   }
 
   private void rotate_image (Range r) {
-
     auto alpha =  r.getValue();
     auto writer = appender!string();
     formattedWrite(writer, "%6.2f", alpha);
@@ -269,26 +296,18 @@ private:
     return;
   }
 
-  public bool button_press (Event ev, Widget w)
+  private bool button_press (Event ev, Widget w)
   {
-
     debug writefln ("The widget is: %s \n this: %s", w, this);
     debug writefln ("bpress at x: %f , y: %f", ev.button.x, ev.button.y);
 
     Context c = createContext (w.getWindow());
-    c.setSourceRgb(0, 0, 0);
-    c.moveTo(2, 2);
-    c.lineTo(17, 2);
-    c.moveTo(2, 5);
-    c.lineTo(12, 5);
-    c.moveTo(2, 8);
-    c.lineTo(17, 8);
-    c.moveTo(2, 11);
-    c.lineTo(12, 11);
-    c.stroke();
 
-    setSourcePixbuf (c, mpage_pxbf, 0.0, 0.0);
-    c.paint ();
+    //setSourcePixbuf (c, mpage_pxbf, 0.0, 0.0);
+    c.setSourceRgb(0, 0, 0);
+    c.moveTo(0, 0);
+    c.lineTo(ev.button.x, ev.button.y);
+    c.stroke();
 
     return false;
   }
