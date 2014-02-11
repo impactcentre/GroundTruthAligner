@@ -71,12 +71,17 @@ public class Model {
  */
 public interface View {
   /**
-   * Actualiza la vista desde el modelo
+   * The model has changed, the view must be updated.
    */
-  public abstract void update ();  
-  public abstract void set_model (Model m);
+  public abstract void update ();
+
   /**
-   * Actualiza el modelo desde la vista
+   * Change the model associated with this view.
+   */
+  public abstract void set_model (Model m);
+
+  /**
+   * The view has changed, the model must be updated.
    */
   public abstract void update_model (); 
 }
