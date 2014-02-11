@@ -258,6 +258,8 @@ public:
   ///////////////
   private bool redraw_page (Context ctx, Widget w) {
     //auto d = mpaned.getChild1 ();
+    static int gc_count = 200;
+
     auto width  = w.getWidth () / 2.0;
     auto height = w.getHeight () / 2.0;
 
@@ -265,7 +267,7 @@ public:
 
     if (mpage_pxbf !is null) {
       // Disable GC when rotating and painting the image
-      GC.disable();
+      //GC.disable ();
 
       if (mangle != 0.0) {
 	//ctx.save ();
@@ -278,7 +280,13 @@ public:
       ctx.paint ();
 
       // enable GC after rotating and painting the image
-      GC.enable();
+      //GC.enable ();
+      if (--gc_count == 0) {
+	gc_count = 200;
+	GC.collect ();
+	debug writeln ("Collecting...");
+	//GC.minimize ();
+      }
     }
 
     return false;
