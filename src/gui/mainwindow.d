@@ -113,6 +113,16 @@ public:
 
     // Initial rotation angle is 0.0
     mangle = 0.0;
+
+    setResizable (true);
+    debug writeln ("Resizable: ", getResizable());
+
+    /*
+    GdkGeometry hints;
+    hints.minWidth = 800;
+    hints.minHeight = 600;
+    setGeometryHints (null, hints, WindowHints.HINT_MIN_SIZE | WindowHints.HINT_USER_POS | WindowHints.HINT_USER_SIZE);
+    */
   }
   
   /////////////////
