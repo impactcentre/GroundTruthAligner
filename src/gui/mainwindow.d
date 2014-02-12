@@ -266,7 +266,7 @@ public:
       auto width  = w.getWidth () / 2.0;
       auto height = w.getHeight () / 2.0;
 
-      debug writefln ("W: %5.2f, H: %5.2f", width, height);
+      debug writefln ("Image center X: %5.2f, Y: %5.2f", width, height);
 
       // memory free in a much cleaner way...
       scope (exit) GC.collect();
