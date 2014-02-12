@@ -38,6 +38,7 @@ import gtk.Window;
 import gtk.DrawingArea;
 import gtk.Paned;
 import gtk.Scale;
+import gtk.SpinButton;
 import gtk.Range;
 import gtk.Label;
 import gtk.FileChooserButton;
@@ -102,7 +103,7 @@ public:
     load_ui ();
 
     debug writeln ("Calling super.");
-    super ("d-images mainWindow");
+    super ("Impact Aligner");
 
     debug writeln ("Calling prepare_ui.");
     prepare_ui ();
@@ -154,7 +155,7 @@ public:
     Box b1 = cast(Box) mbuilder.getObject("box1");
 
     if (b1 !is null) {
-      setTitle("This is a glade window");
+      //setTitle("This is a glade window");
       //w.addOnHide( delegate void(Widget aux){ exit(0); } );
       addOnHide( delegate void(Widget aux){ Main.quit(); } );
 
@@ -182,8 +183,10 @@ public:
       mpaned = cast(Paned) mbuilder.getObject ("paned");
 
       // The scale
-      mscale = cast(Scale) mbuilder.getObject ("scale");
-      mscale.addOnValueChanged (&rotate_image);
+      //mscale = cast(Scale) mbuilder.getObject ("scale");
+      //mscale.addOnValueChanged (&rotate_image);
+      msb = cast(SpinButton) mbuilder.getObject ("sbangle");
+      msb.addOnValueChanged (&rotate_image);
 
       // The degrees label
       mdegrees = cast(Label) mbuilder.getObject ("degrees");
@@ -258,14 +261,16 @@ public:
   ///////////////
   private bool redraw_page (Context ctx, Widget w) {
     //auto d = mpaned.getChild1 ();
-    static int gc_count = 200;
-
-    auto width  = w.getWidth () / 2.0;
-    auto height = w.getHeight () / 2.0;
-
-    debug writefln ("W: %f, H: %f", width, height);
 
     if (mpage_pxbf !is null) {
+      auto width  = w.getWidth () / 2.0;
+      auto height = w.getHeight () / 2.0;
+
+      debug writefln ("W: %5.2f, H: %5.2f", width, height);
+
+      // memory free in a much cleaner way...
+      scope (exit) GC.collect();
+
       // Disable GC when rotating and painting the image
       //GC.disable ();
 
@@ -281,15 +286,23 @@ public:
 
       // enable GC after rotating and painting the image
       //GC.enable ();
-      if (--gc_count == 0) {
-	gc_count = 200;
-	GC.collect ();
-	debug writeln ("Collecting...");
-	//GC.minimize ();
-      }
     }
 
     return false;
+  }
+
+  private void rotate_image (SpinButton s) {
+    auto alpha =  s.getValue();
+    auto writer = appender!string();
+    formattedWrite(writer, "%6.2f", alpha);
+
+    //mdegrees.setText (writer.data);
+    mangle = alpha*PI/180.0;
+    debug writefln ("Deg: %5.2f, Rad: %5.2f", alpha, mangle);
+
+    mpage_image.queueDraw ();
+
+    return;
   }
 
   private void rotate_image (Range r) {
@@ -299,7 +312,10 @@ public:
 
     mdegrees.setText (writer.data);
     mangle = alpha*PI/180.0;
-    mpage_image.queueDraw ();
+    debug writefln ("Deg: %5.2f, Rad: %5.2f", alpha, mangle);
+
+    //mpage_image.queueDraw ();
+    queueDraw ();
 
     return;
   }
@@ -339,6 +355,7 @@ public:
   DrawingArea       mpage_image;
   Paned             mpaned;
   Scale             mscale;
+  SpinButton        msb;
   Label             mdegrees;
   FileChooserButton mchooser;
   Pixbuf            mpage_pxbf;

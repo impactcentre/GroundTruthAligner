@@ -22,16 +22,24 @@
 
 module main;
 
+/////////
+// GTK //
+/////////
 import gtk.Main;
 
+/////////
+// STD //
+/////////
 import std.stdio;
 
+///////////////////
+// Local imports //
+///////////////////
 import config.constants;
 import gui.mainwindow;
 
 /**
  * Usage ./gladeText /path/to/your/glade/file.glade
- *
  */
 int main(string[] args)
 {
@@ -48,7 +56,7 @@ int main(string[] args)
     debug writefln("·> No glade file specified, using [%s]",gladefile);
   }
 
-  scope auto app = new MainWindow (gladefile);
+  auto app = new MainWindow (gladefile);
   Main.run();
 
   return 0;

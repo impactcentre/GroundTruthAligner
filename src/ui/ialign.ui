@@ -15,12 +15,12 @@
   <object class="GtkWindow" id="image_window">
     <property name="can_focus">False</property>
     <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
-    <property name="window_position">center</property>
     <child>
       <object class="GtkBox" id="box1">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
         <child>
           <object class="GtkMenuBar" id="menubar">
             <property name="visible">True</property>
@@ -186,31 +186,35 @@
         <child>
           <object class="GtkPaned" id="paned">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="margin_left">2</property>
-            <property name="margin_right">2</property>
-            <property name="margin_top">2</property>
-            <property name="margin_bottom">2</property>
-            <property name="position_set">True</property>
+            <property name="can_focus">False</property>
+            <property name="border_width">3</property>
             <child>
               <object class="GtkScrolledWindow" id="scrolledwindow">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
+                <property name="can_focus">False</property>
                 <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                <property name="double_buffered">False</property>
                 <property name="margin_left">2</property>
                 <property name="margin_right">2</property>
                 <property name="margin_top">2</property>
-                <property name="margin_bottom">2</property>
+                <property name="margin_bottom">1</property>
                 <property name="shadow_type">in</property>
+                <property name="kinetic_scrolling">False</property>
                 <child>
                   <object class="GtkViewport" id="viewport1">
-                    <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="double_buffered">False</property>
+                    <property name="hexpand">True</property>
+                    <property name="vexpand">True</property>
+                    <property name="hscroll_policy">natural</property>
+                    <property name="vscroll_policy">natural</property>
                     <child>
                       <object class="GtkDrawingArea" id="page_image">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                        <property name="double_buffered">False</property>
+                        <property name="hexpand">True</property>
+                        <property name="vexpand">True</property>
                         <signal name="draw" handler="ui_main_window_redraw_page" swapped="no"/>
                       </object>
                     </child>
@@ -219,7 +223,7 @@
               </object>
               <packing>
                 <property name="resize">True</property>
-                <property name="shrink">False</property>
+                <property name="shrink">True</property>
               </packing>
             </child>
             <child>
@@ -240,7 +244,7 @@
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>
-            <property name="padding">5</property>
+            <property name="padding">4</property>
             <property name="position">1</property>
           </packing>
         </child>
@@ -267,20 +271,18 @@
                         <property name="spacing">10</property>
                         <property name="baseline_position">bottom</property>
                         <child>
-                          <object class="GtkScale" id="scale">
+                          <object class="GtkSpinButton" id="sbangle">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="hexpand">True</property>
+                            <property name="invisible_char">●</property>
                             <property name="adjustment">adjustment_degrees</property>
-                            <property name="round_digits">2</property>
                             <property name="digits">2</property>
-                            <property name="draw_value">False</property>
-                            <signal name="change-value" handler="ui_main_window_rotate_image" swapped="no"/>
+                            <property name="numeric">True</property>
                           </object>
                           <packing>
-                            <property name="expand">True</property>
+                            <property name="expand">False</property>
                             <property name="fill">True</property>
-                            <property name="padding">4</property>
+                            <property name="padding">2</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
@@ -318,6 +320,7 @@
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
+                            <property name="pack_type">end</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
