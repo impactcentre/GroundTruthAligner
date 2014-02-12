@@ -193,10 +193,10 @@ public:
       mpaned = cast(Paned) mbuilder.getObject ("paned");
 
       // The scale
-      //mscale = cast(Scale) mbuilder.getObject ("scale");
-      //mscale.addOnValueChanged (&rotate_image);
-      msb = cast(SpinButton) mbuilder.getObject ("sbangle");
-      msb.addOnValueChanged (&rotate_image);
+      mscale = cast(Scale) mbuilder.getObject ("scale");
+      mscale.addOnValueChanged (&rotate_image);
+      /*msb = cast(SpinButton) mbuilder.getObject ("sbangle");
+	msb.addOnValueChanged (&rotate_image);*/
 
       // The degrees label
       mdegrees = cast(Label) mbuilder.getObject ("degrees");
@@ -316,16 +316,16 @@ public:
   }
 
   private void rotate_image (Range r) {
-    auto alpha =  r.getValue();
+    auto alpha  = r.getValue();
     auto writer = appender!string();
-    formattedWrite(writer, "%6.2f", alpha);
+    formattedWrite(writer, "%s", cast(int)alpha);
 
     mdegrees.setText (writer.data);
-    mangle = alpha*PI/180.0;
+    mangle = alpha*PI/180;
     debug writefln ("Deg: %5.2f, Rad: %5.2f", alpha, mangle);
 
-    //mpage_image.queueDraw ();
-    queueDraw ();
+    mpage_image.queueDraw ();
+    //queueDraw ();
 
     return;
   }
