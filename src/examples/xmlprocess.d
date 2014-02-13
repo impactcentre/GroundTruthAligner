@@ -40,7 +40,7 @@ void main(string[] args)
       t.id = xml.tag.attr["id"];
       t.the_type = xml.tag.attr["type"];
 
-      xml.onEndTag["Point"] = (in Element e) { 
+      xml.onEndTag["Point"] = delegate (in Element e) { 
 	int x, y;
 	x = to!int (xml.tag.attr["x"]);
 	y = to!int (xml.tag.attr["y"]);
@@ -52,6 +52,7 @@ void main(string[] args)
 
       texts ~= t;
     };
+
     xml.parse();
 
     // Plain-print it
