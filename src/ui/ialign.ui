@@ -192,6 +192,7 @@
             <property name="border_width">3</property>
             <child>
               <object class="GtkScrolledWindow" id="scrolledwindow">
+                <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
                 <property name="double_buffered">False</property>
@@ -203,6 +204,7 @@
                 <property name="kinetic_scrolling">False</property>
                 <child>
                   <object class="GtkViewport" id="viewport1">
+                    <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="double_buffered">False</property>
                     <property name="hexpand">True</property>

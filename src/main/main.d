@@ -56,7 +56,24 @@ int main(string[] args)
     debug writefln("·> No glade file specified, using [%s]",gladefile);
   }
 
-  auto app = new MainWindow (gladefile);
+  auto mw = new MainWindow (gladefile);
+
+  /*
+   * Raw strings: r" ... "
+   *            : ` ... `
+   */
+  mw.show_text (`Calling super.
+	Checking invariant.
+	Checking invariant.
+	Checking invariant.
+	Checking invariant.
+	Checking invariant.
+	Checking invariant.
+	Checking invariant.
+	Checking invariant.
+	Checking invariant.`);
+  mw.show ();
+
   Main.run();
 
   return 0;

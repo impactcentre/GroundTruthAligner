@@ -44,6 +44,8 @@ import gtk.Label;
 import gtk.FileChooserButton;
 import gtk.FileChooserIF;
 import gtk.FileFilter;
+import gtk.TextView;
+import gtk.TextBuffer;
 
 /////////
 // GDK //
@@ -132,16 +134,20 @@ public:
     debug writeln ("Destroying MainWindow!");
   }
 
-////////////////////
-// Public methods //
-////////////////////
+  ////////////////////
+  // Public methods //
+  ////////////////////
   public override void update () {}
   public override void set_model (Model m) {}
   public override void update_model () {}
 
-/////////////////////
-// Private methods //
-/////////////////////
+  public void show_text (string the_text) {
+    mtextbuffer.insertAtCursor (the_text);
+  }
+
+  /////////////////////
+  // Private methods //
+  /////////////////////
   /**
    * UI loading:
    * This function loads the UI from the glade file.
@@ -149,11 +155,10 @@ public:
   private void load_ui () {
     mbuilder = new Builder();
 
-    if( !mbuilder.addFromFile (m_gf) )
-      {
-	debug writefln("Oops, could not create Glade object, check your glade file ;)");
-	exit(1);
-      }
+    if( !mbuilder.addFromFile (m_gf) ) {
+      debug writefln("Oops, could not create Glade object, check your glade file ;)");
+      exit(1);
+    }
   }
 
   /**
@@ -201,6 +206,14 @@ public:
       // The degrees label
       mdegrees = cast(Label) mbuilder.getObject ("degrees");
 
+      // The text view + the text buffer
+      mtextview = cast(TextView) mbuilder.getObject ("textview");
+      mtextbuffer = mtextview.getBuffer();
+
+      ////////////////////////////////////////////////////////
+      // Finally reparent the glade window into this one... //
+      ////////////////////////////////////////////////////////
+
       //alias this Widget;
       //alias Widget = this;
       b1.reparent ( this );
@@ -214,8 +227,6 @@ public:
 
       addAccelGroup (agl[0]);
       setResizable (false);
-
-      showAll();
     }
     else {
       debug writefln("No window?");
@@ -369,4 +380,6 @@ public:
   Label             mdegrees;
   FileChooserButton mchooser;
   Pixbuf            mpage_pxbf;
+  TextView          mtextview;
+  TextBuffer        mtextbuffer;
 }
