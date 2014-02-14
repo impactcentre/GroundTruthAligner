@@ -33,11 +33,16 @@ public class Model {
     m_vl = [];
   }
 
-  public void add_view (View v) { m_vl ~= v; v.set_model (this); }
+  public void add_view (View v) { 
+    m_vl ~= v;
+    v.set_model (this);
+  }
+
   public void del_view (View v) { 
     // m_vl.remove(v);
     if (m_vl.length == 0)
       return;
+
     // locate v pos
     int pos = -1;
     for (int i = 0; i < m_vl.length; i++)

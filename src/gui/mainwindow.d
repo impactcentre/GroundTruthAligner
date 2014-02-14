@@ -341,18 +341,42 @@ public:
     return;
   }
 
-  private bool button_press (Event ev, Widget w)
+  private bool button_press (Event ev, Widget wdgt)
   {
-    debug writefln ("The widget is: %s \n this: %s", w, this);
-    debug writefln ("bpress at x: %f , y: %f", ev.button.x, ev.button.y);
+    int px = cast(int) ev.button.x;
+    int py = cast(int) ev.button.y;
 
-    Context c = createContext (w.getWindow());
+    debug writefln ("The widget is: %s \n this: %s", wdgt, this);
+    debug writefln ("bpress at x: [%d] , y: [%d]", px, py);
 
-    //setSourcePixbuf (c, mpage_pxbf, 0.0, 0.0);
-    c.setSourceRgb(0, 0, 0);
-    c.moveTo(0, 0);
-    c.lineTo(ev.button.x, ev.button.y);
-    c.stroke();
+    Context c = createContext (wdgt.getWindow());
+
+    if ( mpage_pxbf !is null) {
+      //setSourcePixbuf (c, mpage_pxbf, 0.0, 0.0);
+      /*
+	c.setSourceRgb(0, 0, 0);
+	c.moveTo(0, 0);
+	c.lineTo(ev.button.x, ev.button.y);
+	c.stroke();
+      */
+
+      char* base = mpage_pxbf.getPixels ();
+      int nc     = mpage_pxbf.getNChannels ();
+      int w      = mpage_pxbf.getWidth ();
+      int h      = mpage_pxbf.getHeight ();
+      int rs     = mpage_pxbf.getRowstride ();
+      char* e    = cast(char*) (base + (py * rs) + (px * nc));
+      char rval = e[0];
+      char gval = e[1];
+      char bval = e[2];
+
+      debug writefln ("base= 0x%x , nc= %d, w= %d, h= %d, rs= %d, r= [%d], g= [%d], b= [%d]", 
+		      base, nc, w, h, rs, rval, gval, bval);
+
+      // This way we can draw into the pixbuf directly
+      // e[0] = e[1] = e[2] = 0;	// R G B  triplet
+
+    }
 
     return false;
   }
