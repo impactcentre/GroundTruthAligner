@@ -64,6 +64,8 @@ public:
     debug writeln ("Destroying Image!");
   }
 
+  @property Pixbuf data () { return mpxbf; }
+
   @property int width () {
     if (mpxbf !is null)
       return mpxbf.getWidth();
@@ -137,4 +139,14 @@ private:
   // Data //
   //////////
   Pixbuf mpxbf; 
+}
+
+unittest {
+  Image i = new Image;
+
+  assert (i.data   is null);
+  assert (i.width  == -1);
+  assert (i.height == -1);
+
+  writeln ("model.Image: All tests passed!");
 }

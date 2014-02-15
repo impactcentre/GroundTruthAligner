@@ -21,6 +21,12 @@ doc:
 	$(DC) -c $(AM_DFLAGS) $(DFLAGS) $(libmodel_a_DOC) $(libmodel_a_SOURCES)
 
 ###############
+# Unittesting #
+###############
+tests:
+	$(DC) -main -unittest $(AM_DFLAGS) $(DFLAGS) $(libmodel_a_SOURCES) $$(pkg-config --libs gtkd2) ../mvc/modelview.o
+
+###############
 # Extra Clean #
 ###############
 CLEANFILES = *~ $(noinst_LIBRARIES)
