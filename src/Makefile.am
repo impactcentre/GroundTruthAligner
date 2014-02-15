@@ -7,4 +7,10 @@ doc:
 	  $(MAKE) -C $$d $@ ; \
 	done;
 
-.PHONY: doc
+tests:
+	for d in model; \
+	do \
+	  $(MAKE) -C $$d $@ ; \
+	done;
+
+.PHONY: doc tests
