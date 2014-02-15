@@ -1,5 +1,5 @@
 
-SUBDIRS = mvc gui main
+SUBDIRS = mvc model gui main
 
 doc:
 	for d in $(SUBDIRS); \
