@@ -69,6 +69,15 @@ public:
     debug writeln ("Destroying Image!");
   }
 
+  ///////////
+  // enums //
+  ///////////
+  public enum Color { WHITE = 0, BLACK = 255 };
+
+  /////////////
+  // METHODS //
+  /////////////
+
   @property Pixbuf data () { return mpxbf; }
 
   @property int width () {
@@ -84,39 +93,25 @@ public:
     else
       return -1;
   }
+
+  /**
+   * Count how many COLOR pixels are in the image.
+   * Parameters:
+   * cl the color to search
+   */
+  int count_color_pixels (Color cl) {
+    char r,g,b;
+    int c = 0;
+
+    for (int x = 0; x < mw; x++)
+      for (int y = 0; y < mh; y++) {
+	get_rgb (x, y, r, g, b);
+	if (r == cl && g == cl && b == cl)
+	  c++;
+      }
+    return c;
+  }
   
-  /**
-   * Count how many white pixels are in the image.
-   */
-  int count_white_pixels () {
-    char r,g,b;
-    int c = 0;
-
-    for (int x = 0; x < mw; x++)
-      for (int y = 0; y < mh; y++) {
-	get_rgb (x, y, r, g, b);
-	if (r == 0 && g == 0 && b == 0)
-	  c++;
-      }
-    return c;
-  }
-
-  /**
-   * Count how many black pixels are in the image.
-   */
-  int count_black_pixels () {
-    char r,g,b;
-    int c = 0;
-
-    for (int x = 0; x < mw; x++)
-      for (int y = 0; y < mh; y++) {
-	get_rgb (x, y, r, g, b);
-	if (r == 255 && g == 255 && b == 255)
-	  c++;
-      }
-    return c;
-  }
-
   /**
    * Loads the image in filename into the pixbuf.
    */
@@ -203,8 +198,8 @@ unittest {
   i.load_image ("../../data/318982.tif");
   assert (i.width  != -1);
   assert (i.height != -1);
-  assert (i.count_white_pixels () >= 0);
-  assert (i.count_black_pixels () >= 0);
+  assert (i.count_color_pixels (Image.Color.WHITE) >= 0);
+  assert (i.count_color_pixels (Image.Color.BLACK) >= 0);
 
   //writeln ("model.Image: All tests passed!");
 }
