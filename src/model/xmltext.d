@@ -20,18 +20,32 @@
  *       MA 02110-1301, USA.
  */
 
-module model.image;
+module model.xmltext;
 
 ////////////////
 // STD + CORE //
 ////////////////
 import std.stdio;
 import std.xml;
+import std.string;
+import std.file;
+import std.conv;
 
 ////////////////
 // Code begin //
 //////////////////////////////////////////////////////////////////////
 
+struct Point {
+  int x;
+  int y;
+}
+
+struct Text {
+  string  id;
+  string  type;
+  Point[] points;
+  string  content;
+}
 
 /**
  * Class XmlText:
@@ -54,9 +68,53 @@ public:
   // Destructor  //
   /////////////////
   ~this () {
-    
+    debug writeln ("XmlText destroyed!");
   }
+
+  @property Text[] get_texts () { return mtexts; }
+  @property ulong get_ntexts () { return mtexts.length; }
+  string get_text (int t) { return mtexts[t].content; }
+  string get_type (int t) { return mtexts[t].type; }
+  Point[] get_points (int t) { return mtexts[t].points; }
+
+
+  /////////////
+  // Methods //
+  /////////////
   
+  void load_xml_contents_from (string the_file) 
+    in {
+      assert (the_file != "", "XmlText: empty file!");
+    }
+  body {
+    string s = cast(string) std.file.read(the_file);
+
+    // Check for well-formedness
+    // check(s);
+
+    auto xml = new DocumentParser(s);
+    xml.onStartTag["TextRegion"] = (ElementParser xml) {
+      Text t;
+
+      t.id = xml.tag.attr["id"];
+      t.type = xml.tag.attr["type"];
+
+      xml.onEndTag["Point"] = delegate (in Element e) { 
+	int x, y;
+	x = to!int (xml.tag.attr["x"]);
+	y = to!int (xml.tag.attr["y"]);
+	t.points ~= Point (x,y); 
+      };
+      xml.onEndTag["Unicode"] = (in Element e) { t.content = e.text(); };
+
+      xml.parse();
+
+      mtexts ~= t;
+    };
+
+    xml.parse();
+  }
+
 private:
   
   /////////////////////
@@ -69,5 +127,23 @@ private:
   //////////
   // Data //
   //////////
-  
+  Text[] mtexts;
+}
+
+unittest {
+  XmlText t = new XmlText;
+  Text[] tt;
+
+  // Hard coded path for now...
+  t.load_xml_contents_from ("../../data/318982.xml");
+  tt = t.get_texts;
+
+  assert (tt.length > 0);
+
+  assert (tt[1].type == "paragraph");
+  assert (tt[1].points.length == 314);
+  writeln(tt[1].content);
+
+  assert (tt[2].type == "catch-word");
+  assert (tt[2].points.length == 8);
 }

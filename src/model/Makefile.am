@@ -26,9 +26,14 @@ doc:
 tests:
 	$(DC) -main -unittest $(AM_DFLAGS) $(DFLAGS) image.d -ofimage-test $$(pkg-config --libs gtkd2) ../mvc/modelview.o
 
+	$(DC) -main -unittest $(AM_DFLAGS) $(DFLAGS) xmltext.d -ofxmltext-test $$(pkg-config --libs gtkd2) ../mvc/modelview.o
+
 pass-tests: tests
-	@echo -e "\n-------[MODEL TESTS]-----------------\n"
+	@echo -e "\n-------[IMAGE TESTS]-----------------\n"
 	./image-test
+	@echo -e "\n-------------------------------------\n"
+	@echo -e "\n-------[XMLTEXT TESTS]---------------\n"
+	./xmltext-test
 	@echo -e "\n-------------------------------------\n"
 
 ###############
