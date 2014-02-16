@@ -80,7 +80,6 @@ import core.memory: GC;		// We need to play with the garbage collector
 // MVC //
 /////////
 import mvc.modelview;
-import model.image;
 
 ////////////////
 // Code begin //
@@ -99,7 +98,6 @@ public:
   /////////////////
   this (string gladefile) {
 
-    mm = null;			// Still no model
     m_gf = gladefile;
     mpage_pxbf = null;
 
@@ -140,7 +138,7 @@ public:
   // Public methods //
   ////////////////////
   public override void update () {}
-  public override void set_model (Model m) { mm = cast(Image) m; }
+  public override void set_model (Model m) {}
   public override void update_model () {}
 
   public void show_text (string the_text) {
@@ -387,8 +385,8 @@ public:
   // Class invariant //
   /////////////////////
   invariant () {
-    debug writeln ("\tChecking invariant.");
-    assert (mbuilder !is null, "Builder is null!!");
+    /*debug writeln ("\tChecking invariant.");
+      assert (mbuilder !is null, "Builder is null!!");*/
   }
   
   //////////
@@ -408,5 +406,4 @@ public:
   Pixbuf            mpage_pxbf;
   TextView          mtextview;
   TextBuffer        mtextbuffer;
-  Image             mm;
 }

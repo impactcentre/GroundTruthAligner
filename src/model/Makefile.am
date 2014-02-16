@@ -6,13 +6,13 @@
 
 include ../d-support.mk
 
-noinst_LIBRARIES = libmodel.a
-libmodel_a_SOURCES = image.d
+noinst_LIBRARIES   = libmodel.a
+libmodel_a_SOURCES = image.d xmltext.d
 
 libmodel_a_DFLAGS  = $$(pkg-config --cflags gtkd2) -I$(top_srcdir)/src
 libmodel_a_DOC     = -D -Dd$(top_srcdir)/src/doc
 
-AM_DFLAGS = $(libmodel_a_DFLAGS)
+AM_DFLAGS          = $(libmodel_a_DFLAGS)
 
 #######
 # DOC #
@@ -24,10 +24,12 @@ doc:
 # Unittesting #
 ###############
 tests:
-	$(DC) -main -unittest $(AM_DFLAGS) $(DFLAGS) $(libmodel_a_SOURCES) $$(pkg-config --libs gtkd2) ../mvc/modelview.o
+	$(DC) -main -unittest $(AM_DFLAGS) $(DFLAGS) image.d -ofimage-test $$(pkg-config --libs gtkd2) ../mvc/modelview.o
 
 pass-tests: tests
-	./image
+	@echo -e "\n-------[MODEL TESTS]-----------------\n"
+	./image-test
+	@echo -e "\n-------------------------------------\n"
 
 ###############
 # Extra Clean #

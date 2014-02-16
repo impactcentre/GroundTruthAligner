@@ -35,7 +35,7 @@ import gdk.Pixbuf;
 /////////
 // MVC //
 /////////
-import mvc.modelview;
+//import mvc.modelview;
 
 ////////////////
 // Code begin //
@@ -46,7 +46,7 @@ import mvc.modelview;
  * will be a scanned page.
  *
  */
-class Image : Model {
+class Image {
   
 public:
   

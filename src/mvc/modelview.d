@@ -34,6 +34,9 @@ public class Model {
   }
 
   public void add_view (View v) { 
+    for (int i = 0; i < m_vl.length; i++)
+      if (m_vl[i] == v) return;
+
     m_vl ~= v;
     v.set_model (this);
   }
