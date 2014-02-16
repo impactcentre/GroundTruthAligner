@@ -172,7 +172,8 @@ private:
   // Class invariant //
   /////////////////////
   invariant () {
-    
+    if (mpxbf is null)
+      assert (mbase is null);
   }
   
   //////////
