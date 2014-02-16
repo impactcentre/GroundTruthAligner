@@ -26,7 +26,12 @@ doc:
 tests:
 	$(DC) -main -unittest $(AM_DFLAGS) $(DFLAGS) $(libmodel_a_SOURCES) $$(pkg-config --libs gtkd2) ../mvc/modelview.o
 
+pass-tests:
+	./image
+
 ###############
 # Extra Clean #
 ###############
 CLEANFILES = *~ $(noinst_LIBRARIES)
+
+.PHONY: doc tests pass-tests

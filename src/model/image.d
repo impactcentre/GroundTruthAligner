@@ -125,7 +125,14 @@ public:
     e[1] = g;
     e[2] = b;
   }
-  
+
+  /**
+   * Checks for a valid image loaded.
+   */
+  @property bool is_valid () {
+    return mpxbf !is null;
+  }
+
 private:
   
   /////////////////////
@@ -138,15 +145,21 @@ private:
   //////////
   // Data //
   //////////
-  Pixbuf mpxbf; 
+  Pixbuf mpxbf;
 }
 
 unittest {
   Image i = new Image;
 
   assert (i.data   is null);
+  assert (!i.is_valid);
   assert (i.width  == -1);
   assert (i.height == -1);
+
+  // hard coded path for now...
+  i.load_image ("../../data/318982.tif");
+  assert (i.width  != -1);
+  assert (i.height != -1);
 
   writeln ("model.Image: All tests passed!");
 }

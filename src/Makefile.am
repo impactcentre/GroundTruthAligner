@@ -1,5 +1,6 @@
 
 SUBDIRS = mvc model gui main
+TESTSUBDIRS = model
 
 doc:
 	for d in $(SUBDIRS); \
@@ -8,9 +9,15 @@ doc:
 	done;
 
 tests:
-	for d in model; \
+	for d in $(TESTSUBDIRS); \
 	do \
 	  $(MAKE) -C $$d $@ ; \
 	done;
 
-.PHONY: doc tests
+pass-tests:
+	for d in $(TESTSUBDIRS); \
+	do \
+	  $(MAKE) -C $$d $@ ; \
+	done;
+
+.PHONY: doc tests pass-tests
