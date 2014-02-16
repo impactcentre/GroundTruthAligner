@@ -14,7 +14,7 @@ tests:
 	  $(MAKE) -C $$d $@ ; \
 	done;
 
-pass-tests:
+pass-tests: tests
 	for d in $(TESTSUBDIRS); \
 	do \
 	  $(MAKE) -C $$d $@ ; \

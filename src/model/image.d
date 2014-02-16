@@ -55,6 +55,11 @@ public:
   /////////////////
   this () {
     mpxbf = null;
+    mbase = null;
+    mnc   = 0;
+    mw    = 0;
+    mh    = 0;
+    mrs   = 0;
   }
   
   /////////////////
@@ -79,6 +84,38 @@ public:
     else
       return -1;
   }
+  
+  /**
+   * Count how many white pixels are in the image.
+   */
+  int count_white_pixels () {
+    char r,g,b;
+    int c = 0;
+
+    for (int x = 0; x < mw; x++)
+      for (int y = 0; y < mh; y++) {
+	get_rgb (x, y, r, g, b);
+	if (r == 0 && g == 0 && b == 0)
+	  c++;
+      }
+    return c;
+  }
+
+  /**
+   * Count how many black pixels are in the image.
+   */
+  int count_black_pixels () {
+    char r,g,b;
+    int c = 0;
+
+    for (int x = 0; x < mw; x++)
+      for (int y = 0; y < mh; y++) {
+	get_rgb (x, y, r, g, b);
+	if (r == 255 && g == 255 && b == 255)
+	  c++;
+      }
+    return c;
+  }
 
   /**
    * Loads the image in filename into the pixbuf.
@@ -88,9 +125,22 @@ public:
     //fit_image ();
 
     if (mpxbf !is null) {
+      // Get image parameters
+      mbase = mpxbf.getPixels ();
+      mnc   = mpxbf.getNChannels ();
+      mw    = mpxbf.getWidth ();
+      mh    = mpxbf.getHeight ();
+      mrs   = mpxbf.getRowstride ();
+
       debug writefln ("Pixbuf loaded:\nImage is %u X %u pixels\n", 
 		      mpxbf.getWidth(), 
 		      mpxbf.getHeight());
+    } else {
+      mbase = null;
+      mnc   = 0;
+      mw    = 0;
+      mh    = 0;
+      mrs   = 0;
     }
   }
 
@@ -98,13 +148,7 @@ public:
    * Get the RGB values from pixel x,y,
    */
   void get_rgb (in int x, in int y, out char r, out char g, out char b) {
-    char* base = mpxbf.getPixels ();
-    int nc     = mpxbf.getNChannels ();
-    int w      = mpxbf.getWidth ();
-    int h      = mpxbf.getHeight ();
-    int rs     = mpxbf.getRowstride ();
-    char* e    = cast(char*) (base + (y * rs) + (x * nc));
-
+    char* e    = cast(char*) (mbase + (y * mrs) + (x * mnc));
     r = e[0];
     g = e[1];
     b = e[2];
@@ -114,13 +158,7 @@ public:
    * Set the RGB values for pixel x,y,
    */
   void set_rgb (in int x, in int y, in char r, in char g, in char b) {
-    char* base = mpxbf.getPixels ();
-    int nc     = mpxbf.getNChannels ();
-    int w      = mpxbf.getWidth ();
-    int h      = mpxbf.getHeight ();
-    int rs     = mpxbf.getRowstride ();
-    char* e    = cast(char*) (base + (y * rs) + (x * nc));
-
+    char* e    = cast(char*) (mbase + (y * mrs) + (x * mnc));
     e[0] = r;
     e[1] = g;
     e[2] = b;
@@ -146,6 +184,11 @@ private:
   // Data //
   //////////
   Pixbuf mpxbf;
+  char* mbase;
+  int mnc;
+  int mw ;
+  int mh ;
+  int mrs;
 }
 
 unittest {
@@ -160,6 +203,8 @@ unittest {
   i.load_image ("../../data/318982.tif");
   assert (i.width  != -1);
   assert (i.height != -1);
+  assert (i.count_white_pixels () >= 0);
+  assert (i.count_black_pixels () >= 0);
 
-  writeln ("model.Image: All tests passed!");
+  //writeln ("model.Image: All tests passed!");
 }

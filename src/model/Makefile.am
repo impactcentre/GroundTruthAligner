@@ -26,7 +26,7 @@ doc:
 tests:
 	$(DC) -main -unittest $(AM_DFLAGS) $(DFLAGS) $(libmodel_a_SOURCES) $$(pkg-config --libs gtkd2) ../mvc/modelview.o
 
-pass-tests:
+pass-tests: tests
 	./image
 
 ###############
