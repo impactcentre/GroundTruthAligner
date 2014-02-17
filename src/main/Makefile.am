@@ -8,7 +8,7 @@ if DMD
 d_images_DFLAGS             = -I$(top_srcdir)/src $(CORE_DEPS_CFLAGS)
 d_images_LDFLAGS            = -L-L$(top_srcdir)/src/mvc -L-L$(top_srcdir)/src/gui -L-L$(top_srcdir)/src/model
 d_images_LDADD              = -L-l:libgui.a -L-l:libmvc.a -L-l:libmodel.a $(CORE_DEPS_LIBS)
-EXTRA_d_images_DEPENDENCIES = $(top_srcdir)/src/gui/libgui.a $(top_srcdir)/src/mvc/libmvc.a
+EXTRA_d_images_DEPENDENCIES = $(top_srcdir)/src/gui/libgui.a $(top_srcdir)/src/mvc/libmvc.a $(top_srcdir)/src/model/libmodel.a
 d_images_DOC                = -D -Dd$(top_srcdir)/src/doc
 else
 d_images_DFLAGS   = -O2 $(CORE_DEPS_CFLAGS)

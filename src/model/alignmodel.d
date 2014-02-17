@@ -22,6 +22,8 @@
 
 module model.alignmodel;
 
+import std.stdio;
+
 /////////
 // MVC //
 /////////
@@ -91,4 +93,13 @@ private:
   //////////
   Image mimage;
   XmlText mxmltext;
+}
+
+unittest {
+  auto am = new AlignModel;
+
+  writeln ("alignmodel tests BEGIN...");
+  assert (am.get_image !is null);
+  assert (am.get_xmltext !is null);
+  writeln ("alignmodel tests END...");
 }

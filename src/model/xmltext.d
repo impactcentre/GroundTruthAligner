@@ -138,6 +138,7 @@ unittest {
   t.load_xml_contents_from ("../../data/318982.xml");
   tt = t.get_texts;
 
+  writeln ("xmltext tests BEGIN...");
   assert (tt.length > 0);
 
   assert (tt[1].type == "paragraph");
@@ -146,4 +147,5 @@ unittest {
 
   assert (tt[2].type == "catch-word");
   assert (tt[2].points.length == 8);
+  writeln ("xmltext tests END...");
 }

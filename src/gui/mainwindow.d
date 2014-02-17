@@ -86,8 +86,10 @@ import mvc.modelview;
 ///////////
 
 import model.alignmodel;
+/*
 import model.image;
 import model.xmltext;
+*/
 
 ////////////////
 // Code begin //
@@ -127,12 +129,8 @@ public:
     setResizable (true);
     debug writeln ("Resizable: ", getResizable());
 
-    /*
-    GdkGeometry hints;
-    hints.minWidth = 800;
-    hints.minHeight = 600;
-    setGeometryHints (null, hints, WindowHints.HINT_MIN_SIZE | WindowHints.HINT_USER_POS | WindowHints.HINT_USER_SIZE);
-    */
+    create_model ();
+
   }
   
   /////////////////
@@ -156,6 +154,15 @@ public:
   /////////////////////
   // Private methods //
   /////////////////////
+
+  /**
+   * Creates the model.
+   * The model consists of an Image and a XmlText.
+   */
+  void create_model () {
+    malignmodel = new AlignModel;
+  }
+
   /**
    * UI loading:
    * This function loads the UI from the glade file.
