@@ -448,5 +448,4 @@ public:
   TextView          mtextview;
   TextBuffer        mtextbuffer;
   AlignModel        malignmodel;
-  Pixbuf            mpage_pxbf;
 }
