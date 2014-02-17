@@ -7,7 +7,7 @@
 include ../d-support.mk
 
 noinst_LIBRARIES   = libmodel.a
-libmodel_a_SOURCES = image.d xmltext.d
+libmodel_a_SOURCES = image.d xmltext.d alignmodel.d
 
 libmodel_a_DFLAGS  = $$(pkg-config --cflags gtkd2) -I$(top_srcdir)/src
 libmodel_a_DOC     = -D -Dd$(top_srcdir)/src/doc

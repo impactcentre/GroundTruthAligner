@@ -81,6 +81,14 @@ import core.memory: GC;		// We need to play with the garbage collector
 /////////
 import mvc.modelview;
 
+///////////
+// Model //
+///////////
+
+import model.alignmodel;
+import model.image;
+import model.xmltext;
+
 ////////////////
 // Code begin //
 //////////////////////////////////////////////////////////////////////
@@ -406,4 +414,5 @@ public:
   Pixbuf            mpage_pxbf;
   TextView          mtextview;
   TextBuffer        mtextbuffer;
+  AlignModel        malignmodel;
 }
