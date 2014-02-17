@@ -109,7 +109,7 @@ public:
   this (string gladefile) {
 
     m_gf = gladefile;
-    mpage_pxbf = null;
+    //mpage_pxbf = null;
 
     debug writeln ("Calling load_ui.");
     load_ui ();
@@ -198,9 +198,9 @@ public:
       _imi = cast(ImageMenuItem) mbuilder.getObject("imenuitem_quit");
       if (_imi !is null) _imi.addOnActivate ( (mi) => Main.quit() );
 
-      // FileChooser button
-      mchooser = cast(FileChooserButton) mbuilder.getObject("filechooserbutton");
-      init_filechooser_button ();
+      // FileChooser buttons
+      mimagechooser = cast(FileChooserButton) mbuilder.getObject("imagefilechooserbutton");
+      init_imagefilechooser_button ();
 
       // Drawing Area
       mpage_image = cast(DrawingArea) mbuilder.getObject("page_image");
@@ -250,9 +250,9 @@ public:
   }
   
   /**
-   * This method creates a filter for the file chooser.
+   * This method creates a filter for the Image file chooser.
    */
-  private void init_filechooser_button () {
+  private void init_imagefilechooser_button () {
     /* Only Images */
     auto filter = new FileFilter;
     filter.setName ("Images");
@@ -260,10 +260,10 @@ public:
     filter.addPattern ("*.jpg");
     filter.addPattern ("*.tif");
     filter.addPattern ("*.tiff");
-    mchooser.addFilter (filter);
+    mimagechooser.addFilter (filter);
 
-    mchooser.addOnSelectionChanged ( delegate void (FileChooserIF fc) {
-	auto uris = mchooser.getUris ();
+    mimagechooser.addOnSelectionChanged ( delegate void (FileChooserIF fc) {
+	auto uris = mimagechooser.getUris ();
 	debug writeln ("uris.typeid = ", typeid(uris));
 
 	//foreach (uri ; uris.toArray!(string,string)) {
@@ -277,28 +277,70 @@ public:
       );
   }
 
+  /**
+   * This method creates a filter for the XML file chooser.
+   */
+  private void init_xmlfilechooser_button () {
+    /* Only XML */
+    auto filter = new FileFilter;
+    filter.setName ("XML");
+    filter.addPattern ("*.xml");
+    mxmlchooser.addFilter (filter);
+
+    mxmlchooser.addOnSelectionChanged ( delegate void (FileChooserIF fc) {
+	auto uris = mxmlchooser.getUris ();
+	debug writeln ("uris.typeid = ", typeid(uris));
+
+	//foreach (uri ; uris.toArray!(string,string)) {
+	for (int f = 0; f < uris.length(); f++) {
+	  auto uri = to!string (cast(char*) uris.nthData(f));
+	  uri = chompPrefix (uri, "file://");
+	  //writefln ("Selection changed: %s", uri);
+	  load_xml (uri);
+	}
+      }
+      );
+  }
+
+  /**
+   * Loads an image into the model.
+   */
   private void load_image (string filename) {
-    mpage_pxbf = new Pixbuf (filename);
+    //mpage_pxbf = new Pixbuf (filename);
+
+    malignmodel.load_image_xmltext (filename, "");
     //fit_image ();
+    //mpage_pxbf = malignmodel.get_image.data;
 
-    if (mpage_pxbf !is null) {
+    if (malignmodel.get_image.data !is null) {
       debug writefln ("Pixbuf loaded:\nImage is %u X %u pixels\n", 
-		      mpage_pxbf.getWidth(), 
-		      mpage_pxbf.getHeight());
+		      malignmodel.get_image.data.getWidth(), 
+		      malignmodel.get_image.data.getHeight());
 
-      mpage_image.setSizeRequest (mpage_pxbf.getWidth(),
-				  mpage_pxbf.getHeight());
+      mpage_image.setSizeRequest (malignmodel.get_image.data.getWidth(),
+				  malignmodel.get_image.data.getHeight());
 
     }
+  }
+
+  /**
+   * Loads an xml into the model.
+   */
+  private void load_xml (string filename) {
+
   }
 
   ///////////////
   // Callbacks //
   ///////////////
+
+  /**
+   * Redraws the scaned page loaded.
+   */
   private bool redraw_page (Context ctx, Widget w) {
     //auto d = mpaned.getChild1 ();
 
-    if (mpage_pxbf !is null) {
+    if (malignmodel.get_image.data !is null) {
       auto width  = w.getWidth () / 2.0;
       auto height = w.getHeight () / 2.0;
 
@@ -315,9 +357,11 @@ public:
 	ctx.translate (width, height);
 	ctx.rotate (mangle);
 	//ctx.restore ();
-	ctx.setSourcePixbuf (mpage_pxbf, -width, -height);
+
+	//ctx.setSourcePixbuf (mpage_pxbf, -width, -height);
+	ctx.setSourcePixbuf (malignmodel.get_image.data, -width, -height);
       } else
-	ctx.setSourcePixbuf (mpage_pxbf, 0.0, 0.0);
+	ctx.setSourcePixbuf (malignmodel.get_image.data, 0.0, 0.0);
       ctx.paint ();
 
       // enable GC after rotating and painting the image
@@ -366,30 +410,12 @@ public:
 
     Context c = createContext (wdgt.getWindow());
 
-    if ( mpage_pxbf !is null) {
-      //setSourcePixbuf (c, mpage_pxbf, 0.0, 0.0);
-      /*
-	c.setSourceRgb(0, 0, 0);
-	c.moveTo(0, 0);
-	c.lineTo(ev.button.x, ev.button.y);
-	c.stroke();
-      */
+    if ( malignmodel.get_image.data !is null ) {
+      char rval, gval, bval;
 
-      char* base = mpage_pxbf.getPixels ();
-      int nc     = mpage_pxbf.getNChannels ();
-      int w      = mpage_pxbf.getWidth ();
-      int h      = mpage_pxbf.getHeight ();
-      int rs     = mpage_pxbf.getRowstride ();
-      char* e    = cast(char*) (base + (py * rs) + (px * nc));
-      char rval = e[0];
-      char gval = e[1];
-      char bval = e[2];
+      malignmodel.get_image.get_rgb (px, py, rval, gval, bval);
 
-      debug writefln ("base= 0x%x , nc= %d, w= %d, h= %d, rs= %d, r= [%d], g= [%d], b= [%d]", 
-		      base, nc, w, h, rs, rval, gval, bval);
-
-      // This way we can draw into the pixbuf directly
-      // e[0] = e[1] = e[2] = 0;	// R G B  triplet
+      debug writefln ("R[%d], G[%d], B[%d]", rval, gval, bval);
 
     }
 
@@ -417,9 +443,10 @@ public:
   Scale             mscale;
   SpinButton        msb;
   Label             mdegrees;
-  FileChooserButton mchooser;
-  Pixbuf            mpage_pxbf;
+  FileChooserButton mimagechooser;
+  FileChooserButton mxmlchooser;
   TextView          mtextview;
   TextBuffer        mtextbuffer;
   AlignModel        malignmodel;
+  Pixbuf            mpage_pxbf;
 }

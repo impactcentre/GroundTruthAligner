@@ -66,14 +66,16 @@ public:
 
   void load_image_xmltext (in string image_file, in string xmltext_file)
     in {
-      assert (image_file != "");
-      assert (xmltext_file != "");
+      //assert (image_file != "");
+      //assert (xmltext_file != "");
       assert (mimage !is null);
       assert (mxmltext !is null);
     }
     body {
-      mimage.load_image (image_file);
-      mxmltext.load_xml_contents_from (xmltext_file);
+      if (image_file != "")
+	mimage.load_image (image_file);
+      if (xmltext_file != "")
+	mxmltext.load_xml_contents_from (xmltext_file);
     }
   
   @property Image get_image () { return mimage; }
