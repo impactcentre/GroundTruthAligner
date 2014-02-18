@@ -192,15 +192,15 @@ public:
       //mpxbf = mpxbf_orig;
 
       CairoFormat  fmt = mpxbf.getHasAlpha () ? CairoFormat.ARGB32 : CairoFormat.RGB24;
-      int            w = mpxbf.getWidth ();
-      int            h = mpxbf.getHeight ();
-      ImageSurface ims = ImageSurface.create (fmt, w, h);
+      //int            w = mpxbf.getWidth ();
+      //int            h = mpxbf.getHeight ();
+      ImageSurface ims = ImageSurface.create (fmt, mw, mh);
       Context      ctx = Context.create (ims);
       float        rad = deg * PI / 180.0;
 
-      ctx.translate (w/2.0, h/2.0);
+      ctx.translate (mw/2.0, mh/2.0);
       ctx.rotate (rad);
-      ctx.setSourcePixbuf (mpxbf, -w/2.0, -h/2.0);
+      ctx.setSourcePixbuf (mpxbf, -mw/2.0, -mh/2.0);
       ctx.paint ();
 
       if (mpxbf_rotated !is null) { mpxbf_rotated.unref(); }
