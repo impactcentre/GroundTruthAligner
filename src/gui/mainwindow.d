@@ -371,19 +371,19 @@ public:
     return false;
   }
 
-  private void rotate_image (SpinButton s) {
-    auto alpha =  s.getValue();
-    auto writer = appender!string();
-    formattedWrite(writer, "%6.2f", alpha);
+  // private void rotate_image (SpinButton s) {
+  //   auto alpha =  s.getValue();
+  //   auto writer = appender!string();
+  //   formattedWrite(writer, "%6.2f", alpha);
 
-    //mdegrees.setText (writer.data);
-    mangle = alpha*PI/180.0;
-    debug writefln ("Deg: %5.2f, Rad: %5.2f", alpha, mangle);
+  //   //mdegrees.setText (writer.data);
+  //   mangle = alpha*PI/180.0;
+  //   debug writefln ("Deg: %5.2f, Rad: %5.2f", alpha, mangle);
 
-    mpage_image.queueDraw ();
+  //   mpage_image.queueDraw ();
 
-    return;
-  }
+  //   return;
+  // }
 
   private void rotate_image (Range r) {
     auto alpha  = r.getValue();
