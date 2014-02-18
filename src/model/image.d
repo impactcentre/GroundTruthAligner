@@ -117,6 +117,8 @@ public:
    */
   void load_image (string filename) {
     mpxbf = new Pixbuf (filename);
+    mpxbf_orig = mpxbf.copy ();
+
     //fit_image ();
 
     if (mpxbf !is null) {
@@ -180,6 +182,7 @@ private:
   // Data //
   //////////
   Pixbuf mpxbf;
+  Pixbuf mpxbf_orig;
   char* mbase;
   int mnc;
   int mw ;
