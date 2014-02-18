@@ -340,28 +340,29 @@ public:
   private bool redraw_page (Context ctx, Widget w) {
     //auto d = mpaned.getChild1 ();
 
+    // memory free in a much cleaner way...
+    scope (exit) GC.collect();
+
     if (malignmodel.get_image.data !is null) {
       auto width  = w.getWidth () / 2.0;
       auto height = w.getHeight () / 2.0;
 
       debug writefln ("Image center X: %5.2f, Y: %5.2f", width, height);
 
-      // memory free in a much cleaner way...
-      scope (exit) GC.collect();
-
       // Disable GC when rotating and painting the image
       //GC.disable ();
 
-      if (mangle != 0.0) {
-	//ctx.save ();
-	ctx.translate (width, height);
-	ctx.rotate (mangle);
-	//ctx.restore ();
+      /*if (mangle != 0.0) {
+      //ctx.save ();
+      ctx.translate (width, height);
+      ctx.rotate (mangle);
+      //ctx.restore ();
 
-	//ctx.setSourcePixbuf (mpage_pxbf, -width, -height);
-	ctx.setSourcePixbuf (malignmodel.get_image.data, -width, -height);
-      } else
-	ctx.setSourcePixbuf (malignmodel.get_image.data, 0.0, 0.0);
+      //ctx.setSourcePixbuf (mpage_pxbf, -width, -height);
+      ctx.setSourcePixbuf (malignmodel.get_image.data, -width, -height);
+      } else*/
+
+      ctx.setSourcePixbuf (malignmodel.get_image.data, 0.0, 0.0);
       ctx.paint ();
 
       // enable GC after rotating and painting the image
@@ -391,9 +392,11 @@ public:
     formattedWrite(writer, "%s", cast(int)alpha);
 
     mdegrees.setText (writer.data);
-    mangle = alpha*PI/180;
+    //    mangle = alpha*PI/180;
+    mangle = alpha;
     debug writefln ("Deg: %5.2f, Rad: %5.2f", alpha, mangle);
 
+    malignmodel.get_image.rotate_by (mangle);
     mpage_image.queueDraw ();
     //queueDraw ();
 

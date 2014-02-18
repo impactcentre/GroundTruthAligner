@@ -177,8 +177,13 @@ public:
    * Params:
    *   deg = The number of degrees to rotate the image.
    */
-  public void rotate_image_by (float deg) {
+  public void rotate_by (float deg) {
+    // memory free in a much cleaner way...
+    scope (exit) GC.collect();
+
     if (mpxbf !is null) {
+      mpxbf = mpxbf_orig;
+
       CairoFormat  fmt = mpxbf.getHasAlpha () ? CairoFormat.ARGB32 : CairoFormat.RGB24;
       int            w = mpxbf.getWidth ();
       int            h = mpxbf.getHeight ();
@@ -186,15 +191,15 @@ public:
       Context      ctx = Context.create (ims);
       float        rad = deg * PI / 180.0;
 
-      // memory free in a much cleaner way...
-      scope (exit) GC.collect();
-
       ctx.translate (w/2.0, h/2.0);
       ctx.rotate (rad);
       ctx.setSourcePixbuf (mpxbf, -w/2.0, -h/2.0);
       ctx.paint ();
 
-      mpxbf = Pixbuf.getFromSurface (ims, 0, 0, ims.getWidth() , ims.getHeight ());
+      mpxbf = Pixbuf.getFromSurface (ims, 0, 0, 
+				     ims.getWidth(), ims.getHeight ());
+
+      ims.destroy ();
     }
 
   }
