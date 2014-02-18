@@ -26,11 +26,21 @@ module model.image;
 // STD + CORE //
 ////////////////
 import std.stdio;
+import std.math;
+import core.memory: GC;		// We need to play with the garbage collector
 
 /////////
 // GDK //
 /////////
 import gdk.Pixbuf;
+import gdk.Cairo;
+
+///////////
+// CAIRO //
+///////////
+import cairo.Context;
+import cairo.ImageSurface;
+import cairo.Surface;
 
 /////////
 // MVC //
@@ -54,6 +64,7 @@ public:
   // Constructor //
   /////////////////
   this () {
+    mpxbf_orig = null;
     mpxbf = null;
     mbase = null;
     mnc   = 0;
@@ -70,12 +81,12 @@ public:
   }
 
   ///////////
-  // enums //
+  // Enums //
   ///////////
   public enum Color { WHITE = 0, BLACK = 255 };
 
   /////////////
-  // METHODS //
+  // Methods //
   /////////////
 
   @property Pixbuf data () { return mpxbf; }
@@ -96,8 +107,8 @@ public:
 
   /**
    * Count how many COLOR pixels are in the image.
-   * Parameters:
-   * cl the color to search
+   * Params:
+   *    cl= the color to search
    */
   int count_color_pixels (Color cl) {
     char r,g,b;
@@ -117,17 +128,10 @@ public:
    */
   void load_image (string filename) {
     mpxbf = new Pixbuf (filename);
-    mpxbf_orig = mpxbf.copy ();
-
-    //fit_image ();
-
     if (mpxbf !is null) {
-      // Get image parameters
-      mbase = mpxbf.getPixels ();
-      mnc   = mpxbf.getNChannels ();
-      mw    = mpxbf.getWidth ();
-      mh    = mpxbf.getHeight ();
-      mrs   = mpxbf.getRowstride ();
+      mpxbf_orig = mpxbf.copy ();	// We save the original image
+					// in case we rotate/scale it.
+      get_image_parameters ();
 
       debug writefln ("Pixbuf loaded:\nImage is %u X %u pixels\n", 
 		      mpxbf.getWidth(), 
@@ -145,7 +149,7 @@ public:
    * Get the RGB values from pixel x,y,
    */
   void get_rgb (in int x, in int y, out char r, out char g, out char b) {
-    char* e    = cast(char*) (mbase + (y * mrs) + (x * mnc));
+    char* e = cast(char*) (mbase + (y * mrs) + (x * mnc));
     r = e[0];
     g = e[1];
     b = e[2];
@@ -155,7 +159,7 @@ public:
    * Set the RGB values for pixel x,y,
    */
   void set_rgb (in int x, in int y, in char r, in char g, in char b) {
-    char* e    = cast(char*) (mbase + (y * mrs) + (x * mnc));
+    char* e = cast(char*) (mbase + (y * mrs) + (x * mnc));
     e[0] = r;
     e[1] = g;
     e[2] = b;
@@ -168,6 +172,33 @@ public:
     return mpxbf !is null;
   }
 
+  /**
+   * Rotate the image by 'deg' degrees.
+   * Params:
+   *   deg = The number of degrees to rotate the image.
+   */
+  public void rotate_image_by (float deg) {
+    if (mpxbf !is null) {
+      CairoFormat  fmt = mpxbf.getHasAlpha () ? CairoFormat.ARGB32 : CairoFormat.RGB24;
+      int            w = mpxbf.getWidth ();
+      int            h = mpxbf.getHeight ();
+      ImageSurface ims = ImageSurface.create (fmt, w, h);
+      Context      ctx = Context.create (ims);
+      float        rad = deg * PI / 180.0;
+
+      // memory free in a much cleaner way...
+      scope (exit) GC.collect();
+
+      ctx.translate (w/2.0, h/2.0);
+      ctx.rotate (rad);
+      ctx.setSourcePixbuf (mpxbf, -w/2.0, -h/2.0);
+      ctx.paint ();
+
+      mpxbf = Pixbuf.getFromSurface (ims, 0, 0, ims.getWidth() , ims.getHeight ());
+    }
+
+  }
+
 private:
   
   /////////////////////
@@ -176,6 +207,14 @@ private:
   invariant () {
     if (mpxbf is null)
       assert (mbase is null);
+  }
+
+  void get_image_parameters () {
+      mbase = mpxbf.getPixels ();
+      mnc   = mpxbf.getNChannels ();
+      mw    = mpxbf.getWidth ();
+      mh    = mpxbf.getHeight ();
+      mrs   = mpxbf.getRowstride ();
   }
   
   //////////
