@@ -186,7 +186,7 @@ public:
    */
   public void rotate_by (float deg) {
     // memory free in a much cleaner way...
-    //scope (exit) GC.collect();
+    scope (exit) GC.collect();
 
     if (mpxbf !is null) {
       //mpxbf = mpxbf_orig;
