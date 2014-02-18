@@ -64,7 +64,7 @@ public:
   // Constructor //
   /////////////////
   this () {
-    mpxbf_orig = null;
+    mpxbf_rotated = null;
     mpxbf = null;
     mbase = null;
     mnc   = 0;
@@ -89,7 +89,7 @@ public:
   // Methods //
   /////////////
 
-  @property Pixbuf data () { return mpxbf; }
+  @property Pixbuf data () { return mpxbf_rotated; }
 
   @property int width () {
     if (mpxbf !is null)
@@ -127,9 +127,16 @@ public:
    * Loads the image in filename into the pixbuf.
    */
   void load_image (string filename) {
+
+    if (mpxbf !is null) { mpxbf.unref(); }
+    if (mpxbf_rotated !is null) { mpxbf_rotated.unref(); }
+
     mpxbf = new Pixbuf (filename);
+
     if (mpxbf !is null) {
-      mpxbf_orig = mpxbf.copy ();	// We save the original image
+
+      if (mpxbf_rotated !is null) { mpxbf_rotated.unref(); }
+      mpxbf_rotated = mpxbf.copy ();	// We save the original image
 					// in case we rotate/scale it.
       get_image_parameters ();
 
@@ -179,10 +186,10 @@ public:
    */
   public void rotate_by (float deg) {
     // memory free in a much cleaner way...
-    scope (exit) GC.collect();
+    //scope (exit) GC.collect();
 
     if (mpxbf !is null) {
-      mpxbf = mpxbf_orig;
+      //mpxbf = mpxbf_orig;
 
       CairoFormat  fmt = mpxbf.getHasAlpha () ? CairoFormat.ARGB32 : CairoFormat.RGB24;
       int            w = mpxbf.getWidth ();
@@ -196,9 +203,12 @@ public:
       ctx.setSourcePixbuf (mpxbf, -w/2.0, -h/2.0);
       ctx.paint ();
 
-      mpxbf = Pixbuf.getFromSurface (ims, 0, 0, 
-				     ims.getWidth(), ims.getHeight ());
+      if (mpxbf_rotated !is null) { mpxbf_rotated.unref(); }
+      mpxbf_rotated = Pixbuf.getFromSurface (ims, 0, 0, 
+					     ims.getWidth(), ims.getHeight ());
+      get_image_parameters ();
 
+      ctx.destroy ();
       ims.destroy ();
     }
 
@@ -215,18 +225,18 @@ private:
   }
 
   void get_image_parameters () {
-      mbase = mpxbf.getPixels ();
-      mnc   = mpxbf.getNChannels ();
-      mw    = mpxbf.getWidth ();
-      mh    = mpxbf.getHeight ();
-      mrs   = mpxbf.getRowstride ();
+      mbase = mpxbf_rotated.getPixels ();
+      mnc   = mpxbf_rotated.getNChannels ();
+      mw    = mpxbf_rotated.getWidth ();
+      mh    = mpxbf_rotated.getHeight ();
+      mrs   = mpxbf_rotated.getRowstride ();
   }
   
   //////////
   // Data //
   //////////
   Pixbuf mpxbf;
-  Pixbuf mpxbf_orig;
+  Pixbuf mpxbf_rotated;
   char* mbase;
   int mnc;
   int mw ;
