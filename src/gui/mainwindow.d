@@ -202,6 +202,9 @@ public:
       mimagechooser = cast(FileChooserButton) mbuilder.getObject("imagefilechooserbutton");
       init_imagefilechooser_button ();
 
+      mxmlchooser = cast(FileChooserButton) mbuilder.getObject("xmlfilechooserbutton");
+      init_xmlfilechooser_button ();
+
       // Drawing Area
       mpage_image = cast(DrawingArea) mbuilder.getObject("page_image");
       if (mpage_image !is null) {
