@@ -356,10 +356,7 @@ public:
    * Loads an xml into the model.
    */
   private void load_xml (string filename)
-    in 
-      {
-	assert (malignmodel !is null);
-      }
+    in { assert (malignmodel !is null); }
   body {
     //debug writefln ("We must load [%s] xml file.", filename);
     malignmodel.load_image_xmltext ("", filename);
@@ -426,7 +423,7 @@ public:
   private void rotate_image (Range r) {
     auto alpha  = r.getValue();
     auto writer = appender!string();
-    formattedWrite(writer, "%s", cast(int)alpha);
+    formattedWrite(writer, "%s", cast(int) alpha);
 
     mdegrees.setText (writer.data);
     //    mangle = alpha*PI/180;
@@ -442,8 +439,7 @@ public:
     return;
   }
 
-  private bool button_press (Event ev, Widget wdgt)
-  {
+  private bool button_press (Event ev, Widget wdgt) {
     int px = cast(int) ev.button.x;
     int py = cast(int) ev.button.y;
 
