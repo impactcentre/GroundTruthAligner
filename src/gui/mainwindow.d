@@ -108,6 +108,9 @@ public:
   /////////////////
   this (string gladefile) {
 
+    ////////////////////
+    // 1- The UI part //
+    /////////////////////////////////////////////////////////
     m_gf = gladefile;
     //mpage_pxbf = null;
 
@@ -128,8 +131,13 @@ public:
 
     setResizable (true);
     debug writeln ("Resizable: ", getResizable());
+    /////////////////////////////////////////////////////////
 
+    //////////////////
+    // 2- The model //
+    /////////////////////////////////////////////////////////
     create_model ();
+    /////////////////////////////////////////////////////////
 
   }
   
@@ -144,17 +152,22 @@ public:
   // Public methods //
   ////////////////////
   override void update () {
+    ///////////////////////
+    // 1- The Image part //
+    ///////////////////////
     mpage_image.queueDraw ();
+
+    /////////////////////////
+    // 2- The XmlText part //
+    /////////////////////////
   }
 
   override void set_model (Model m) {
     malignmodel = cast(AlignModel) m;
     malignmodel.add_view (this);
   }
-  
 
   override void update_model () {}
-
 
   void show_text (string the_text) {
     mtextbuffer.insertAtCursor (the_text);
