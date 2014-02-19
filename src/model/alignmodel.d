@@ -22,7 +22,15 @@
 
 module model.alignmodel;
 
+/////////
+// STD //
+/////////
 import std.stdio;
+
+/////////
+// GDK //
+/////////
+import gdk.Pixbuf;
 
 /////////
 // MVC //
@@ -78,11 +86,27 @@ public:
 	mxmltext.load_xml_contents_from (xmltext_file);
     }
 
+  ////////////////////////////
+  // Image relative methods //
+  ////////////////////////////
+  @property Pixbuf get_image_data() { return mimage.data; }
+
   void rotate_image_by (float deg) { 
     mimage.rotate_by (deg);
     notify_views ();
   }
 
+  void get_image_rgb (in int x, in int y, out char r, out char g, out char b) {
+    mimage.get_rgb (x, y, r, g, b);
+  }
+
+  //////////////////////////////
+  // XmlText relative methods //
+  //////////////////////////////
+
+  //////////////////////////////////
+  // Subcomponents access methods //
+  //////////////////////////////////
   @property Image get_image () { return mimage; }
   @property XmlText get_xmltext () { return mxmltext; }
   
@@ -92,7 +116,8 @@ private:
   // Class invariant //
   /////////////////////
   invariant () {
-    
+    assert (mimage !is null);
+    assert (mxmltext !is null);
   }
   
   //////////

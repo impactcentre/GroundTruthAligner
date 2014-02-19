@@ -326,15 +326,15 @@ public:
 
     malignmodel.load_image_xmltext (filename, "");
     //fit_image ();
-    //mpage_pxbf = malignmodel.get_image.data;
+    //mpage_pxbf = malignmodel.get_image_data;
 
-    if (malignmodel.get_image.data !is null) {
+    if (malignmodel.get_image_data !is null) {
       debug writefln ("Pixbuf loaded:\nImage is %u X %u pixels\n", 
-		      malignmodel.get_image.data.getWidth(), 
-		      malignmodel.get_image.data.getHeight());
+		      malignmodel.get_image_data.getWidth(), 
+		      malignmodel.get_image_data.getHeight());
 
-      mpage_image.setSizeRequest (malignmodel.get_image.data.getWidth(),
-				  malignmodel.get_image.data.getHeight());
+      mpage_image.setSizeRequest (malignmodel.get_image_data.getWidth(),
+				  malignmodel.get_image_data.getHeight());
 
     }
   }
@@ -367,7 +367,7 @@ public:
     // memory free in a much cleaner way...
     scope (exit) GC.collect();
 
-    if (malignmodel.get_image.data !is null) {
+    if (malignmodel.get_image_data !is null) {
       auto width  = w.getWidth () / 2.0;
       auto height = w.getHeight () / 2.0;
 
@@ -383,10 +383,10 @@ public:
       //ctx.restore ();
 
       //ctx.setSourcePixbuf (mpage_pxbf, -width, -height);
-      ctx.setSourcePixbuf (malignmodel.get_image.data, -width, -height);
+      ctx.setSourcePixbuf (malignmodel.get_image_data, -width, -height);
       } else*/
 
-      ctx.setSourcePixbuf (malignmodel.get_image.data, 0.0, 0.0);
+      ctx.setSourcePixbuf (malignmodel.get_image_data, 0.0, 0.0);
       ctx.paint ();
 
       // enable GC after rotating and painting the image
@@ -439,10 +439,10 @@ public:
 
     Context c = createContext (wdgt.getWindow());
 
-    if ( malignmodel.get_image.data !is null ) {
+    if ( malignmodel.get_image_data !is null ) {
       char rval, gval, bval;
 
-      malignmodel.get_image.get_rgb (px, py, rval, gval, bval);
+      malignmodel.get_image_rgb (px, py, rval, gval, bval);
 
       debug writefln ("R[%d], G[%d], B[%d]", rval, gval, bval);
 
