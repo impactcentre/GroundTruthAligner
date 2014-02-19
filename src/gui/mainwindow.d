@@ -143,11 +143,20 @@ public:
   ////////////////////
   // Public methods //
   ////////////////////
-  public override void update () {}
-  public override void set_model (Model m) {}
-  public override void update_model () {}
+  override void update () {
+    mpage_image.queueDraw ();
+  }
 
-  public void show_text (string the_text) {
+  override void set_model (Model m) {
+    malignmodel = cast(AlignModel) m;
+    malignmodel.add_view (this);
+  }
+  
+
+  override void update_model () {}
+
+
+  void show_text (string the_text) {
     mtextbuffer.insertAtCursor (the_text);
   }
 
@@ -156,11 +165,13 @@ public:
   /////////////////////
 
   /**
-   * Creates the model.
-   * The model consists of an Image and a XmlText.
+   * Creates the model and sets 'this' as it's View.
+   * 
+   * The model (AlignModel) consists of an Image and a XmlText.
    */
-  void create_model () {
-    malignmodel = new AlignModel;
+  private void create_model () {
+    //malignmodel = new AlignModel;
+    set_model (new AlignModel);
   }
 
   /**
@@ -409,9 +420,11 @@ public:
     mangle = alpha;
     debug writefln ("Deg: %5.2f, Rad: %5.2f", alpha, mangle);
 
-    malignmodel.get_image.rotate_by (mangle);
-    mpage_image.queueDraw ();
-    //queueDraw ();
+    //malignmodel.get_image.rotate_by (mangle);
+    malignmodel.rotate_image_by (mangle);
+
+    // Not necessary because of MVC
+    //mpage_image.queueDraw ();
 
     return;
   }

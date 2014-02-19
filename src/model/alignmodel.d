@@ -45,7 +45,7 @@ import model.xmltext;
  * It contains an Image an a XmlText.
  *
  */
-class AlignModel : Object {
+class AlignModel : Model {
   
 public:
   
@@ -77,7 +77,12 @@ public:
       if (xmltext_file != "")
 	mxmltext.load_xml_contents_from (xmltext_file);
     }
-  
+
+  void rotate_image_by (float deg) { 
+    mimage.rotate_by (deg);
+    notify_views ();
+  }
+
   @property Image get_image () { return mimage; }
   @property XmlText get_xmltext () { return mxmltext; }
   
