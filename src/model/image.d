@@ -185,8 +185,6 @@ public:
    *   deg = The number of degrees to rotate the image.
    */
   public void rotate_by (float deg) {
-    // memory free in a much cleaner way...
-    scope (exit) GC.collect();
 
     if (mpxbf !is null) {
       //mpxbf = mpxbf_orig;
@@ -198,6 +196,15 @@ public:
       Context      ctx = Context.create (ims);
       float        rad = deg * PI / 180.0;
 
+      // memory free in a much cleaner way...
+      scope (exit) {
+	GC.collect();
+	ctx.destroy ();
+	ims.destroy ();
+
+	//writeln ("FREE MEMORY.");
+      }
+
       ctx.translate (mw/2.0, mh/2.0);
       ctx.rotate (rad);
       ctx.setSourcePixbuf (mpxbf, -mw/2.0, -mh/2.0);
@@ -208,8 +215,6 @@ public:
 					     ims.getWidth(), ims.getHeight ());
       get_image_parameters ();
 
-      ctx.destroy ();
-      ims.destroy ();
     }
 
   }

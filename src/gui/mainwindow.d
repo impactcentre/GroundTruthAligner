@@ -309,10 +309,8 @@ public:
    * Loads an image into the model.
    */
   private void load_image (string filename) 
-    in {
-      assert (malignmodel !is null);
-    }
-    body {
+    in  { assert (malignmodel !is null); }
+  body {
     //mpage_pxbf = new Pixbuf (filename);
 
     malignmodel.load_image_xmltext (filename, "");
@@ -334,13 +332,14 @@ public:
    * Loads an xml into the model.
    */
   private void load_xml (string filename)
-    in {
-      assert (malignmodel !is null);
-    }
+    in 
+      {
+	assert (malignmodel !is null);
+      }
   body {
     //debug writefln ("We must load [%s] xml file.", filename);
     malignmodel.load_image_xmltext ("", filename);
-
+    
     debug writefln ("[%s]", malignmodel.get_xmltext.get_texts[0].content);
   }
 
