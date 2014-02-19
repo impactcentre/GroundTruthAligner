@@ -83,16 +83,14 @@ public:
   /////////////
   
   void load_xml_contents_from (string the_file) 
-    in {
-      assert (the_file != "", "XmlText: empty file!");
-    }
+    in { assert (the_file != "", "XmlText: empty file!"); }
   body {
     string s = cast(string) std.file.read(the_file);
 
     // Check for well-formedness
     // check(s);
 
-    auto xml = new DocumentParser(s);
+    auto xml = new DocumentParser (s);
     xml.onStartTag["TextRegion"] = (ElementParser xml) {
       Text t;
 
