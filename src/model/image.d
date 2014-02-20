@@ -83,7 +83,7 @@ public:
   ///////////
   // Enums //
   ///////////
-  public enum Color { WHITE = 0, BLACK = 255 };
+  public enum Color { BLACK = 0, WHITE = 255 };
 
   /////////////
   // Methods //
@@ -106,6 +106,53 @@ public:
   }
 
   /**
+   * Counts black pixels per line.
+   * 
+   * Returns: An array where each component represents a vertical line
+   * and has the number of black pixles in that line.
+   */
+  int[] black_pixels_per_line () 
+    in { assert (mh > 0); }
+  body {
+    char r,g,b;
+    Color cl = Color.BLACK;
+
+    mbppl = new int[mh];
+
+    for (int y = 0; y < mh; y++) {
+      for (int x = 0; x < mw; x++) {
+	get_rgb (x, y, r, g, b);
+	if (r == cl && g == cl && b == cl)
+	  ++mbppl[y];
+      }
+    }
+    return mbppl;
+  }
+
+  /**
+   * Counts black pixels in one line.
+   *
+   * Params:
+   *   y: The line to search black pixels in.
+   *   
+   * Returns: the number of black pixels in line 'y'.
+   */
+  int black_pixels_in_line (int y) 
+    in { assert (y <= mh); }
+  body {
+    char r,g,b;
+    Color cl = Color.BLACK;
+    int c;
+
+    for (int x = 0; x < mw; x++) {
+      get_rgb (x, y, r, g, b);
+      if (r == cl && g == cl && b == cl)
+	++c;
+    }
+    return c;
+  }
+
+  /**
    * Count how many COLOR pixels are in the image.
    * Params:
    *    cl= the color to search
@@ -113,7 +160,7 @@ public:
   int count_color_pixels (Color cl) {
     char r,g,b;
     int c = 0;
-
+    
     for (int x = 0; x < mw; x++)
       for (int y = 0; y < mh; y++) {
 	get_rgb (x, y, r, g, b);
@@ -242,11 +289,12 @@ private:
   //////////
   Pixbuf mpxbf;
   Pixbuf mpxbf_rotated;
-  char* mbase;
-  int mnc;
-  int mw ;
-  int mh ;
-  int mrs;
+  char*  mbase;
+  int    mnc;
+  int    mw ;
+  int    mh ;
+  int    mrs;
+  int[]  mbppl;			// Black Pixels Per Line
 }
 
 unittest {
@@ -264,5 +312,8 @@ unittest {
   assert (i.count_color_pixels (Image.Color.WHITE) >= 0);
   assert (i.count_color_pixels (Image.Color.BLACK) >= 0);
 
+  int[] bp = i.black_pixels_per_line ();
+  for (int l = 0; l < bp.length; l++)
+    writefln ("Line[%d] has %d black pixels.", l, bp[l]);
   //writeln ("model.Image: All tests passed!");
 }

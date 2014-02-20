@@ -445,6 +445,8 @@ public:
 
     debug writefln ("The widget is: %s \n this: %s", wdgt, this);
     debug writefln ("bpress at x: [%d] , y: [%d]", px, py);
+    debug writefln ("Black pix. in line [%d]: %d", py, 
+		    malignmodel.get_image.black_pixels_in_line (py));
 
     Context c = createContext (wdgt.getWindow());
 
