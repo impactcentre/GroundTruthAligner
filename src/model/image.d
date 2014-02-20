@@ -64,6 +64,7 @@ public:
   // Constructor //
   /////////////////
   this () {
+    mbppl = null;
     mpxbf_rotated = null;
     mpxbf = null;
     mbase = null;
@@ -103,6 +104,23 @@ public:
       return mpxbf.getHeight();
     else
       return -1;
+  }
+
+  /**
+   * Returns the maximum number of black pixels of all scanned lines.
+   */
+  int get_max_black_pixels_line (out int line) {
+    line = 0;
+    if (mbppl !is null) {
+      int max = mbppl[0];
+      for (int i = 0; i<mbppl.length ; i++)
+	if (mbppl[i] > max) {
+	  line = i;
+	  max = mbppl[i];
+	}
+      return max;
+    }
+    return 0;
   }
 
   /**
@@ -309,9 +327,6 @@ unittest {
   assert (i.count_color_pixels (Image.Color.WHITE) >= 0);
   assert (i.count_color_pixels (Image.Color.BLACK) >= 0);
 
-  for (int l = 0; l < i.height; l++)
-    //writefln ("Line[%d] has %d black pixels.", l, bp[l]);
-    writefln ("%d", i.get_black_pixels_in_line (l));
-
+  writefln ("Max blk pixels: %d", i.get_max_black_pixels ());
   //writeln ("model.Image: All tests passed!");
 }

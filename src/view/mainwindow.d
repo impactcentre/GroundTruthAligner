@@ -39,6 +39,7 @@ import gtk.DrawingArea;
 import gtk.Paned;
 import gtk.Scale;
 import gtk.SpinButton;
+import gtk.ToggleButton;
 import gtk.Range;
 import gtk.Label;
 import gtk.FileChooserButton;
@@ -151,6 +152,11 @@ public:
   ////////////////////
   // Public methods //
   ////////////////////
+
+
+  ////////////////////////
+  // Base class methods //
+  ///////////////////////////////////////////////////////////
   override void update () {
     ///////////////////////
     // 1- The Image part //
@@ -168,6 +174,7 @@ public:
   }
 
   override void update_model () {}
+  ///////////////////////////////////////////////////////////
 
   void show_text (string the_text) {
     mtextbuffer.insertAtCursor (the_text);
@@ -240,13 +247,17 @@ public:
       mpaned = cast(Paned) mbuilder.getObject ("paned");
 
       // The scale
-      mscale = cast(Scale) mbuilder.getObject ("scale");
-      mscale.addOnValueChanged (&rotate_image);
+      /*mscale = cast(Scale) mbuilder.getObject ("scale");
+	mscale.addOnValueChanged (&rotate_image);*/
       /*msb = cast(SpinButton) mbuilder.getObject ("sbangle");
 	msb.addOnValueChanged (&rotate_image);*/
 
       // The degrees label
-      mdegrees = cast(Label) mbuilder.getObject ("degrees");
+      //mdegrees = cast(Label) mbuilder.getObject ("degrees");
+
+      // The showlines toggle
+      mshowlines = cast(ToggleButton) mbuilder.getObject ("showlines");
+      mshowlines.addOnToggled (&show_lines_toggle);
 
       // The text view + the text buffer
       mtextview = cast(TextView) mbuilder.getObject ("textview");
@@ -346,6 +357,8 @@ public:
 		      malignmodel.get_image_data.getWidth(), 
 		      malignmodel.get_image_data.getHeight());
 
+      mmaxbpxl = malignmodel.get_image.get_max_black_pixels_line (mll);
+
       mpage_image.setSizeRequest (malignmodel.get_image_data.getWidth(),
 				  malignmodel.get_image_data.getHeight());
 
@@ -383,28 +396,48 @@ public:
 
       debug writefln ("Image center X: %5.2f, Y: %5.2f", width, height);
 
-      // Disable GC when rotating and painting the image
-      //GC.disable ();
-
-      /*if (mangle != 0.0) {
-      //ctx.save ();
-      ctx.translate (width, height);
-      ctx.rotate (mangle);
-      //ctx.restore ();
-
-      //ctx.setSourcePixbuf (mpage_pxbf, -width, -height);
-      ctx.setSourcePixbuf (malignmodel.get_image_data, -width, -height);
-      } else*/
-
       ctx.setSourcePixbuf (malignmodel.get_image_data, 0.0, 0.0);
       ctx.paint ();
 
-      // enable GC after rotating and painting the image
-      //GC.enable ();
+      //////////////////////////////////
+      // Draw longest and space lines //
+      //////////////////////////////////
+      debug writefln ("mll: %s mmaxbpxl: %s", mll, mmaxbpxl);
+      if (mshowlines.getActive) {
+	show_longest_line (ctx);
+	show_possible_space_lines (ctx);
+      }
     }
 
     return false;
   }
+
+  private void show_possible_space_lines (Context ctx) {
+    ctx.save ();
+    ctx.setSourceRgb (0.5, 0.0, 0.1);
+    ctx.setLineWidth (0.5);
+    for (int l = 0; l < malignmodel.get_image_height; l++) {
+
+      if (malignmodel.get_image.get_black_pixels_in_line (l) < (mmaxbpxl / 5)) {
+	ctx.moveTo(0,l);
+	ctx.lineTo (malignmodel.get_image_width, l);
+	ctx.stroke ();
+      }
+    }
+    ctx.restore ();
+  }
+
+
+  private void show_longest_line (Context ctx) {
+    ctx.save ();
+    ctx.setSourceRgb (0.0, 0.6, 0.1);
+    ctx.setLineWidth (10);
+    ctx.moveTo(0,mll);
+    ctx.lineTo (malignmodel.get_image_width, mll);
+    ctx.stroke ();
+    ctx.restore ();
+  }
+
 
   // private void rotate_image (SpinButton s) {
   //   auto alpha =  s.getValue();
@@ -420,12 +453,16 @@ public:
   //   return;
   // }
 
+  private void show_lines_toggle (ToggleButton t) {
+    update ();			// Update the view
+  }
+
   private void rotate_image (Range r) {
     auto alpha  = r.getValue();
     auto writer = appender!string();
     formattedWrite(writer, "%s", cast(int) alpha);
 
-    mdegrees.setText (writer.data);
+    //mdegrees.setText (writer.data);
     //    mangle = alpha*PI/180;
     mangle = alpha;
     debug writefln ("Deg: %5.2f, Rad: %5.2f", alpha, mangle);
@@ -480,12 +517,13 @@ public:
   ImageMenuItem     _imi;
   DrawingArea       mpage_image;
   Paned             mpaned;
-  Scale             mscale;
   SpinButton        msb;
-  Label             mdegrees;
+  ToggleButton      mshowlines;
   FileChooserButton mimagechooser;
   FileChooserButton mxmlchooser;
   TextView          mtextview;
   TextBuffer        mtextbuffer;
   AlignModel        malignmodel;
+  int               mll;	// longest line
+  int               mmaxbpxl;	// max black pixels
 }

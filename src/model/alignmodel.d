@@ -90,6 +90,8 @@ public:
   // Image relative methods //
   ////////////////////////////
   @property Pixbuf get_image_data() { return mimage.data; }
+  @property int get_image_width() { return mimage.width; }
+  @property int get_image_height() { return mimage.height; }
 
   void image_rotate_by (float deg) { 
     mimage.rotate_by (deg);
