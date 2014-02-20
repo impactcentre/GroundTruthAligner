@@ -1,5 +1,5 @@
 
-SUBDIRS = mvc model gui main
+SUBDIRS     = mvc model view main
 TESTSUBDIRS = model
 
 doc:

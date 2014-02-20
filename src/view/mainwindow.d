@@ -431,7 +431,7 @@ public:
     debug writefln ("Deg: %5.2f, Rad: %5.2f", alpha, mangle);
 
     //malignmodel.get_image.rotate_by (mangle);
-    malignmodel.rotate_image_by (mangle);
+    malignmodel.image_rotate_by (mangle);
 
     // Not necessary because of MVC
     //mpage_image.queueDraw ();
@@ -451,7 +451,7 @@ public:
     if ( malignmodel.get_image_data !is null ) {
       char rval, gval, bval;
 
-      malignmodel.get_image_rgb (px, py, rval, gval, bval);
+      malignmodel.image_get_rgb (px, py, rval, gval, bval);
 
       debug writefln ("R[%d], G[%d], B[%d]", rval, gval, bval);
 

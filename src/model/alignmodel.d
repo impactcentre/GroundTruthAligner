@@ -91,12 +91,12 @@ public:
   ////////////////////////////
   @property Pixbuf get_image_data() { return mimage.data; }
 
-  void rotate_image_by (float deg) { 
+  void image_rotate_by (float deg) { 
     mimage.rotate_by (deg);
     notify_views ();
   }
 
-  void get_image_rgb (in int x, in int y, out char r, out char g, out char b) {
+  void image_get_rgb (in int x, in int y, out char r, out char g, out char b) {
     mimage.get_rgb (x, y, r, g, b);
   }
 

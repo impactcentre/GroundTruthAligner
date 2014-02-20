@@ -36,7 +36,7 @@ import std.stdio;
 // Local imports //
 ///////////////////
 import config.constants;
-import gui.mainwindow;
+import view.mainwindow;
 
 /**
  * Usage ./gladeText /path/to/your/glade/file.glade
