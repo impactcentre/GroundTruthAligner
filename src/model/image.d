@@ -106,30 +106,6 @@ public:
   }
 
   /**
-   * Counts black pixels per line.
-   * 
-   * Returns: An array where each component represents a vertical line
-   * and has the number of black pixles in that line.
-   */
-  int[] black_pixels_per_line () 
-    in { assert (mh > 0); }
-  body {
-    char r,g,b;
-    Color cl = Color.BLACK;
-
-    mbppl = new int[mh];
-
-    for (int y = 0; y < mh; y++) {
-      for (int x = 0; x < mw; x++) {
-	get_rgb (x, y, r, g, b);
-	if (r == cl && g == cl && b == cl)
-	  ++mbppl[y];
-      }
-    }
-    return mbppl;
-  }
-
-  /**
    * Counts black pixels in one line.
    *
    * Params:
@@ -137,19 +113,11 @@ public:
    *   
    * Returns: the number of black pixels in line 'y'.
    */
-  int black_pixels_in_line (int y) 
+  int get_black_pixels_in_line (int y) 
     in { assert (y <= mh); }
   body {
-    char r,g,b;
-    Color cl = Color.BLACK;
-    int c;
-
-    for (int x = 0; x < mw; x++) {
-      get_rgb (x, y, r, g, b);
-      if (r == cl && g == cl && b == cl)
-	++c;
-    }
-    return c;
+    if (mpxbf !is null) return mbppl[y];
+    return 0;
   }
 
   /**
@@ -186,6 +154,7 @@ public:
       mpxbf_rotated = mpxbf.copy ();	// We save the original image
 					// in case we rotate/scale it.
       get_image_parameters ();
+      count_black_pixels_per_line ();
 
       debug writefln ("Pixbuf loaded:\nImage is %u X %u pixels\n", 
 		      mpxbf.getWidth(), 
@@ -203,20 +172,24 @@ public:
    * Get the RGB values from pixel x,y,
    */
   void get_rgb (in int x, in int y, out char r, out char g, out char b) {
-    char* e = cast(char*) (mbase + (y * mrs) + (x * mnc));
-    r = e[0];
-    g = e[1];
-    b = e[2];
+    if (mpxbf !is null) {
+      char* e = cast(char*) (mbase + (y * mrs) + (x * mnc));
+      r = e[0];
+      g = e[1];
+      b = e[2];
+    }
   }
 
   /**
    * Set the RGB values for pixel x,y,
    */
   void set_rgb (in int x, in int y, in char r, in char g, in char b) {
-    char* e = cast(char*) (mbase + (y * mrs) + (x * mnc));
-    e[0] = r;
-    e[1] = g;
-    e[2] = b;
+    if (mpxbf !is null) {
+      char* e = cast(char*) (mbase + (y * mrs) + (x * mnc));
+      e[0] = r;
+      e[1] = g;
+      e[2] = b;
+    }
   }
 
   /**
@@ -261,6 +234,7 @@ public:
       mpxbf_rotated = Pixbuf.getFromSurface (ims, 0, 0, 
 					     ims.getWidth(), ims.getHeight ());
       get_image_parameters ();
+      count_black_pixels_per_line ();
 
     }
 
@@ -276,6 +250,29 @@ private:
       assert (mbase is null);
   }
 
+  /**
+   * Counts and caches black pixels per line.
+   */
+  void count_black_pixels_per_line () 
+    in { assert (mh > 0); }
+  body {
+    char r,g,b;
+    Color cl = Color.BLACK;
+
+    mbppl = new int[mh];
+
+    for (int y = 0; y < mh; y++) {
+      for (int x = 0; x < mw; x++) {
+	get_rgb (x, y, r, g, b);
+	if (r == cl && g == cl && b == cl)
+	  ++mbppl[y];
+      }
+    }
+  }
+
+  /**
+   * Caches the Pixbuf metadata.
+   */
   void get_image_parameters () {
       mbase = mpxbf_rotated.getPixels ();
       mnc   = mpxbf_rotated.getNChannels ();
@@ -312,8 +309,9 @@ unittest {
   assert (i.count_color_pixels (Image.Color.WHITE) >= 0);
   assert (i.count_color_pixels (Image.Color.BLACK) >= 0);
 
-  int[] bp = i.black_pixels_per_line ();
-  for (int l = 0; l < bp.length; l++)
-    writefln ("Line[%d] has %d black pixels.", l, bp[l]);
+  for (int l = 0; l < i.height; l++)
+    //writefln ("Line[%d] has %d black pixels.", l, bp[l]);
+    writefln ("%d", i.get_black_pixels_in_line (l));
+
   //writeln ("model.Image: All tests passed!");
 }
