@@ -90,6 +90,7 @@ public:
   void load_xml_contents_from (string the_file) 
     in { assert (the_file != "", "XmlText: empty file!"); }
   body {
+    mtexts = [];
     string s = cast(string) std.file.read(the_file);
 
     // Check for well-formedness

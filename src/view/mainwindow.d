@@ -269,6 +269,9 @@ public:
       // The showlines toggle
       mshowlines = cast(ToggleButton) mbuilder.getObject ("showlines");
       mshowlines.addOnToggled (&show_lines_toggle);
+      // The showcontours toggle
+      mshowcontours = cast(ToggleButton) mbuilder.getObject ("showcontours");
+      mshowcontours.addOnToggled (&show_contours_toggle);
 
       // The text view + the text buffer
       mtextview = cast(TextView) mbuilder.getObject ("textview");
@@ -442,7 +445,7 @@ public:
       /////////////////////////////////////////////////
       // 3. Draw the points loaded from the XML file //
       /////////////////////////////////////////////////
-      draw_points_from_xml (ctx);
+      if (mshowcontours.getActive) draw_points_from_xml (ctx);
     }
 
     return false;
@@ -458,7 +461,7 @@ public:
       if (p.length > 0) {
 	ctx.save ();
 
-	ctx.setSourceRgb (0.6, 0.1, 0.1);
+	ctx.setSourceRgb (0.0, 0.76, 0.0);
 	ctx.setLineWidth (2.0);
 
 	ctx.moveTo (p[0].x, p[0].y);
@@ -534,6 +537,10 @@ public:
     update ();			// Update the view
   }
 
+  private void show_contours_toggle (ToggleButton t) {
+    update ();			// Update the view
+  }
+
   private void rotate_image (Range r) {
     auto alpha  = r.getValue();
     auto writer = appender!string();
@@ -596,6 +603,7 @@ public:
   Paned             mpaned;
   SpinButton        msbbpx;
   ToggleButton      mshowlines;
+  ToggleButton      mshowcontours;
   FileChooserButton mimagechooser;
   FileChooserButton mxmlchooser;
   TextView          mtextview;
