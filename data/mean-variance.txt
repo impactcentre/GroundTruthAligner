@@ -1,0 +1,6 @@
+## Sin rotar
+Max blk pixels: 465 , Mean bpx: 108.423912 , Variance bpx: 15965.731445
+
+
+## Rotado 10 grados
+Max blk pixels: 113 , Mean bpx: 56.695335 , Variance bpx: 1290.360718
