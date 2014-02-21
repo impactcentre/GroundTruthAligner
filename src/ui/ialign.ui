@@ -7,8 +7,10 @@
     <property name="tooltip" translatable="yes">Action that quits the App.</property>
     <signal name="activate" handler="ui_main_window_quit" swapped="no"/>
   </object>
-  <object class="GtkAdjustment" id="adjustment_degrees">
-    <property name="upper">360</property>
+  <object class="GtkAdjustment" id="adjustment_bpx">
+    <property name="lower">2</property>
+    <property name="upper">120</property>
+    <property name="value">2</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
@@ -300,7 +302,21 @@
             <property name="can_focus">False</property>
             <property name="spacing">2</property>
             <child>
-              <placeholder/>
+              <object class="GtkSpinButton" id="bpdivisor">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="invisible_char">●</property>
+                <property name="placeholder_text">2</property>
+                <property name="input_purpose">digits</property>
+                <property name="adjustment">adjustment_bpx</property>
+                <property name="numeric">True</property>
+                <property name="wrap">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
             </child>
             <child>
               <object class="GtkCheckButton" id="showlines">

@@ -249,8 +249,10 @@ public:
       // The scale
       /*mscale = cast(Scale) mbuilder.getObject ("scale");
 	mscale.addOnValueChanged (&rotate_image);*/
-      /*msb = cast(SpinButton) mbuilder.getObject ("sbangle");
-	msb.addOnValueChanged (&rotate_image);*/
+
+      // The black pixels divisor
+      msbbpx = cast(SpinButton) mbuilder.getObject ("bpdivisor");
+      msbbpx.addOnValueChanged (&identify_white_lines);
 
       // The degrees label
       //mdegrees = cast(Label) mbuilder.getObject ("degrees");
@@ -413,12 +415,14 @@ public:
   }
 
   private void show_possible_space_lines (Context ctx) {
+    int d = msbbpx.getValueAsInt ();
+
     ctx.save ();
     ctx.setSourceRgb (0.5, 0.0, 0.1);
     ctx.setLineWidth (0.5);
     for (int l = 0; l < malignmodel.get_image_height; l++) {
 
-      if (malignmodel.get_image.get_black_pixels_in_line (l) < (mmaxbpxl / 5)) {
+      if (malignmodel.get_image.get_black_pixels_in_line (l) < (mmaxbpxl / d)) {
 	ctx.moveTo(0,l);
 	ctx.lineTo (malignmodel.get_image_width, l);
 	ctx.stroke ();
@@ -439,19 +443,21 @@ public:
   }
 
 
-  // private void rotate_image (SpinButton s) {
-  //   auto alpha =  s.getValue();
-  //   auto writer = appender!string();
-  //   formattedWrite(writer, "%6.2f", alpha);
+  private void identify_white_lines (SpinButton s) {
+    /*auto alpha =  s.getValue();
+    auto writer = appender!string();
+    formattedWrite(writer, "%6.2f", alpha);
 
-  //   //mdegrees.setText (writer.data);
-  //   mangle = alpha*PI/180.0;
-  //   debug writefln ("Deg: %5.2f, Rad: %5.2f", alpha, mangle);
+    //mdegrees.setText (writer.data);
+    mangle = alpha*PI/180.0;
+    debug writefln ("Deg: %5.2f, Rad: %5.2f", alpha, mangle);
 
-  //   mpage_image.queueDraw ();
+    mpage_image.queueDraw ();*/
 
-  //   return;
-  // }
+    update ();
+
+    return;
+  }
 
   private void show_lines_toggle (ToggleButton t) {
     update ();			// Update the view
@@ -517,7 +523,7 @@ public:
   ImageMenuItem     _imi;
   DrawingArea       mpage_image;
   Paned             mpaned;
-  SpinButton        msb;
+  SpinButton        msbbpx;
   ToggleButton      mshowlines;
   FileChooserButton mimagechooser;
   FileChooserButton mxmlchooser;
