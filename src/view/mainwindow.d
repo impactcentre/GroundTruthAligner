@@ -166,6 +166,7 @@ public:
     /////////////////////////
     // 2- The XmlText part //
     /////////////////////////
+    show_the_texts ();
   }
 
   override void set_model (Model m) {
@@ -176,9 +177,17 @@ public:
   override void update_model () {}
   ///////////////////////////////////////////////////////////
 
-  void show_text (string the_text) {
+  ////////////////////////////////
+  // Methods for the text panel //
+  ///////////////////////////////////////////////////////////
+  void append_text (string the_text) {
     mtextbuffer.insertAtCursor (the_text);
   }
+
+  void replace_text (string the_text) {
+    mtextbuffer.setText (the_text);
+  }
+  ///////////////////////////////////////////////////////////
 
   /////////////////////
   // Private methods //
@@ -376,12 +385,29 @@ public:
     //debug writefln ("We must load [%s] xml file.", filename);
     malignmodel.load_image_xmltext ("", filename);
     
-    debug writefln ("[%s]", malignmodel.get_xmltext.get_texts[0].content);
+    debug {
+      writefln ("Loaded text has [%s] regions. The texts are:", 
+		malignmodel.text_nregions);
+      foreach (r ; 0..malignmodel.text_nregions) {
+	writefln ("region-%d has %d points associated.", 
+		  r, malignmodel.text_get_points (cast(int) r).length);
+      }
+    }
+  }
+
+  /**
+   * Shows the texts loaded from an xml file.
+   */
+  private void show_the_texts () {
+    replace_text ("");
+    foreach (r ; 0..malignmodel.text_nregions) {
+      append_text (malignmodel.text_get_content (cast(int) r)~"\n");
+    }
   }
 
   ///////////////
   // Callbacks //
-  ///////////////
+  ///////////////////////////////////////////////////////////////////////////////
 
   /**
    * Redraws the scaned page loaded.
@@ -398,22 +424,62 @@ public:
 
       debug writefln ("Image center X: %5.2f, Y: %5.2f", width, height);
 
+      ///////////////////////////////
+      // 1. Draw the Scanned image //
+      ///////////////////////////////
       ctx.setSourcePixbuf (malignmodel.get_image_data, 0.0, 0.0);
       ctx.paint ();
 
-      //////////////////////////////////
-      // Draw longest and space lines //
-      //////////////////////////////////
+      /////////////////////////////////////
+      // 2. Draw longest and space lines //
+      /////////////////////////////////////
       debug writefln ("mll: %s mmaxbpxl: %s", mll, mmaxbpxl);
       if (mshowlines.getActive) {
 	show_longest_line (ctx);
 	show_possible_space_lines (ctx);
       }
+
+      /////////////////////////////////////////////////
+      // 3. Draw the points loaded from the XML file //
+      /////////////////////////////////////////////////
+      draw_points_from_xml (ctx);
     }
 
     return false;
   }
 
+  /**
+   * Iterates over the regions extracting the Point[] in each of them
+   * and calls one function to paint those points.
+   */
+  private void draw_points_from_xml (Context ctx) {
+
+    void draw_points (model.xmltext.Points p) {
+      if (p.length > 0) {
+	ctx.save ();
+
+	ctx.setSourceRgb (0.6, 0.1, 0.1);
+	ctx.setLineWidth (2.0);
+
+	ctx.moveTo (p[0].x, p[0].y);
+	for (int i = 1; i < p.length; i++) {
+	  ctx.lineTo (p[i].x, p[i].y);
+	}
+	ctx.lineTo (p[0].x, p[0].y);
+
+	ctx.stroke ();
+	ctx.restore ();
+      }
+    }
+
+    for (int r = 0 ; r < malignmodel.text_nregions; r++) {
+      draw_points (malignmodel.text_get_points (r));
+    }
+  }
+
+  /**
+   * Visually identify blank lines, they are painted in pink.
+   */
   private void show_possible_space_lines (Context ctx) {
     int d = msbbpx.getValueAsInt ();
 
@@ -431,7 +497,9 @@ public:
     ctx.restore ();
   }
 
-
+  /**
+   * Draw a green line over the one with more black pixels.
+   */
   private void show_longest_line (Context ctx) {
     ctx.save ();
     ctx.setSourceRgb (0.0, 0.6, 0.1);
@@ -442,7 +510,10 @@ public:
     ctx.restore ();
   }
 
-
+  /**
+   * Callback invoked whenever the user increases the divisor in the UI.
+   * This is done in order to visually identify blank lines,
+   */
   private void identify_white_lines (SpinButton s) {
     /*auto alpha =  s.getValue();
     auto writer = appender!string();
@@ -491,7 +562,7 @@ public:
     debug writefln ("Black pix. in line [%d]: %d", py, 
 		    malignmodel.get_image.get_black_pixels_in_line (py));
 
-    Context c = createContext (wdgt.getWindow());
+    //Context c = createContext (wdgt.getWindow());
 
     if ( malignmodel.get_image_data !is null ) {
       char rval, gval, bval;

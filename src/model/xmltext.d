@@ -47,6 +47,12 @@ struct Text {
   string  content;
 }
 
+////////////////////
+// Useful aliases //
+////////////////////
+alias Points = Point[];
+alias Texts  = Text[];
+
 /**
  * Class XmlText:
  *
@@ -71,12 +77,11 @@ public:
     debug writeln ("XmlText destroyed!");
   }
 
-  @property Text[] get_texts () { return mtexts; }
+  @property Texts get_texts () { return mtexts; }
   @property ulong get_ntexts () { return mtexts.length; }
   string get_text (int t) { return mtexts[t].content; }
   string get_type (int t) { return mtexts[t].type; }
-  Point[] get_points (int t) { return mtexts[t].points; }
-
+  Points get_points (int t) { return mtexts[t].points; }
 
   /////////////
   // Methods //

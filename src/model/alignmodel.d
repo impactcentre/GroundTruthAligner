@@ -82,8 +82,11 @@ public:
     body {
       if (image_file != "")
 	mimage.load_image (image_file);
+	
       if (xmltext_file != "")
 	mxmltext.load_xml_contents_from (xmltext_file);
+
+      notify_views ();
     }
 
   ////////////////////////////
@@ -105,6 +108,27 @@ public:
   //////////////////////////////
   // XmlText relative methods //
   //////////////////////////////
+
+  /**
+   * Returns the number of regions that conform the text.
+   */
+  @property ulong text_nregions () {
+    return mxmltext.get_texts.length;
+  }
+
+  /**
+   * Returns the text content for region 'r'.
+   */
+  string text_get_content (int r) {
+    return mxmltext.get_text(r);
+  }
+
+  /**
+   * Returns the array of points associated to region 'r'.
+   */
+  Points text_get_points (int r) {
+    return mxmltext.get_points(r);
+  }
 
   //////////////////////////////////
   // Subcomponents access methods //

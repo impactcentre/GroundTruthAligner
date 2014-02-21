@@ -124,6 +124,27 @@ public:
   }
 
   /**
+   * Returns the mean and the variance of the black pixels from the
+   * Image.
+   */
+  void get_mean_variance_bpixels (out float mean, out float variance) {
+    mean = variance = 0.0;
+    if (mbppl !is null) {
+      // Mean
+      for (int i = 0; i<mbppl.length ; i++) {
+	mean += mbppl[i];
+      }
+      mean /= mbppl.length;
+
+      // Variance
+      for (int i = 0; i<mbppl.length ; i++) {
+	variance += (mbppl[i]-mean)^^2.0;
+      }
+      variance /= mbppl.length;
+    }
+  }
+
+  /**
    * Counts black pixels in one line.
    *
    * Params:
@@ -321,12 +342,15 @@ unittest {
   assert (i.height == -1);
 
   // hard coded path for now...
-  i.load_image ("../../data/318982.tif");
+  i.load_image ("../../data/318982r.png");
   assert (i.width  != -1);
   assert (i.height != -1);
   assert (i.count_color_pixels (Image.Color.WHITE) >= 0);
   assert (i.count_color_pixels (Image.Color.BLACK) >= 0);
 
-  writefln ("Max blk pixels: %d", i.get_max_black_pixels ());
+  float m, v;
+  int l;
+  i.get_mean_variance_bpixels (m, v);
+  writefln ("Max blk pixels: %d , Mean bpx: %f , Variance bpx: %f", i.get_max_black_pixels_line (l), m, v);
   //writeln ("model.Image: All tests passed!");
 }

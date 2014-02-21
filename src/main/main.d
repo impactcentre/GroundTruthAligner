@@ -62,7 +62,7 @@ int main(string[] args)
    * Raw strings: r" ... "
    *            : ` ... `
    */
-  mw.show_text (`Calling super.
+  mw.replace_text (`Calling super.
 	Checking invariant.
 	Checking invariant.
 	Checking invariant.
