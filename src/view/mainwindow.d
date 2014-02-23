@@ -85,12 +85,12 @@ import mvc.modelview;
 ///////////
 // Model //
 ///////////
-
 import model.alignmodel;
-/*
-import model.image;
-import model.xmltext;
-*/
+
+/////////////
+// Aliases //
+/////////////
+alias Points = model.xmltext.Points;
 
 ////////////////
 // Code begin //
@@ -98,7 +98,6 @@ import model.xmltext;
 
 /**
  * Class MainWindow: The App main window.
- *
  */
 class MainWindow : Window, View {
   
@@ -158,15 +157,8 @@ public:
   // Base class methods //
   ///////////////////////////////////////////////////////////
   override void update () {
-    ///////////////////////
-    // 1- The Image part //
-    ///////////////////////
-    mpage_image.queueDraw ();
-
-    /////////////////////////
-    // 2- The XmlText part //
-    /////////////////////////
-    show_the_texts ();
+    mpage_image.queueDraw ();	// 1- The Image part
+    show_the_texts ();		// 2- The XmlText part
   }
 
   override void set_model (Model m) {
@@ -180,10 +172,23 @@ public:
   ////////////////////////////////
   // Methods for the text panel //
   ///////////////////////////////////////////////////////////
+
+  /**
+   * Appends the text to the text in the panel.
+   *
+   * Paremeters:
+   *     the_text = The text to append
+   */
   void append_text (string the_text) {
     mtextbuffer.insertAtCursor (the_text);
   }
 
+  /**
+   * Replaces the text in the panel.
+   *
+   * Paremeters:
+   *     the_text = The texto to replace the one in the panel.
+   */
   void replace_text (string the_text) {
     mtextbuffer.setText (the_text);
   }
@@ -457,7 +462,7 @@ public:
    */
   private void draw_points_from_xml (Context ctx) {
 
-    void draw_points (model.xmltext.Points p) {
+    void draw_points (Points p) {
       if (p.length > 0) {
 	ctx.save ();
 
