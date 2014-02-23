@@ -107,7 +107,8 @@ public:
   }
 
   /**
-   * Returns the maximum number of black pixels of all scanned lines.
+   * Returns the maximum number of black pixels of all scanned lines
+   * and te line that has them.
    */
   int get_max_black_pixels_line (out int line) {
     line = 0;
@@ -279,6 +280,54 @@ public:
 
   }
 
+  /**
+   * Detects Skew,
+   */
+  int detect_skew () 
+    in { assert (mpxbf !is null); }
+    body {
+
+    struct SkewInfo {
+      int deg;
+      float variance;
+    };
+
+    const angle = 10;		// we'll try from -angle..angle , step 2
+    float m, v, maxv;
+    int ra;			// Rotation angle detected
+
+    SkewInfo[] si;
+
+    // Initial variance...rotation angle is supposed to be 0 deg.
+    get_mean_variance_bpixels (m, v);
+    si ~= SkewInfo (0, v);
+    for (int a = -angle; a <= angle; a += 1) {
+      if (a != 0) {
+
+	rotate_by (a);
+	get_mean_variance_bpixels (m, v);
+
+	si ~= SkewInfo (a, v);
+      }
+    }
+
+    // Initial values to compare with
+    maxv = -1.0;
+    ra = 0;
+
+    foreach ( si_aux ; si) {
+
+      if (si_aux.variance > maxv) {
+	maxv = si_aux.variance;
+	ra = si_aux.deg;
+      }
+
+      writefln ("v: %f , deg: %d , maxv: %f , ra: %d", si_aux.variance, si_aux.deg, maxv , ra);
+    }
+
+    return ra;
+  }
+
 private:
   
   /////////////////////
@@ -312,7 +361,9 @@ private:
   /**
    * Caches the Pixbuf metadata.
    */
-  void get_image_parameters () {
+  void get_image_parameters () 
+    in { assert (mpxbf !is null); }
+  body {
       mbase = mpxbf_rotated.getPixels ();
       mnc   = mpxbf_rotated.getNChannels ();
       mw    = mpxbf_rotated.getWidth ();
@@ -342,7 +393,7 @@ unittest {
   assert (i.height == -1);
 
   // hard coded path for now...
-  i.load_image ("../../data/318982r.png");
+  i.load_image ("../../data/318982rp10.png");
   assert (i.width  != -1);
   assert (i.height != -1);
   assert (i.count_color_pixels (Image.Color.WHITE) >= 0);
@@ -352,5 +403,11 @@ unittest {
   int l;
   i.get_mean_variance_bpixels (m, v);
   writefln ("Max blk pixels: %d , Mean bpx: %f , Variance bpx: %f", i.get_max_black_pixels_line (l), m, v);
+
+  writefln ("Detected Skew for +10deg is: %d degrees.", i.detect_skew ());
+
+  i.load_image ("../../data/318982rm5.png");
+  writefln ("Detected Skew for -5deg is: %d degrees.", i.detect_skew ());
+
   //writeln ("model.Image: All tests passed!");
 }
