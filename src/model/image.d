@@ -360,7 +360,7 @@ public:
    * Returns:
    *    The number of different colours.
    */
-  @property int get_num_colours () {
+  @property ulong get_num_colours () {
     return mcmap.length;
   }
 
