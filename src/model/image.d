@@ -270,6 +270,8 @@ public:
       ctx.setSourcePixbuf (mpxbf, -mw/2.0, -mh/2.0);
       ctx.paint ();
 
+      ims.writeToPng ("/tmp/rotated.png");
+
       if (mpxbf_rotated !is null) { mpxbf_rotated.unref(); }
       mpxbf_rotated = Pixbuf.getFromSurface (ims, 0, 0, 
 					     ims.getWidth(), ims.getHeight ());
@@ -328,6 +330,40 @@ public:
     return ra;
   }
 
+  /**
+   * Create image color map
+   */
+  void create_color_map () 
+    in {
+      assert (mh > 0);
+      assert (mw > 0);
+    }
+  body {
+    char r,g,b;
+    string cname;
+
+    for (int y = 0; y < mh; y++) {
+      for (int x = 0; x < mw; x++) {
+	get_rgb (x, y, r, g, b);
+	
+	cname = "";
+	cname ~= r;
+	cname ~= g;
+	cname ~= b;
+	mcmap[cname]++;
+      }
+    }
+  }
+
+  /**
+   * Get the number of different colours of the image.
+   * Returns:
+   *    The number of different colours.
+   */
+  @property int get_num_colours () {
+    return mcmap.length;
+  }
+
 private:
   
   /////////////////////
@@ -342,7 +378,10 @@ private:
    * Counts and caches black pixels per line.
    */
   void count_black_pixels_per_line () 
-    in { assert (mh > 0); }
+    in { 
+      assert (mh > 0); 
+      assert (mw > 0); 
+    }
   body {
     char r,g,b;
     Color cl = Color.BLACK;
@@ -369,19 +408,22 @@ private:
       mw    = mpxbf_rotated.getWidth ();
       mh    = mpxbf_rotated.getHeight ();
       mrs   = mpxbf_rotated.getRowstride ();
+
+      create_color_map ();
   }
   
   //////////
   // Data //
   //////////
-  Pixbuf mpxbf;
-  Pixbuf mpxbf_rotated;
-  char*  mbase;
-  int    mnc;
-  int    mw ;
-  int    mh ;
-  int    mrs;
-  int[]  mbppl;			// Black Pixels Per Line
+  Pixbuf      mpxbf;
+  Pixbuf      mpxbf_rotated;
+  char*       mbase;
+  int         mnc;
+  int         mw ;
+  int         mh ;
+  int         mrs;
+  int[]       mbppl;			// Black Pixels Per Line
+  int[string] mcmap;			// Color map of the image
 }
 
 unittest {
@@ -399,6 +441,7 @@ unittest {
   assert (i.count_color_pixels (Image.Color.WHITE) >= 0);
   assert (i.count_color_pixels (Image.Color.BLACK) >= 0);
 
+  /*
   float m, v;
   int l;
   i.get_mean_variance_bpixels (m, v);
@@ -408,6 +451,27 @@ unittest {
 
   i.load_image ("../../data/318982rm5.png");
   writefln ("Detected Skew for -5deg is: %d degrees.", i.detect_skew ());
+  */
 
+  char r,g,b;
+  i.get_rgb (130, 534, r, g, b);
+  string s;
+
+  s ~= r; s ~= g; s ~= b;
+  writefln ("Color name: ·[%d_%d_%d]· - [%s]", r,g,b, s);
+
+  writefln ("Image has %d different colours.", i.get_num_colours);
+
+  foreach (color, times; i.mcmap) {
+    writefln ("Color [%s] repeats [%d] times.", 
+	      color, times);
+  }
+
+  foreach ( color ; i.mcmap.byKey ) {
+    writefln ("Color [%s] repeats [%d] times.", 
+	      color, i.mcmap[color]);
+  }
+
+  i.rotate_by (10);
   //writeln ("model.Image: All tests passed!");
 }
