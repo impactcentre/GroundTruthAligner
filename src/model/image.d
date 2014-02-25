@@ -211,24 +211,30 @@ public:
   /**
    * Get the RGB values from pixel x,y,
    */
-  void get_rgb (in int x, in int y, out char r, out char g, out char b) {
-    if (mpxbf !is null) {
-      char* e = cast(char*) (mbase + (y * mrs) + (x * mnc));
-      r = e[0];
-      g = e[1];
-      b = e[2];
-    }
+  void get_rgb (in int x, in int y, out char r, out char g, out char b)
+  {
+    if (mpxbf_rotated !is null) {
+      if ( (x < mw) && (y < mh) ) {
+	  char* e = cast(char*) (mbase + (y * mrs) + (x * mnc));
+	  r = e[0];
+	  g = e[1];
+	  b = e[2];
+	} else r = g = b = 0;
+    } else r = g = b = 0;
   }
 
   /**
    * Set the RGB values for pixel x,y,
    */
-  void set_rgb (in int x, in int y, in char r, in char g, in char b) {
-    if (mpxbf !is null) {
-      char* e = cast(char*) (mbase + (y * mrs) + (x * mnc));
-      e[0] = r;
-      e[1] = g;
-      e[2] = b;
+  void set_rgb (in int x, in int y, in char r, in char g, in char b) 
+  {
+    if (mpxbf_rotated !is null) {
+      if ( (x < mw) && (y < mh) ) {
+	  char* e = cast(char*) (mbase + (y * mrs) + (x * mnc));
+	  e[0] = r;
+	  e[1] = g;
+	  e[2] = b;
+	}
     }
   }
 
