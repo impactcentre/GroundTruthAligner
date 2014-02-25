@@ -47,6 +47,7 @@ import gtk.FileChooserIF;
 import gtk.FileFilter;
 import gtk.TextView;
 import gtk.TextBuffer;
+import gtk.Tooltip;
 
 /////////
 // GDK //
@@ -255,6 +256,8 @@ public:
       if (mpage_image !is null) {
 	mpage_image.addOnDraw (&redraw_page);
 	mpage_image.addOnButtonPress (&button_press);
+	mpage_image.setHasTooltip (true);
+	mpage_image.addOnQueryTooltip (&query_tooltip);
       }
 
       // The paned
@@ -586,6 +589,22 @@ public:
     }
 
     return false;
+  }
+
+  private bool query_tooltip (int x, int y, int keyboard_tt, 
+			      Tooltip t, Widget w) {
+
+    if ( (!keyboard_tt) && (malignmodel.get_image_data !is null) ) {
+      auto writer = appender!string();
+      char rval, gval, bval;
+ 
+      malignmodel.image_get_rgb (x, y, rval, gval, bval);
+      formattedWrite(writer, "@(%d, %d)/(R:%u , G:%u , B: %u)", x,y,rval,gval,bval);
+
+      //writefln ("Tooltip @(%s,%s)", x, y);
+      t.setText (writer.data);
+    }
+    return true;
   }
 
   /////////////////////

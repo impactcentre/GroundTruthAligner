@@ -57,6 +57,7 @@ int main(string[] args)
   }
 
   auto mw = new MainWindow (gladefile);
+  //scope (exit) mw.destroy ();
 
   /*
    * Raw strings: r" ... "
@@ -74,7 +75,7 @@ int main(string[] args)
 	Checking invariant.`);
   mw.show ();
 
-  Main.run();
+  Main.run ();
 
   return 0;
 }
