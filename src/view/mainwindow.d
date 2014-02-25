@@ -574,13 +574,13 @@ public:
 
     debug writefln ("The widget is: %s \n this: %s", wdgt, this);
     debug writefln ("bpress at x: [%d] , y: [%d]", px, py);
-    debug writefln ("Black pix. in line [%d]: %d", py, 
-		    malignmodel.get_image.get_black_pixels_in_line (py));
-
     //Context c = createContext (wdgt.getWindow());
 
     if ( malignmodel.get_image_data !is null ) {
       char rval, gval, bval;
+
+      debug writefln ("Black pix. in line [%d]: %d", py, 
+		      malignmodel.get_image.get_black_pixels_in_line (py));
 
       malignmodel.image_get_rgb (px, py, rval, gval, bval);
 
@@ -603,8 +603,11 @@ public:
 
       //writefln ("Tooltip @(%s,%s)", x, y);
       t.setText (writer.data);
+
+      return true;
     }
-    return true;
+
+    return false;
   }
 
   /////////////////////
