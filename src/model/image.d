@@ -154,7 +154,9 @@ public:
    * Returns: the number of black pixels in line 'y'.
    */
   int get_black_pixels_in_line (int y) 
-    in { assert (y <= mh); }
+    in { 
+      assert (y < mh);
+    }
   body {
     if (mpxbf !is null) return mbppl[y];
     return 0;
@@ -182,6 +184,8 @@ public:
    * Loads the image in filename into the pixbuf.
    */
   void load_image (string filename) {
+
+    if (filename == "") return;
 
     if (mpxbf !is null) { mpxbf.unref(); }
     if (mpxbf_rotated !is null) { mpxbf_rotated.unref(); }
@@ -211,8 +215,7 @@ public:
   /**
    * Get the RGB values from pixel x,y,
    */
-  void get_rgb (in int x, in int y, out char r, out char g, out char b)
-  {
+  void get_rgb (in int x, in int y, out char r, out char g, out char b) {
     if (mpxbf_rotated !is null) {
       if ( (x < mw) && (y < mh) ) {
 	  char* e = cast(char*) (mbase + (y * mrs) + (x * mnc));
@@ -226,8 +229,7 @@ public:
   /**
    * Set the RGB values for pixel x,y,
    */
-  void set_rgb (in int x, in int y, in char r, in char g, in char b) 
-  {
+  void set_rgb (in int x, in int y, in char r, in char g, in char b) {
     if (mpxbf_rotated !is null) {
       if ( (x < mw) && (y < mh) ) {
 	  char* e = cast(char*) (mbase + (y * mrs) + (x * mnc));

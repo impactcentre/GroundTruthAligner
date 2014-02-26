@@ -592,20 +592,23 @@ public:
   }
 
   private bool query_tooltip (int x, int y, int keyboard_tt, 
-			      Tooltip t, Widget w) {
+			      Tooltip t, Widget w)
+  {
 
-    if ( (!keyboard_tt) && (malignmodel.get_image_data !is null) ) {
-      auto writer = appender!string();
-      char rval, gval, bval;
- 
-      malignmodel.image_get_rgb (x, y, rval, gval, bval);
-      formattedWrite(writer, "@(%d, %d)/(R:%u , G:%u , B: %u)", x,y,rval,gval,bval);
+    if ((x < malignmodel.get_image_width()) && 
+	(y < malignmodel.get_image_height()))
+      if ( (!keyboard_tt) && (malignmodel.get_image_data !is null) ) {
+	auto writer = appender!string();
+	char rval, gval, bval;
+	
+	malignmodel.image_get_rgb (x, y, rval, gval, bval);
+	formattedWrite(writer, "@(%d, %d)/(R:%u , G:%u , B: %u)", x,y,rval,gval,bval);
 
-      //writefln ("Tooltip @(%s,%s)", x, y);
-      t.setText (writer.data);
+	//writefln ("Tooltip @(%s,%s)", x, y);
+	t.setText (writer.data);
 
-      return true;
-    }
+	return true;
+      }
 
     return false;
   }
