@@ -433,7 +433,7 @@ public:
       auto width  = w.getWidth () / 2.0;
       auto height = w.getHeight () / 2.0;
 
-      debug writefln ("Image center X: %5.2f, Y: %5.2f", width, height);
+      // debug writefln ("Image center X: %5.2f, Y: %5.2f", width, height);
 
       ///////////////////////////////
       // 1. Draw the Scanned image //
@@ -444,7 +444,8 @@ public:
       /////////////////////////////////////
       // 2. Draw longest and space lines //
       /////////////////////////////////////
-      debug writefln ("mll: %s mmaxbpxl: %s", mll, mmaxbpxl);
+
+      //debug writefln ("mll: %s mmaxbpxl: %s", mll, mmaxbpxl);
       if (mshowlines.getActive) {
 	show_longest_line (ctx);
 	show_possible_space_lines (ctx);
