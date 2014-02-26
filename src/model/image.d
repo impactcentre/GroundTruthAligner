@@ -266,11 +266,9 @@ public:
 
       // memory free in a much cleaner way...
       scope (exit) {
-	GC.collect();
 	ctx.destroy ();
 	ims.destroy ();
-
-	//writeln ("FREE MEMORY.");
+	GC.collect();
       }
 
       ctx.translate (mw/2.0, mh/2.0);
@@ -435,6 +433,8 @@ private:
 }
 
 unittest {
+
+  writeln ("------- [ Image tests begin ] ----------------");
   Image i = new Image;
 
   assert (i.data   is null);
@@ -456,10 +456,11 @@ unittest {
   writefln ("Max blk pixels: %d , Mean bpx: %f , Variance bpx: %f", i.get_max_black_pixels_line (l), m, v);
 
   writefln ("Detected Skew for +10deg is: %d degrees.", i.detect_skew ());
+  */
 
   i.load_image ("../../data/318982rm5.png");
   writefln ("Detected Skew for -5deg is: %d degrees.", i.detect_skew ());
-  */
+  i.rotate_by (10);
 
   char r,g,b;
   i.get_rgb (130, 534, r, g, b);
@@ -480,6 +481,7 @@ unittest {
 	      color, i.mcmap[color]);
   }
 
-  i.rotate_by (10);
   //writeln ("model.Image: All tests passed!");
+  writeln ("------- [ Image tests end ] ----------------");
+
 }
