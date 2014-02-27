@@ -6,7 +6,7 @@ doc:
 tests:
 	$(MAKE) -C src $@
 
-pass-tests: tests
+pass-tests: 
 	$(MAKE) -C src $@
 
 .PHONY: doc tests pass-tests

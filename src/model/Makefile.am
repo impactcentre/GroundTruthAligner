@@ -23,28 +23,33 @@ doc:
 ###############
 # Unittesting #
 ###############
+MVC_LIB = ../mvc/libmvc.a
 tests:
-	$(DC) -main -unittest $(AM_DFLAGS) $(DFLAGS) image.d -ofimage-test \
-	    $$(pkg-config --libs gtkd2) ../mvc/modelview.o
+	@$(MAKE) -C ../mvc
 
-	$(DC) -main -unittest $(AM_DFLAGS) $(DFLAGS) xmltext.d -ofxmltext-test \
-            $$(pkg-config --libs gtkd2) ../mvc/modelview.o
+	@$(DC) -main -unittest $(AM_DFLAGS) $(DFLAGS) image.d -ofimage-test \
+	    $$(pkg-config --libs gtkd2) $(MVC_LIB)
 
-	$(DC) -main -unittest $(AM_DFLAGS) $(DFLAGS) \
+	@$(DC) -main -unittest $(AM_DFLAGS) $(DFLAGS) xmltext.d -ofxmltext-test \
+            $$(pkg-config --libs gtkd2) $(MV_LIB)
+
+	@$(DC) -main -unittest $(AM_DFLAGS) $(DFLAGS) \
             alignmodel.d image.d xmltext.d \
-            -ofalignmodel-test $$(pkg-config --libs gtkd2) ../mvc/modelview.o
+            -ofalignmodel-test $$(pkg-config --libs gtkd2) $(MVC_LIB)
 
 
 pass-tests: tests
-	@echo -e "\n-------[IMAGE TESTS]-----------------\n"
+	@echo -e "\n(1)----[IMAGE TESTS BEGIN]-----------\n"
 	./image-test
-	@echo -e "\n-------------------------------------\n"
-	@echo -e "\n-------[XMLTEXT TESTS]---------------\n"
+	@echo -e "\n-------[IMAGE TESTS END]-------------\n\n"
+
+	@echo -e "\n(2)----[XMLTEXT TESTS BEGIN]---------\n"
 	./xmltext-test
-	@echo -e "\n-------------------------------------\n"
-	@echo -e "\n-------[ALIGNMODEL TESTS]------------\n"
+	@echo -e "\n-------[XMLTEXT TESTS END]-----------\n\n"
+
+	@echo -e "\n(3)----[ALIGNMODEL TESTS BEGIN]------\n"
 	./alignmodel-test
-	@echo -e "\n-------------------------------------\n"
+	@echo -e "\n-------[ALIGNMODEL TESTS END]--------\n\n"
 
 ###############
 # Extra Clean #

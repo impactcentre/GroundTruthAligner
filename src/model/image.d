@@ -433,8 +433,6 @@ private:
 }
 
 unittest {
-
-  writeln ("------- [ Image tests begin ] ----------------");
   Image i = new Image;
 
   assert (i.data   is null);
@@ -480,8 +478,4 @@ unittest {
     writefln ("Color [%s] repeats [%d] times.", 
 	      color, i.mcmap[color]);
   }
-
-  //writeln ("model.Image: All tests passed!");
-  writeln ("------- [ Image tests end ] ----------------");
-
 }
