@@ -200,7 +200,7 @@ public:
       mpxbf_rotated = mpxbf.copy ();	// We save the original image
 					// in case we rotate/scale it.
       get_image_parameters ();
-      count_black_pixels_per_line ();
+      //count_black_pixels_per_line ();  // <- invoked inside "get_image_parameters"
 
       debug writefln ("Pixbuf loaded:\nImage is %u X %u pixels\n", 
 		      mpxbf.getWidth(), 
@@ -285,8 +285,7 @@ public:
       mpxbf_rotated = Pixbuf.getFromSurface (ims, 0, 0, 
 					     ims.getWidth(), ims.getHeight ());
       get_image_parameters ();
-      count_black_pixels_per_line ();
-
+      //count_black_pixels_per_line ();  // <- invoked inside "get_image_parameters"
     }
 
   }
@@ -421,6 +420,7 @@ private:
       mh    = mpxbf_rotated.getHeight ();
       mrs   = mpxbf_rotated.getRowstride ();
 
+      count_black_pixels_per_line ();
       create_color_map ();
   }
   
