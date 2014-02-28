@@ -149,9 +149,10 @@ public:
    * Counts black pixels in one line.
    *
    * Params:
-   *   y: The line to search black pixels in.
+   *   y = The line to search black pixels in.
    *   
-   * Returns: the number of black pixels in line 'y'.
+   * Returns:
+   *     the number of black pixels in line 'y'.
    */
   int get_black_pixels_in_line (int y) 
     in { 
@@ -164,8 +165,9 @@ public:
 
   /**
    * Count how many COLOR pixels are in the image.
+   * 
    * Params:
-   *    cl= the color to search
+   *    cl = the color to search
    */
   int count_color_pixels (Color cl) {
     char r,g,b;
@@ -249,6 +251,7 @@ public:
 
   /**
    * Rotate the image by 'deg' degrees.
+   * 
    * Params:
    *   deg = The number of degrees to rotate the image.
    */
@@ -289,7 +292,10 @@ public:
   }
 
   /**
-   * Detects Skew,
+   * Detects Skew.
+   *
+   * Returns:
+   *     Skew angle
    */
   int detect_skew () 
     in { assert (mpxbf !is null); }
