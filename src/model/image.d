@@ -149,9 +149,10 @@ public:
    * Counts black pixels in one line.
    *
    * Params:
-   *   y: The line to search black pixels in.
+   *   y = The line to search black pixels in.
    *   
-   * Returns: the number of black pixels in line 'y'.
+   * Returns:
+   *     the number of black pixels in line 'y'.
    */
   int get_black_pixels_in_line (int y) 
     in { 
@@ -164,8 +165,9 @@ public:
 
   /**
    * Count how many COLOR pixels are in the image.
+   * 
    * Params:
-   *    cl= the color to search
+   *    cl = the color to search
    */
   int count_color_pixels (Color cl) {
     char r,g,b;
@@ -198,7 +200,7 @@ public:
       mpxbf_rotated = mpxbf.copy ();	// We save the original image
 					// in case we rotate/scale it.
       get_image_parameters ();
-      count_black_pixels_per_line ();
+      //count_black_pixels_per_line ();  // <- invoked inside "get_image_parameters"
 
       debug writefln ("Pixbuf loaded:\nImage is %u X %u pixels\n", 
 		      mpxbf.getWidth(), 
@@ -249,6 +251,7 @@ public:
 
   /**
    * Rotate the image by 'deg' degrees.
+   * 
    * Params:
    *   deg = The number of degrees to rotate the image.
    */
@@ -282,14 +285,16 @@ public:
       mpxbf_rotated = Pixbuf.getFromSurface (ims, 0, 0, 
 					     ims.getWidth(), ims.getHeight ());
       get_image_parameters ();
-      count_black_pixels_per_line ();
-
+      //count_black_pixels_per_line ();  // <- invoked inside "get_image_parameters"
     }
 
   }
 
   /**
-   * Detects Skew,
+   * Detects Skew.
+   *
+   * Returns:
+   *     Skew angle
    */
   int detect_skew () 
     in { assert (mpxbf !is null); }
@@ -415,6 +420,7 @@ private:
       mh    = mpxbf_rotated.getHeight ();
       mrs   = mpxbf_rotated.getRowstride ();
 
+      count_black_pixels_per_line ();
       create_color_map ();
   }
   
