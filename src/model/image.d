@@ -375,6 +375,45 @@ public:
     return mcmap.length;
   }
 
+  /**
+   * Tries to determine the number of line based on the
+   * increase/decrease of black pixels by pixel line.
+   */
+  int count_number_of_lines ()
+    in {
+      assert (mh > 0);
+    }
+  body {
+    int bp = 0;
+    int cbp = 0;
+    int l = 0;
+    int nl = 0;
+    bool must_exit = false;
+
+    do {
+      // Going up in black pixels
+      while ((cbp >= bp) && (!must_exit)) {
+	bp = cbp;
+	cbp = get_black_pixels_in_line (l++);
+
+	if (l >= mh) must_exit = true;
+      }
+
+      nl++;
+
+      // Going down in black pixels
+      while ((cbp <= bp) && (!must_exit)) {
+	bp = cbp;
+	cbp = get_black_pixels_in_line (l++);
+
+	if (l >= mh) must_exit = true;
+      }
+
+    } while (!must_exit);
+
+    return nl;
+  }
+
 private:
   
   /////////////////////
@@ -484,4 +523,31 @@ unittest {
     writefln ("Color [%s] repeats [%d] times.", 
 	      color, i.mcmap[color]);
   }
+}
+
+unittest {
+  Image i = new Image;
+
+  writeln ("\n--- 2nd round tests ---");
+
+  assert (i.data   is null);
+  assert (!i.is_valid);
+  assert (i.width  == -1);
+  assert (i.height == -1);
+
+  // hard coded path for now...
+  i.load_image ("../../data/318982.tif");
+  assert (i.is_valid);
+  assert (i.height != -1);
+
+  for (int l = 0; l < i.height; l++) {
+    //writefln ("Line %d has %d black px.", l, i.get_black_pixels_in_line (l));
+    writefln ("%d : %d", l, i.get_black_pixels_in_line (l));
+  }
+
+  writeln ("· Counting lines...");
+  writefln ("This image has [%d] lines... I think :/", i.count_number_of_lines ());
+
+  writeln ("--- 2nd round tests ---\n");
+
 }
