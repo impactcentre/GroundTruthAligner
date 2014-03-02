@@ -79,9 +79,30 @@ public:
 
   @property Texts get_texts () { return mtexts; }
   @property ulong get_ntexts () { return mtexts.length; }
-  string get_text (int t) { return mtexts[t].content; }
-  string get_type (int t) { return mtexts[t].type; }
-  Points get_points (int t) { return mtexts[t].points; }
+
+  string get_text (int t)
+    in {
+      assert (t < mtexts.length, "No such region");
+    }
+  body {
+    return mtexts[t].content;
+  }
+
+  string get_type (int t)
+    in {
+      assert (t < mtexts.length, "No such region");
+    }
+  body {
+    return mtexts[t].type;
+  }
+
+  Points get_points (int t)
+    in {
+      assert (t < mtexts.length, "No such region");
+    }
+  body {
+    return mtexts[t].points;
+  }
 
   /////////////
   // Methods //
@@ -131,12 +152,12 @@ private:
   //////////
   // Data //
   //////////
-  Text[] mtexts;
+  Texts mtexts;
 }
 
 unittest {
   XmlText t = new XmlText;
-  Text[] tt;
+  Texts tt;
 
   // Hard coded path for now...
   t.load_xml_contents_from ("../../data/318982.xml");
