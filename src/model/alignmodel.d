@@ -79,15 +79,15 @@ public:
       assert (mimage !is null);
       assert (mxmltext !is null);
     }
-    body {
-      if (image_file != "")
-	mimage.load_image (image_file);
-	
-      if (xmltext_file != "")
-	mxmltext.load_xml_contents_from (xmltext_file);
+  body {
+    if (image_file != "")
+      mimage.load_image (image_file);
 
-      notify_views ();
-    }
+    if (xmltext_file != "")
+      mxmltext.load_xml_contents_from (xmltext_file);
+
+    notify_views ();
+  }
 
   ////////////////////////////
   // Image relative methods //
