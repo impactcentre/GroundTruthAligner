@@ -28,6 +28,7 @@ module model.image;
 import std.stdio;
 import std.math;
 import core.memory: GC;		// We need to play with the garbage collector
+import std.conv;
 
 /////////
 // GDK //
@@ -64,6 +65,7 @@ public:
   // Constructor //
   /////////////////
   this () {
+    mlwmbp = -1;
     mbppl = null;
     mpxbf_rotated = null;
     mpxbf = null;
@@ -107,22 +109,17 @@ public:
   }
 
   /**
-   * Returns the maximum number of black pixels of all scanned lines
-   * and te line that has them.
+   * Returns:
+   *     the line with the maximum number of black pixels of all
+   *     scanned lines
    */
-  int get_max_black_pixels_line (out int line) {
-    line = 0;
-    if (mbppl !is null) {
-      int max = mbppl[0];
-      for (int i = 0; i<mbppl.length ; i++)
-	if (mbppl[i] > max) {
-	  line = i;
-	  max = mbppl[i];
-	}
-      return max;
-    }
-    return 0;
-  }
+  @property int blackest_line () { return mlwmbp; }
+
+  /**
+   * Returns:
+   *     The number of black pixels in the line with most of them.
+   */
+  @property int bpx_in_blackest_line () { return mbppl[mlwmbp]; }
 
   /**
    * Returns the mean and the variance of the black pixels from the
@@ -384,10 +381,11 @@ public:
       assert (mh > 0);
     }
   body {
-    int bp = 0;
-    int cbp = 0;
-    int l = 0;
-    int nl = 0;
+    alias to_str = to!string;
+    ulong  bp = to_str(mbppl[mlwmbp]).length;
+    int  cbp = 0;
+    int  l   = 0;
+    int  nl  = 0;
     bool must_exit = false;
 
     do {
@@ -433,8 +431,9 @@ private:
       assert (mw > 0); 
     }
   body {
-    char r,g,b;
+    char  r,g,b;
     Color cl = Color.BLACK;
+    int   mbp = -1;
 
     mbppl = new int[mh];
 
@@ -443,6 +442,11 @@ private:
 	get_rgb (x, y, r, g, b);
 	if (r == cl && g == cl && b == cl)
 	  ++mbppl[y];
+      }
+
+      if (mbppl[y] > mbp) {
+	mbp = mbppl[y];
+	mlwmbp = y;
       }
     }
   }
@@ -474,9 +478,15 @@ private:
   int         mh ;
   int         mrs;
   int[]       mbppl;			// Black Pixels Per Line
+  int         mlwmbp;			// Line with most black pixels
   int[string] mcmap;			// Color map of the image
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// Unit Testing //
+//////////////////
+
+/+
 unittest {
   Image i = new Image;
 
@@ -524,6 +534,7 @@ unittest {
 	      color, i.mcmap[color]);
   }
 }
++/
 
 unittest {
   Image i = new Image;
@@ -540,10 +551,15 @@ unittest {
   assert (i.is_valid);
   assert (i.height != -1);
 
-  for (int l = 0; l < i.height; l++) {
-    //writefln ("Line %d has %d black px.", l, i.get_black_pixels_in_line (l));
-    writefln ("%d : %d", l, i.get_black_pixels_in_line (l));
-  }
+  // for (int l = 0; l < i.height; l++) {
+  //   writefln ("%d : %d", l, i.get_black_pixels_in_line (l));
+  // }
+
+  writefln ("\n\tLine %d has %d blackpixels.", 
+	    i.blackest_line, i.bpx_in_blackest_line);
+
+  writefln ("\tNumber %d has %d digits.\n", 
+	    i.bpx_in_blackest_line, to!string(i.bpx_in_blackest_line).length );
 
   writeln ("· Counting lines...");
   writefln ("This image has [%d] lines... I think :/", i.count_number_of_lines ());
