@@ -203,6 +203,10 @@ public:
 		      mpxbf.getWidth(), 
 		      mpxbf.getHeight());
     } else {
+      mlwmbp = -1;
+      mbppl = null;
+      mpxbf_rotated = null;
+      mpxbf = null;
       mbase = null;
       mnc   = 0;
       mw    = 0;
@@ -302,7 +306,7 @@ public:
       float variance;
     };
 
-    const angle = 10;		// we'll try from -angle..angle , step 2
+    const angle = 10;		// we'll try from -angle..angle , step 1
     float m, v, maxv;
     int ra;			// Rotation angle detected
 
@@ -373,38 +377,35 @@ public:
   }
 
   /**
-   * Tries to determine the number of line based on the
+   * Tries to determine the number of text lines based on the
    * increase/decrease of black pixels by pixel line.
    */
-  int count_number_of_lines ()
+  int count_number_of_text_lines ()
     in {
       assert (mh > 0);
     }
   body {
     alias to_str = to!string;
-    ulong  bp = to_str(mbppl[mlwmbp]).length;
-    int  cbp = 0;
-    int  l   = 0;
-    int  nl  = 0;
-    bool must_exit = false;
+    ulong  maxd = to_str(mbppl[mlwmbp]).length; // max number of digits of the max black pixel count line
+    ulong  curd = 0;				// digits of the number of blackpixels of the current line
+    int    l    = 0;				// current line of pixels being processed
+    int    nl   = 0;				// number of text lines detected
+    bool   must_exit = false;			// Are al pixel-lines processed?
 
+    curd = to_str(get_black_pixels_in_line (l++)).length;
     do {
       // Going up in black pixels
-      while ((cbp >= bp) && (!must_exit)) {
-	bp = cbp;
-	cbp = get_black_pixels_in_line (l++);
-
+      while ((curd < maxd) && (!must_exit)) {
 	if (l >= mh) must_exit = true;
+	else curd = to_str(get_black_pixels_in_line (l++)).length;
       }
 
-      nl++;
+      nl++;			// One more text-line
 
-      // Going down in black pixels
-      while ((cbp <= bp) && (!must_exit)) {
-	bp = cbp;
-	cbp = get_black_pixels_in_line (l++);
-
+      // Same number of black pixels
+      while ((curd == maxd) && (!must_exit)) {
 	if (l >= mh) must_exit = true;
+	else curd = to_str(get_black_pixels_in_line (l++)).length;
       }
 
     } while (!must_exit);
@@ -490,6 +491,8 @@ private:
 unittest {
   Image i = new Image;
 
+  writeln ("\n--- 1st round tests ---");
+
   assert (i.data   is null);
   assert (!i.is_valid);
   assert (i.width  == -1);
@@ -533,6 +536,9 @@ unittest {
     writefln ("Color [%s] repeats [%d] times.", 
 	      color, i.mcmap[color]);
   }
+
+  writeln ("\n--- 1st round tests ---\n");
+
 }
 +/
 
@@ -562,8 +568,8 @@ unittest {
 	    i.bpx_in_blackest_line, to!string(i.bpx_in_blackest_line).length );
 
   writeln ("· Counting lines...");
-  writefln ("This image has [%d] lines... I think :/", i.count_number_of_lines ());
+  writefln ("This image has [%d] lines... I think :/", i.count_number_of_text_lines ());
 
-  writeln ("--- 2nd round tests ---\n");
+  writeln ("\n--- 2nd round tests ---\n");
 
 }
