@@ -379,7 +379,8 @@ public:
 		      malignmodel.get_image_data.getWidth(), 
 		      malignmodel.get_image_data.getHeight());
 
-      mmaxbpxl = malignmodel.get_image.get_max_black_pixels_line (mll);
+      mmaxbpxl = malignmodel.get_image.blackest_line;
+      mll = malignmodel.get_image.bpx_in_blackest_line;
 
       mpage_image.setSizeRequest (malignmodel.get_image_data.getWidth(),
 				  malignmodel.get_image_data.getHeight());
