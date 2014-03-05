@@ -395,7 +395,7 @@ public:
     float  m,v;
 
     get_mean_variance_bpixels (m, v); // Mean of black pixels per line
-    maxd = to_str(cast(int) m).length; // Howmany digits does have the mean of black pixels?
+    maxd = to_str(cast(int) m).length; // How many digits does have the mean of black pixels?
 
     debug writefln ("Max bpx: %s , mean bpx: %s , maxd: %s", bpx_in_blackest_line, m, maxd);
 
@@ -409,6 +409,10 @@ public:
 
       nl++;			// One more text-line
 
+      debug writefln ("New line starts at Y:[%s] and has [%s] bpx (Y-1:[%s]:=[%s])", 
+		      l-1, get_black_pixels_in_line (l-1),
+		      l-2, get_black_pixels_in_line (l-2));
+
       // Same number of black pixels
       while ((curd == maxd) && (!must_exit)) {
 	if (l >= mh) must_exit = true;
@@ -418,6 +422,74 @@ public:
     } while (!must_exit);
 
     return nl;
+  }
+
+  int count_pixel_runs ()
+    in {
+      assert (mh > 0);
+    }
+  body {
+    alias to_str = to!string;
+
+    struct PixelRun {
+      int init_pixel;
+      int rl;
+    }
+    
+    ulong maxd = 0;
+    ulong  curd = 0;				// digits of the number of blackpixels of the current line
+    int    l    = 0;				// current line of pixels being processed
+    bool   must_exit = false;			// Are al pixel-lines processed?
+    float  m,v;
+    int    rl = 0;		// run length
+    int    ipxl = 0;
+    PixelRun[] pra, praux;
+
+    get_mean_variance_bpixels (m, v); // Mean of black pixels per line
+    maxd = to_str(cast(int) m).length; // How many digits does have the mean of black pixels?
+
+    debug writefln ("Max bpx: %s , mean bpx: %s , maxd: %s", bpx_in_blackest_line, m, maxd);
+
+    curd = to_str(get_black_pixels_in_line (l++)).length;
+    do {
+      // Going up in black pixels
+      while ((curd < maxd) && (!must_exit)) {
+	if (l >= mh) must_exit = true;
+	else curd = to_str(get_black_pixels_in_line (l++)).length;
+      }
+
+      debug writefln ("New line starts at Y:[%s] and has [%s] bpx (Y-1:[%s]:=[%s])", 
+		      l-1, get_black_pixels_in_line (l-1),
+		      l-2, get_black_pixels_in_line (l-2));
+
+      rl = 1;
+      ipxl = l;
+      // Same number == maxd of black pixels
+      while ((curd == maxd) && (!must_exit)) {
+	if (l >= mh) must_exit = true;
+	else {
+	  rl++;
+	  curd = to_str(get_black_pixels_in_line (l++)).length;
+	}
+      }
+      pra ~= PixelRun (ipxl, rl);
+
+    } while (!must_exit);
+
+    int sl = 0;
+    float prmean = 0.0;		// Pixel run mean
+    for (auto i = 0; i < pra.length; i++) {
+      sl += pra[i].rl;
+      //writefln ("prun starts at y-pixel [%d], has length [%d]", pra[i].init_pixel, pra[i].rl);
+    }
+    prmean = cast(float)(sl) / pra.length;
+    for (auto i = 0; i < pra.length; i++) {
+      if (abs(pra[i].rl-prmean) < (prmean/2.0))
+	praux ~= pra[i];
+    }
+    debug writefln ("Run lenght mean: %f", prmean);
+
+    return cast(int) praux.length;
   }
 
 private:
@@ -576,6 +648,7 @@ unittest {
 
   writeln ("· Counting lines...");
   writefln ("This image has [%d] lines... I think :/", i.count_number_of_text_lines ());
+  writefln ("This image has [%d] PixelRuns...", i.count_pixel_runs ());
 
   writeln ("\n--- 2nd round tests ---\n");
 
