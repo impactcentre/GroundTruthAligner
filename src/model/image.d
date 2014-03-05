@@ -386,11 +386,18 @@ public:
     }
   body {
     alias to_str = to!string;
-    ulong  maxd = to_str(mbppl[mlwmbp]).length; // max number of digits of the max black pixel count line
+
+    ulong maxd = 0;
     ulong  curd = 0;				// digits of the number of blackpixels of the current line
     int    l    = 0;				// current line of pixels being processed
     int    nl   = 0;				// number of text lines detected
     bool   must_exit = false;			// Are al pixel-lines processed?
+    float  m,v;
+
+    get_mean_variance_bpixels (m, v); // Mean of black pixels per line
+    maxd = to_str(cast(int) m).length; // Howmany digits does have the mean of black pixels?
+
+    debug writefln ("Max bpx: %s , mean bpx: %s , maxd: %s", bpx_in_blackest_line, m, maxd);
 
     curd = to_str(get_black_pixels_in_line (l++)).length;
     do {
