@@ -376,6 +376,15 @@ public:
     return mcmap.length;
   }
 
+  @property ulong get_num_textlines () { return mtextlines.length; }
+
+  void get_textline_start_height (in int l, out int s, out int h)
+    in { assert ( l < mtextlines.length); }
+  body {
+    s = mtextlines[l].pixel_start;
+    h = mtextlines[l].pixel_height;
+  }
+
   /**
    * Tries to determine the number of text lines based on the
    * increase/decrease of black pixels by pixel line.
@@ -424,6 +433,65 @@ public:
     return nl;
   }
 
+  void detect_text_lines ()
+    in {
+      assert (mh > 0);
+    }
+  body {
+    alias to_str = to!string;
+
+    ulong  maxd = 0;
+    ulong  curd = 0; // digits of the number of blackpixels of the current line
+    int    l    = 0;	     // current line of pixels being processed
+    bool   must_exit = false;	// Are al pixel-lines processed?
+    float  m,v;
+    int    ph = 0;		// Pixel height of current text line
+    int    ipxl = 0;		// Initial y-coord in pixels of the current text line
+    TextLineInfo[] tl;
+
+    mtextlines.length = 0;	// Clear the previous TextLineInfo data
+
+    get_mean_variance_bpixels (m, v); // Mean of black pixels per line
+    maxd = to_str(cast(int) m).length; // How many digits does have the mean of black pixels?
+
+    debug writefln ("Max bpx: %s , mean bpx: %s , maxd: %s", bpx_in_blackest_line, m, maxd);
+
+    curd = to_str(get_black_pixels_in_line (l++)).length;
+    do {
+      // Going up in black pixels
+      while ((curd < maxd) && (!must_exit)) {
+	if (l >= mh) must_exit = true;
+	else curd = to_str(get_black_pixels_in_line (l++)).length;
+      }
+
+      ph = 1;
+      ipxl = l;
+      // Same number == maxd of black pixels
+      while ((curd == maxd) && (!must_exit)) {
+	if (l >= mh) must_exit = true;
+	else {
+	  ph++;
+	  curd = to_str(get_black_pixels_in_line (l++)).length;
+	}
+      }
+      tl ~= TextLineInfo(ipxl, ph);
+
+    } while (!must_exit);
+
+    int sh = 0;			// Sum of heights
+    for (auto i = 0; i < tl.length; i++) {
+      sh += tl[i].pixel_height;
+    }
+
+    float phmean = cast(float)(sh) / tl.length;	// Pixel height mean
+
+    for (auto i = 0; i < tl.length; i++) {
+      if ( abs (tl[i].pixel_height - phmean) < (phmean/2.0) )
+	mtextlines ~= tl[i];
+    }
+  }
+
+  ////////////////////////////////////////////////////////////////////////
   int count_pixel_runs ()
     in {
       assert (mh > 0);
@@ -491,9 +559,20 @@ public:
 
     return cast(int) praux.length;
   }
+  ////////////////////////////////////////////////////////////////////////
 
 private:
-  
+
+  /**
+   * This structure holds information of the text lines detected from
+   * the bitmap image.
+   */
+  struct TextLineInfo {
+    // The Y-coordinate of the pixel tha reflects the text line begining
+    int pixel_start;
+    int pixel_height;
+  }
+
   /////////////////////
   // Class invariant //
   /////////////////////
@@ -545,6 +624,7 @@ private:
 
       count_black_pixels_per_line ();
       create_color_map ();
+      detect_text_lines ();
   }
   
   //////////
@@ -560,6 +640,7 @@ private:
   int[]       mbppl;			// Black Pixels Per Line
   int         mlwmbp;			// Line with most black pixels
   int[string] mcmap;			// Color map of the image
+  TextLineInfo[] mtextlines;		// Detected text lines in bitmap, pixel start and pixel height
 }
 
 ////////////////////////////////////////////////////////////////////////////////

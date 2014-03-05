@@ -449,7 +449,9 @@ public:
       //debug writefln ("mll: %s mmaxbpxl: %s", mll, mmaxbpxl);
       if (mshowlines.getActive) {
 	show_longest_line (ctx);
-	show_possible_space_lines (ctx);
+	//show_possible_space_lines (ctx);
+
+	show_text_lines (ctx);
       }
 
       /////////////////////////////////////////////////
@@ -491,6 +493,34 @@ public:
   }
 
   /**
+   * Visually identify text lines, they are painted in pink.
+   */
+  private void show_text_lines (Context ctx) {
+
+    int s, h;
+    int w = malignmodel.get_image_width;
+
+    ctx.save ();
+
+    ctx.setSourceRgb (0.6, 0.1, 0.1);
+    ctx.setLineWidth (2);
+
+    for (int l = 0; l < malignmodel.get_image.get_num_textlines; l++) {
+      malignmodel.get_image.get_textline_start_height (l, s, h);
+
+      ctx.moveTo(0,s);
+      ctx.lineTo (w, s);
+      ctx.lineTo (w, s+h);
+      ctx.lineTo (0, s+h);
+      ctx.lineTo (0, s);
+
+      ctx.stroke ();
+    }
+
+    ctx.restore ();
+  }
+
+  /**
    * Visually identify blank lines, they are painted in pink.
    */
   private void show_possible_space_lines (Context ctx) {
@@ -517,8 +547,8 @@ public:
     ctx.save ();
     ctx.setSourceRgb (0.0, 0.6, 0.1);
     ctx.setLineWidth (10);
-    ctx.moveTo(0,mll);
-    ctx.lineTo (malignmodel.get_image_width, mll);
+    ctx.moveTo(0,mmaxbpxl);
+    ctx.lineTo (malignmodel.get_image_width, mmaxbpxl);
     ctx.stroke ();
     ctx.restore ();
   }
