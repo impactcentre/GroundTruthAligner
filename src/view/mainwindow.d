@@ -499,21 +499,45 @@ public:
 
     int s, h;
     int w = malignmodel.get_image_width;
+    float delta;
 
     ctx.save ();
 
-    ctx.setSourceRgb (0.6, 0.1, 0.1);
-    ctx.setLineWidth (2);
-
     for (int l = 0; l < malignmodel.get_image.get_num_textlines; l++) {
       malignmodel.get_image.get_textline_start_height (l, s, h);
+      delta = h / 2.0;
+
+      // 1- Upper rectangle
+      ctx.setSourceRgb (0.1, 0.1, 0.6);
+      ctx.setLineWidth (1);
+
+      ctx.moveTo(0,s-delta);
+      ctx.lineTo (w, s-delta);
+      ctx.lineTo (w, s);
+      ctx.lineTo (0, s);
+      ctx.lineTo (0, s-delta);
+      ctx.stroke ();
+
+      // 2- Inner rectangle
+      ctx.setSourceRgb (0.6, 0.1, 0.1);
+      ctx.setLineWidth (2);
 
       ctx.moveTo(0,s);
       ctx.lineTo (w, s);
       ctx.lineTo (w, s+h);
       ctx.lineTo (0, s+h);
       ctx.lineTo (0, s);
+      ctx.stroke ();
 
+      // 3- Down rectangle
+      ctx.setSourceRgb (0.1, 0.1, 0.6);
+      ctx.setLineWidth (1);
+
+      ctx.moveTo(0,s+h+delta);
+      ctx.lineTo (w, s+h+delta);
+      ctx.lineTo (w, s+h);
+      ctx.lineTo (0, s+h);
+      ctx.lineTo (0, s+h+delta);
       ctx.stroke ();
     }
 
