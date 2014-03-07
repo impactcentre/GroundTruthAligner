@@ -508,37 +508,50 @@ public:
       delta = h / 2.0;
 
       // 1- Upper rectangle
-      ctx.setSourceRgb (0.1, 0.1, 0.6);
-      ctx.setLineWidth (1);
-
-      ctx.moveTo(0,s-delta);
-      ctx.lineTo (w, s-delta);
-      ctx.lineTo (w, s);
-      ctx.lineTo (0, s);
-      ctx.lineTo (0, s-delta);
-      ctx.stroke ();
+      ///////////////////////////////////////
+      // ctx.setSourceRgb (0.1, 0.1, 0.6); //
+      // ctx.setLineWidth (1);		   //
+      // 				   //
+      // ctx.moveTo(0,s-delta);		   //
+      // ctx.lineTo (w, s-delta);	   //
+      // ctx.lineTo (w, s);		   //
+      // ctx.lineTo (0, s);		   //
+      // ctx.lineTo (0, s-delta);	   //
+      // ctx.stroke ();			   //
+      ///////////////////////////////////////
 
       // 2- Inner rectangle
-      ctx.setSourceRgb (0.6, 0.1, 0.1);
-      ctx.setLineWidth (2);
+      ctx.setSourceRgb (0.7, 0.1, 0.1);
+      ctx.setLineWidth (0.5);
 
-      ctx.moveTo(0,s);
-      ctx.lineTo (w, s);
-      ctx.lineTo (w, s+h);
-      ctx.lineTo (0, s+h);
-      ctx.lineTo (0, s);
+      //////////////////////////
+      // ctx.moveTo(0,s);     //
+      // ctx.lineTo (w, s);   //
+      // ctx.lineTo (w, s+h); //
+      // ctx.lineTo (0, s+h); //
+      // ctx.lineTo (0, s);   //
+      // ctx.stroke ();	      //
+      //////////////////////////
+
+      ctx.moveTo(0,s-delta);
+      ctx.lineTo (w, s - delta);
+      ctx.lineTo (w, s + delta + h);
+      ctx.lineTo (0, s + delta + h);
+      ctx.lineTo (0, s - delta);
       ctx.stroke ();
 
       // 3- Down rectangle
-      ctx.setSourceRgb (0.1, 0.1, 0.6);
-      ctx.setLineWidth (1);
-
-      ctx.moveTo(0,s+h+delta);
-      ctx.lineTo (w, s+h+delta);
-      ctx.lineTo (w, s+h);
-      ctx.lineTo (0, s+h);
-      ctx.lineTo (0, s+h+delta);
-      ctx.stroke ();
+      ///////////////////////////////////////
+      // ctx.setSourceRgb (0.1, 0.1, 0.6); //
+      // ctx.setLineWidth (1);		   //
+      // 				   //
+      // ctx.moveTo(0,s+h+delta);	   //
+      // ctx.lineTo (w, s+h+delta);	   //
+      // ctx.lineTo (w, s+h);		   //
+      // ctx.lineTo (0, s+h);		   //
+      // ctx.lineTo (0, s+h+delta);	   //
+      // ctx.stroke ();			   //
+      ///////////////////////////////////////
     }
 
     ctx.restore ();
