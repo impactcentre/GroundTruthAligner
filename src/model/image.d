@@ -411,9 +411,13 @@ public:
     get_mean_variance_bpixels (m, v); // Mean of black pixels per line
     maxd = to_str(cast(int) m).length; // How many digits does have the mean of black pixels?
 
-    debug writefln ("Max bpx: %s , mean bpx: %s , maxd: %s", bpx_in_blackest_line, m, maxd);
+    debug writefln ("Max bpx: %s , mean bpx: %s , maxd: %s", 
+		    bpx_in_blackest_line, m, maxd);
 
+    // number of digits of the figure of black pixels of the current
+    // line (l)
     curd = to_str(get_black_pixels_in_line (l++)).length;
+
     do {
       // Going up in black pixels
       while ((curd < maxd) && (!must_exit)) {
