@@ -385,6 +385,12 @@ public:
     h = mtextlines[l].pixel_height;
   }
 
+  int[] get_textline_skyline (in int l)
+    in { assert ( l < mtextlines.length); }
+  body {
+    return mtextlines[l].skyline;
+  }
+
   /**
    * Tries to detect the number of text lines in the image.  It also
    * stores the begining pixel of the text line and its height in
@@ -397,14 +403,14 @@ public:
   body {
     alias to_str = to!string;
 
-    ulong  maxd = 0;
-    ulong  curd = 0;            // digits of the number of blackpixels
+    ulong  maxd  = 0;
+    ulong  curd  = 0;           // digits of the number of blackpixels
 				// of the current line
-    int    l    = 0;	        // current line of pixels being processed
+    int    l     = 0;	        // current line of pixels being processed
     bool   must_exit = false;	// Are al pixel-lines processed?
     float  m,v;
-    int    ph = 0;		// Pixel height of current text line
-    int    ipxl = 0;		// Initial y-coord in pixels of the current text line
+    int    ph    = 0;		// Pixel height of current text line
+    int    ipxl  = 0;		// Initial y-coord in pixels of the current text line
     TextLineInfo[] tl;
 
     mtextlines.length = 0;	// Clear the previous TextLineInfo data
@@ -451,6 +457,24 @@ public:
       if ( abs (tl[i].pixel_height - phmean) < (phmean/2.0) )
 	mtextlines ~= tl[i];
     }
+
+    // The SkyLine for every text line detected
+    for (auto i = 0; i < mtextlines.length; i++) {
+      
+      debug writefln ("Before building skmap length: %d , PTR= %x",
+	mtextlines[i].skyline.length, mtextlines[i].skyline.ptr);
+      
+      build_skyline (mtextlines[i]);
+
+      debug writefln ("After building skmap length: %d , PTR= %x",
+	mtextlines[i].skyline.length, mtextlines[i].skyline.ptr);
+
+      /*debug for (int x = 0; x < mw; x++) {
+	writefln ("BuilT SkyLine[PS: %d PH: %d] for x: %d gives y: %d.",
+	mtextlines[i].pixel_start, mtextlines[i].pixel_height, x, mtextlines[i].skyline[x]);
+      }*/
+    }
+
   }
 
 private:
@@ -461,6 +485,39 @@ private:
   invariant () {
     if (mpxbf is null)
       assert (mbase is null);
+  }
+
+  /**
+   * Builds the skyline of the text lines.
+   * 
+   * It stores the y-coord of the highest pixel for the current
+   * x-coord int each text line.
+   */
+  void build_skyline (ref TextLineInfo tl) {
+    char r,g,b;
+    const Color cl = Color.BLACK;
+
+    tl.skyline = new int[mw];
+    //debug writefln ("Building SkyLine PTR: %x", tl.skyline.ptr);
+
+    for (int x = 0; x < mw; x++) {
+
+      with (tl) {
+
+	int d = pixel_height / 2;
+	int finish = pixel_start + pixel_height + d;
+
+	for (int y = pixel_start-d; y < finish; y++) {
+	  get_rgb (x, y, r, g, b);
+	  if (r == cl && g == cl && b == cl) {
+	    skyline[x] = y;
+	    break;
+	  }
+	}
+	/*debug writefln ("Building SkyLine[PS: %d, PH:%d] for x: %d gives y: %d.",
+	  pixel_start, pixel_height, x, skyline[x]);*/
+      }
+    }
   }
 
   /**
@@ -529,6 +586,11 @@ private:
      * 'htqg...' chars.
      */
     int pixel_height;
+
+    /**
+     * The SkyLine of the text line.
+     */
+    int[] skyline;
   }
 
   Pixbuf         mpxbf;

@@ -451,7 +451,8 @@ public:
 	show_longest_line (ctx);
 	//show_possible_space_lines (ctx);
 
-	show_text_lines (ctx);
+	//show_text_lines (ctx);
+	show_skylines (ctx);
       }
 
       /////////////////////////////////////////////////
@@ -493,6 +494,60 @@ public:
   }
 
   /**
+   * Visually show the text skylines for each line.
+   */
+  private void show_skylines (Context ctx) {
+
+    int s, h;
+    int w = malignmodel.get_image_width;
+    float delta;
+    int[] sl;
+
+    ctx.save ();
+
+    ctx.setSourceRgb (0.5, 0.1, 0.6);
+    ctx.setLineWidth (0.5);
+
+    for (int l = 0; l < malignmodel.get_image.get_num_textlines; l++) {
+      sl = malignmodel.get_image.get_textline_skyline (l);
+
+      //////////////////////////
+      // ctx.moveTo(0,s);     //
+      // ctx.lineTo (w, s);   //
+      // ctx.lineTo (w, s+h); //
+      // ctx.lineTo (0, s+h); //
+      // ctx.lineTo (0, s);   //
+      // ctx.stroke ();	      //
+      //////////////////////////
+
+      ctx.moveTo (0, sl[0]);
+      for (int x = 1; x < sl.length-1; x++) {
+	ctx.lineTo (x+1, sl[x+1]);
+
+	debug if (l == 15) {
+	  writefln ("SkyLine x: [%d] , y : [%d]", x, sl[x]);
+	}
+      }
+      ctx.stroke ();
+
+      // 3- Down rectangle
+      ///////////////////////////////////////
+      // ctx.setSourceRgb (0.1, 0.1, 0.6); //
+      // ctx.setLineWidth (1);		   //
+      // 				   //
+      // ctx.moveTo(0,s+h+delta);	   //
+      // ctx.lineTo (w, s+h+delta);	   //
+      // ctx.lineTo (w, s+h);		   //
+      // ctx.lineTo (0, s+h);		   //
+      // ctx.lineTo (0, s+h+delta);	   //
+      // ctx.stroke ();			   //
+      ///////////////////////////////////////
+    }
+
+    ctx.restore ();
+  }
+
+  /**
    * Visually identify text lines, they are painted in pink.
    */
   private void show_text_lines (Context ctx) {
@@ -502,6 +557,9 @@ public:
     float delta;
 
     ctx.save ();
+
+    ctx.setSourceRgb (0.7, 0.1, 0.1);
+    ctx.setLineWidth (0.5);
 
     for (int l = 0; l < malignmodel.get_image.get_num_textlines; l++) {
       malignmodel.get_image.get_textline_start_height (l, s, h);
@@ -521,8 +579,8 @@ public:
       ///////////////////////////////////////
 
       // 2- Inner rectangle
-      ctx.setSourceRgb (0.7, 0.1, 0.1);
-      ctx.setLineWidth (0.5);
+      /*ctx.setSourceRgb (0.7, 0.1, 0.1);
+	ctx.setLineWidth (0.5);*/
 
       //////////////////////////
       // ctx.moveTo(0,s);     //
@@ -533,12 +591,11 @@ public:
       // ctx.stroke ();	      //
       //////////////////////////
 
-      ctx.moveTo(0,s-delta);
+      ctx.moveTo (0, s - delta);
       ctx.lineTo (w, s - delta);
       ctx.lineTo (w, s + delta + h);
       ctx.lineTo (0, s + delta + h);
       ctx.lineTo (0, s - delta);
-      ctx.stroke ();
 
       // 3- Down rectangle
       ///////////////////////////////////////
@@ -554,6 +611,7 @@ public:
       ///////////////////////////////////////
     }
 
+    ctx.stroke ();
     ctx.restore ();
   }
 
