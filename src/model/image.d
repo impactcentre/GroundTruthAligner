@@ -161,10 +161,10 @@ public:
   }
 
   /**
-   * Count how many COLOR pixels are in the image.
+   * Counts how many COLOR pixels are in the image.
    * 
    * Params:
-   *    cl = the color to search
+   *    cl = The color to search for.
    */
   int count_color_pixels (Color cl) {
     char r,g,b;
@@ -295,7 +295,7 @@ public:
    * Detects Skew.
    *
    * Returns:
-   *     Skew angle
+   *     Skew angle detected in degrees.
    */
   int detect_skew () 
     in { assert (mpxbf !is null); }
@@ -398,8 +398,9 @@ public:
     alias to_str = to!string;
 
     ulong  maxd = 0;
-    ulong  curd = 0; // digits of the number of blackpixels of the current line
-    int    l    = 0;	     // current line of pixels being processed
+    ulong  curd = 0;            // digits of the number of blackpixels
+				// of the current line
+    int    l    = 0;	        // current line of pixels being processed
     bool   must_exit = false;	// Are al pixel-lines processed?
     float  m,v;
     int    ph = 0;		// Pixel height of current text line
@@ -453,16 +454,6 @@ public:
   }
 
 private:
-
-  /**
-   * This structure holds information of the text lines detected from
-   * the bitmap image.
-   */
-  struct TextLineInfo {
-    // The Y-coordinate of the pixel tha reflects the text line begining
-    int pixel_start;
-    int pixel_height;
-  }
 
   /////////////////////
   // Class invariant //
@@ -521,17 +512,36 @@ private:
   //////////
   // Data //
   //////////
-  Pixbuf      mpxbf;
-  Pixbuf      mpxbf_rotated;
-  char*       mbase;
-  int         mnc;
-  int         mw ;
-  int         mh ;
-  int         mrs;
-  int[]       mbppl;			// Black Pixels Per Line
-  int         mlwmbp;			// Line with most black pixels
-  int[string] mcmap;			// Color map of the image
-  TextLineInfo[] mtextlines;		// Detected text lines in bitmap, pixel start and pixel height
+
+  /**
+   * This structure holds information of the text lines detected from
+   * the bitmap image.
+   */
+  struct TextLineInfo {
+    /**
+     * The Y-coordinate of the pixel tha reflects the text line
+     * begining.
+     */
+    int pixel_start;
+    /**
+     * The height in pixels of the 'core' of the text line, that is,
+     * it does not inlcude upper and lower rectangles that hold
+     * 'htqg...' chars.
+     */
+    int pixel_height;
+  }
+
+  Pixbuf         mpxbf;
+  Pixbuf         mpxbf_rotated;
+  char*          mbase;
+  int            mnc;
+  int            mw ;
+  int            mh ;
+  int            mrs;
+  int[]          mbppl;		// Black Pixels Per Line
+  int            mlwmbp;	// Line with most black pixels
+  int[string]    mcmap;		// Color map of the image
+  TextLineInfo[] mtextlines;	// Detected text lines in bitmap, pixel start and pixel height
 }
 
 ////////////////////////////////////////////////////////////////////////////////
