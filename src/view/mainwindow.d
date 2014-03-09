@@ -439,8 +439,8 @@ public:
       ///////////////////////////////
       // 1. Draw the Scanned image //
       ///////////////////////////////
-      ctx.setSourcePixbuf (malignmodel.get_image_data, 0.0, 0.0);
-      ctx.paint ();
+      //ctx.setSourcePixbuf (malignmodel.get_image_data, 0.0, 0.0);
+      //ctx.paint ();
 
       /////////////////////////////////////
       // 2. Draw longest and space lines //
@@ -451,7 +451,7 @@ public:
 	show_longest_line (ctx);
 	//show_possible_space_lines (ctx);
 
-	//show_text_lines (ctx);
+	show_text_lines (ctx);
 	show_skylines (ctx);
       }
 
@@ -505,8 +505,8 @@ public:
 
     ctx.save ();
 
-    ctx.setSourceRgb (0.5, 0.1, 0.6);
-    ctx.setLineWidth (0.5);
+    ctx.setSourceRgb (0.2, 0.7, 0.2);
+    ctx.setLineWidth (1.7);
 
     for (int l = 0; l < malignmodel.get_image.get_num_textlines; l++) {
       sl = malignmodel.get_image.get_textline_skyline (l);

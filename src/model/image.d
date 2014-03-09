@@ -491,7 +491,10 @@ private:
    * Builds the skyline of the text lines.
    * 
    * It stores the y-coord of the highest pixel for the current
-   * x-coord int each text line.
+   * x-coord in the 'tl' TextLineInfo.
+   *
+   * Parameters:
+   *    tl = The TextLineInfo tho build the Skyline for.
    */
   void build_skyline (ref TextLineInfo tl) {
     char r,g,b;
@@ -502,10 +505,13 @@ private:
 
     for (int x = 0; x < mw; x++) {
 
-      with (tl) {
+      with (tl) {		// Sweet Pascal memories...
 
 	int d = pixel_height / 2;
 	int finish = pixel_start + pixel_height + d;
+
+	//skyline[x] = pixel_start-d;
+	skyline[x] = finish;
 
 	for (int y = pixel_start-d; y < finish; y++) {
 	  get_rgb (x, y, r, g, b);
