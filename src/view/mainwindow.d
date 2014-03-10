@@ -281,6 +281,13 @@ public:
       mshowcontours = cast(ToggleButton) mbuilder.getObject ("showcontours");
       mshowcontours.addOnToggled (&show_contours_toggle);
 
+      // The showpage toggle
+      mshowpage = cast(ToggleButton) mbuilder.getObject ("showpage");
+      mshowpage.addOnToggled ( (tb) => update() );
+      // The showskyline toggle
+      mshowskyline = cast(ToggleButton) mbuilder.getObject ("showskyline");
+      mshowskyline.addOnToggled ( (tb) => update() );
+
       // The text view + the text buffer
       mtextview = cast(TextView) mbuilder.getObject ("textview");
       mtextbuffer = mtextview.getBuffer();
@@ -439,20 +446,24 @@ public:
       ///////////////////////////////
       // 1. Draw the Scanned image //
       ///////////////////////////////
-      //ctx.setSourcePixbuf (malignmodel.get_image_data, 0.0, 0.0);
-      //ctx.paint ();
+      if (mshowpage.getActive) {
+	ctx.setSourcePixbuf (malignmodel.get_image_data, 0.0, 0.0);
+	ctx.paint ();
+      }
 
-      /////////////////////////////////////
-      // 2. Draw longest and space lines //
-      /////////////////////////////////////
-
-      //debug writefln ("mll: %s mmaxbpxl: %s", mll, mmaxbpxl);
-      if (mshowlines.getActive) {
-	show_longest_line (ctx);
-	//show_possible_space_lines (ctx);
-
-	show_text_lines (ctx);
+      ////////////////
+      // 2. SkyLine //
+      ////////////////
+      if (mshowskyline.getActive) {
 	show_skylines (ctx);
+      }
+
+      /////////////////////////////////////
+      // 3. Draw longest and space lines //
+      /////////////////////////////////////
+      if (mshowlines.getActive) {
+      	//show_longest_line (ctx);
+      	show_text_lines (ctx);
       }
 
       /////////////////////////////////////////////////
@@ -761,6 +772,8 @@ public:
   SpinButton        msbbpx;
   ToggleButton      mshowlines;
   ToggleButton      mshowcontours;
+  ToggleButton      mshowpage;
+  ToggleButton      mshowskyline;
   FileChooserButton mimagechooser;
   FileChooserButton mxmlchooser;
   TextView          mtextview;

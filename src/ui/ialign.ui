@@ -327,8 +327,23 @@
               </packing>
             </child>
             <child>
+              <object class="GtkCheckButton" id="showpage">
+                <property name="label" translatable="yes">Show Image</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="xalign">0</property>
+                <property name="draw_indicator">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkCheckButton" id="showlines">
-                <property name="label" translatable="yes">Show Info-Lines</property>
+                <property name="label" translatable="yes">Text lines</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
@@ -340,12 +355,27 @@ possible white lines (red)</property>
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">False</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="showskyline">
+                <property name="label" translatable="yes">SkyLine</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="xalign">0</property>
+                <property name="draw_indicator">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child>
               <object class="GtkCheckButton" id="showcontours">
-                <property name="label" translatable="yes">Show Contours</property>
+                <property name="label" translatable="yes">XML points</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
@@ -355,7 +385,7 @@ possible white lines (red)</property>
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">False</property>
-                <property name="position">2</property>
+                <property name="position">4</property>
               </packing>
             </child>
             <child>
@@ -370,7 +400,7 @@ possible white lines (red)</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="position">5</property>
               </packing>
             </child>
           </object>
