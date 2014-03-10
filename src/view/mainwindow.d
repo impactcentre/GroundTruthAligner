@@ -300,13 +300,12 @@ public:
       //alias Widget = this;
       b1.reparent ( this );
 
-      /*
-       * Get the accel group created in glade.
-       */
+      // Get the accel group for the window created in glade...
       auto imw = mbuilder.getObject ("image_window");
       auto agl = AccelGroup.accelGroupsFromObject (imw).toArray!AccelGroup;
       //writefln ("NGrupos: %u\n", agl.length);
 
+      // ...and transplant it onto 'this' window...
       addAccelGroup (agl[0]);
       setResizable (false);
     }
