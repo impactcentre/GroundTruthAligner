@@ -454,7 +454,8 @@ public:
       // 2. SkyLine //
       ////////////////
       if (mshowskyline.getActive) {
-	show_skylines (ctx);
+	//show_skylines (ctx);
+	show_histograms (ctx);
       }
 
       /////////////////////////////////////
@@ -553,6 +554,44 @@ public:
       // ctx.stroke ();			   //
       ///////////////////////////////////////
     }
+
+    ctx.restore ();
+  }
+
+  /**
+   * Visually show the text histograms for each line.
+   */
+  private void show_histograms (Context ctx) {
+
+    int s, h;
+    int w = malignmodel.get_image_width;
+    float delta;
+    int y;
+    int[] hist;
+
+    ctx.save ();
+
+    ctx.setSourceRgb (0.2, 0.2, 0.8);
+    ctx.setLineWidth (1.0);
+
+    for (int l = 0; l < malignmodel.get_image.get_num_textlines; l++) {
+
+      malignmodel.get_image.get_textline_start_height (l, s, h);
+      delta = h / 2.0;
+      y = cast (int) (s + h + delta);
+
+      hist  = malignmodel.get_image.get_textline_histogram (l);
+
+      for (int x = 0; x < hist.length; x++) {
+	ctx.moveTo (x, y); // Go deepest in the current line
+	ctx.lineTo (x, y - hist[x]);
+
+	debug if (l == 15) {
+	  writefln ("Histogram x: [%d] , y : [%d]", x, hist[x]);
+	}
+      }
+    }
+    ctx.stroke ();
 
     ctx.restore ();
   }

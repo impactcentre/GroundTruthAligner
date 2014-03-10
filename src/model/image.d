@@ -391,6 +391,12 @@ public:
     return mtextlines[l].skyline;
   }
 
+  int[] get_textline_histogram (in int l)
+    in { assert ( l < mtextlines.length); }
+  body {
+    return mtextlines[l].histogram;
+  }
+
   /**
    * Tries to detect the number of text lines in the image.  It also
    * stores the begining pixel of the text line and its height in
@@ -458,23 +464,23 @@ public:
 	mtextlines ~= tl[i];
     }
 
-    // The SkyLine for every text line detected
+    // The SkyLine + Histogram for every text line detected
     for (auto i = 0; i < mtextlines.length; i++) {
       
-      debug writefln ("Before building skmap length: %d , PTR= %x",
-	mtextlines[i].skyline.length, mtextlines[i].skyline.ptr);
+      /*debug writefln ("Before building skmap length: %d , PTR= %x",
+	mtextlines[i].skyline.length, mtextlines[i].skyline.ptr);*/
       
       build_skyline (mtextlines[i]);
+      build_histogram (mtextlines[i]);
 
-      debug writefln ("After building skmap length: %d , PTR= %x",
-	mtextlines[i].skyline.length, mtextlines[i].skyline.ptr);
+      /*debug writefln ("After building skmap length: %d , PTR= %x",
+	mtextlines[i].skyline.length, mtextlines[i].skyline.ptr);*/
 
       /*debug for (int x = 0; x < mw; x++) {
 	writefln ("BuilT SkyLine[PS: %d PH: %d] for x: %d gives y: %d.",
 	mtextlines[i].pixel_start, mtextlines[i].pixel_height, x, mtextlines[i].skyline[x]);
       }*/
     }
-
   }
 
 private:
@@ -488,7 +494,7 @@ private:
   }
 
   /**
-   * Builds the skyline of the text lines.
+   * Builds the skyline of a text line.
    * 
    * It stores the y-coord of the highest pixel for the current
    * x-coord in the 'tl' TextLineInfo.
@@ -518,6 +524,43 @@ private:
 	  if (r == cl && g == cl && b == cl) {
 	    skyline[x] = y;
 	    break;
+	  }
+	}
+	/*debug writefln ("Building SkyLine[PS: %d, PH:%d] for x: %d gives y: %d.",
+	  pixel_start, pixel_height, x, skyline[x]);*/
+      }
+    }
+  }
+
+  /**
+   * Builds the histogram of a text line.
+   * 
+   * It stores the sum of black pixels for the current
+   * x-coord in the 'tl' TextLineInfo.
+   *
+   * Parameters:
+   *    tl = The TextLineInfo tho build the Histogram for.
+   */
+  void build_histogram (ref TextLineInfo tl) {
+    char r,g,b;
+    const Color cl = Color.BLACK;
+
+    tl.histogram = new int[mw];
+    //debug writefln ("Building SkyLine PTR: %x", tl.skyline.ptr);
+
+    for (int x = 0; x < mw; x++) {
+
+      with (tl) {		// Sweet Pascal memories...
+
+	int d = pixel_height / 2;
+	int finish = pixel_start + pixel_height + d;
+
+	histogram[x] = 0;	// Not necessary in D
+
+	for (int y = pixel_start-d; y < finish; y++) {
+	  get_rgb (x, y, r, g, b);
+	  if (r == cl && g == cl && b == cl) {
+	    histogram[x]++;
 	  }
 	}
 	/*debug writefln ("Building SkyLine[PS: %d, PH:%d] for x: %d gives y: %d.",
@@ -597,6 +640,11 @@ private:
      * The SkyLine of the text line.
      */
     int[] skyline;
+
+    /**
+     * The Histogram of the text line.
+     */
+    int[] histogram;
   }
 
   Pixbuf         mpxbf;
