@@ -1,4 +1,5 @@
-SUBDIRS=src
+EXTRA_DIST = autogen.sh
+SUBDIRS    = src
 
 doc:
 	$(MAKE) -C src $@

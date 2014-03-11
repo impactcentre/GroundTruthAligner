@@ -1,4 +1,4 @@
-
+EXTRA_DIST  = ui/*.ui
 SUBDIRS     = mvc model view main
 TESTSUBDIRS = model
 
