@@ -454,7 +454,7 @@ public:
       // 2. SkyLine //
       ////////////////
       if (mshowskyline.getActive) {
-	//show_skylines (ctx);
+	show_skylines (ctx);
 	show_histograms (ctx);
       }
 
@@ -516,45 +516,19 @@ public:
 
     ctx.save ();
 
-    ctx.setSourceRgb (0.2, 0.7, 0.2);
-    ctx.setLineWidth (1.7);
+    ctx.setSourceRgb (0.75, 0.1, 0.1);
+    ctx.setLineWidth (1.3);
 
     for (int l = 0; l < malignmodel.get_image.get_num_textlines; l++) {
       sl = malignmodel.get_image.get_textline_skyline (l);
 
-      //////////////////////////
-      // ctx.moveTo(0,s);     //
-      // ctx.lineTo (w, s);   //
-      // ctx.lineTo (w, s+h); //
-      // ctx.lineTo (0, s+h); //
-      // ctx.lineTo (0, s);   //
-      // ctx.stroke ();	      //
-      //////////////////////////
-
       ctx.moveTo (0, sl[0]);
       for (int x = 1; x < sl.length-1; x++) {
 	ctx.lineTo (x+1, sl[x+1]);
-
-	debug if (l == 15) {
-	  writefln ("SkyLine x: [%d] , y : [%d]", x, sl[x]);
-	}
       }
-      ctx.stroke ();
-
-      // 3- Down rectangle
-      ///////////////////////////////////////
-      // ctx.setSourceRgb (0.1, 0.1, 0.6); //
-      // ctx.setLineWidth (1);		   //
-      // 				   //
-      // ctx.moveTo(0,s+h+delta);	   //
-      // ctx.lineTo (w, s+h+delta);	   //
-      // ctx.lineTo (w, s+h);		   //
-      // ctx.lineTo (0, s+h);		   //
-      // ctx.lineTo (0, s+h+delta);	   //
-      // ctx.stroke ();			   //
-      ///////////////////////////////////////
     }
 
+    ctx.stroke ();
     ctx.restore ();
   }
 
@@ -585,14 +559,10 @@ public:
       for (int x = 0; x < hist.length; x++) {
 	ctx.moveTo (x, y); // Go deepest in the current line
 	ctx.lineTo (x, y - hist[x]);
-
-	debug if (l == 15) {
-	  writefln ("Histogram x: [%d] , y : [%d]", x, hist[x]);
-	}
       }
     }
-    ctx.stroke ();
 
+    ctx.stroke ();
     ctx.restore ();
   }
 
