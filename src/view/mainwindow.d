@@ -39,6 +39,7 @@ import gtk.DrawingArea;
 import gtk.Paned;
 import gtk.Scale;
 import gtk.SpinButton;
+import gtk.ProgressBar;
 import gtk.ToggleButton;
 import gtk.Range;
 import gtk.Label;
@@ -140,6 +141,8 @@ public:
     create_model ();
     /////////////////////////////////////////////////////////
 
+    mloading_data = false;
+
   }
   
   /////////////////
@@ -158,8 +161,16 @@ public:
   // Base class methods //
   ///////////////////////////////////////////////////////////
   override void update () {
-    mpage_image.queueDraw ();	// 1- The Image part
-    show_the_texts ();		// 2- The XmlText part
+    if (!mloading_data) {
+      mpage_image.queueDraw ();	// 1- The Image part
+      show_the_texts ();	// 2- The XmlText part
+    } else {
+      // Loading data...progress show
+      mpbar.queueDraw ();	// Update the progressbar.
+      process_pending_events (); // I mean it!!
+
+      debug writeln ("Update the pbar!!");
+    }
   }
 
   override void set_model (Model m) {
@@ -267,9 +278,9 @@ public:
       /*mscale = cast(Scale) mbuilder.getObject ("scale");
 	mscale.addOnValueChanged (&rotate_image);*/
 
-      // The black pixels divisor
-      msbbpx = cast(SpinButton) mbuilder.getObject ("bpdivisor");
-      msbbpx.addOnValueChanged (&identify_white_lines);
+      // The progress bar...
+      mpbar = cast(ProgressBar) mbuilder.getObject ("pbar");
+      //msbbpx.addOnValueChanged (&identify_white_lines);
 
       // The degrees label
       //mdegrees = cast(Label) mbuilder.getObject ("degrees");
@@ -376,6 +387,12 @@ public:
   body {
     //mpage_pxbf = new Pixbuf (filename);
 
+    // For the update method and the progress bar
+    mloading_data = true;
+    mpbar.setText ("Loading image");
+    mpbar.setFraction (0.5);
+    update ();
+
     malignmodel.load_image_xmltext (filename, "");
     //fit_image ();
     //mpage_pxbf = malignmodel.get_image_data;
@@ -392,6 +409,12 @@ public:
 				  malignmodel.get_image_data.getHeight());
 
     }
+    
+    // For the update method and the progress bar
+    mloading_data = false;
+    mpbar.setText ("");
+    mpbar.setFraction (0.0);
+    update ();
   }
 
   /**
@@ -400,6 +423,11 @@ public:
   private void load_xml (string filename)
     in { assert (malignmodel !is null); }
   body {
+    // For the update method and the progress bar
+    mloading_data = true;
+    mpbar.setText ("Loading texts");
+    update ();
+
     //debug writefln ("We must load [%s] xml file.", filename);
     malignmodel.load_image_xmltext ("", filename);
     
@@ -411,6 +439,11 @@ public:
 		  r, malignmodel.text_get_points (cast(int) r).length);
       }
     }
+
+    // For the update method and the progress bar
+    mloading_data = false;
+    mpbar.setText ("");
+    update ();
   }
 
   /**
@@ -635,26 +668,6 @@ public:
   }
 
   /**
-   * Visually identify blank lines, they are painted in pink.
-   */
-  private void show_possible_space_lines (Context ctx) {
-    int d = msbbpx.getValueAsInt ();
-
-    ctx.save ();
-    ctx.setSourceRgb (0.5, 0.0, 0.1);
-    ctx.setLineWidth (0.5);
-    for (int l = 0; l < malignmodel.get_image_height; l++) {
-
-      if (malignmodel.get_image.get_black_pixels_in_line (l) < (mmaxbpxl / d)) {
-	ctx.moveTo(0,l);
-	ctx.lineTo (malignmodel.get_image_width, l);
-	ctx.stroke ();
-      }
-    }
-    ctx.restore ();
-  }
-
-  /**
    * Draw a green line over the one with more black pixels.
    */
   private void show_longest_line (Context ctx) {
@@ -665,26 +678,6 @@ public:
     ctx.lineTo (malignmodel.get_image_width, mmaxbpxl);
     ctx.stroke ();
     ctx.restore ();
-  }
-
-  /**
-   * Callback invoked whenever the user increases the divisor in the UI.
-   * This is done in order to visually identify blank lines,
-   */
-  private void identify_white_lines (SpinButton s) {
-    /*auto alpha =  s.getValue();
-    auto writer = appender!string();
-    formattedWrite(writer, "%6.2f", alpha);
-
-    //mdegrees.setText (writer.data);
-    mangle = alpha*PI/180.0;
-    debug writefln ("Deg: %5.2f, Rad: %5.2f", alpha, mangle);
-
-    mpage_image.queueDraw ();*/
-
-    update ();
-
-    return;
   }
 
   private void show_lines_toggle (ToggleButton t) {
@@ -759,6 +752,11 @@ public:
     return false;
   }
 
+  private void process_pending_events () {
+    while (Main.eventsPending ())
+      Main.iteration ();
+  }
+
   /////////////////////
   // Class invariant //
   /////////////////////
@@ -777,7 +775,8 @@ public:
   ImageMenuItem     _imi;
   DrawingArea       mpage_image;
   Paned             mpaned;
-  SpinButton        msbbpx;
+  //SpinButton        msbbpx;
+  ProgressBar       mpbar;
   ToggleButton      mshowlines;
   ToggleButton      mshowcontours;
   ToggleButton      mshowpage;
@@ -789,4 +788,6 @@ public:
   AlignModel        malignmodel;
   int               mll;	// longest line
   int               mmaxbpxl;	// max black pixels
+  bool              mloading_data; // Flag for knowing if we are
+				   // loading image/xml-text
 }
