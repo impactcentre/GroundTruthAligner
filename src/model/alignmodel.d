@@ -63,6 +63,12 @@ public:
   this () {
     mimage = new Image;
     mxmltext = new XmlText;
+
+    mcurr_action = "Time passes...";
+    mfraction = 0.0;
+
+    // Connect signals...
+    mimage.signal_progress.connect (&progress_inform);
   }
   
   /////////////////
@@ -71,6 +77,9 @@ public:
   ~this () {
     
   }
+
+  @property string get_current_action () { return mcurr_action; }
+  @property float  get_fraction_current_action () { return mfraction; }
 
   void load_image_xmltext (in string image_file, in string xmltext_file)
     in {
@@ -145,12 +154,27 @@ private:
     assert (mimage !is null);
     assert (mxmltext !is null);
   }
-  
+
+  /////////////
+  // Methods //
+  /////////////
+  void progress_inform (string s, float fraction) {
+
+    debug writefln ("Signal [%s] emitted.", s);
+
+    mcurr_action = s;
+    mfraction = fraction;
+
+    notify_views ();
+  }
+
   //////////
   // Data //
   //////////
   Image mimage;
   XmlText mxmltext;
+  string  mcurr_action;		// Current action being done by the model
+  float   mfraction;		// Fraction done.
 }
 
 unittest {

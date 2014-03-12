@@ -166,10 +166,13 @@ public:
       show_the_texts ();	// 2- The XmlText part
     } else {
       // Loading data...progress show
+      mpbar.setText (malignmodel.get_current_action);
+      mpbar.setFraction (malignmodel.get_fraction_current_action);
+
       mpbar.queueDraw ();	// Update the progressbar.
       process_pending_events (); // I mean it!!
 
-      debug writeln ("Update the pbar!!");
+      //debug writeln ("Update the pbar!!");
     }
   }
 
@@ -389,8 +392,6 @@ public:
 
     // For the update method and the progress bar
     mloading_data = true;
-    mpbar.setText ("Loading image");
-    mpbar.setFraction (0.5);
     update ();
 
     malignmodel.load_image_xmltext (filename, "");
@@ -410,11 +411,9 @@ public:
 
     }
     
-    // For the update method and the progress bar
-    mloading_data = false;
-    mpbar.setText ("");
-    mpbar.setFraction (0.0);
+    // Reset the progress bar...
     update ();
+    mloading_data = false;
   }
 
   /**

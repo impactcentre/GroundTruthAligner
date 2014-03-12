@@ -87,7 +87,17 @@ public:
   ///////////
   // Enums //
   ///////////
-  public enum Color { BLACK = 0, WHITE = 255 };
+  enum Color { BLACK = 0, WHITE = 255 };
+
+  /////////////
+  // Signals //
+  /////////////////////////////////////////////////////////////////////////
+
+  mixin Signal!(string, float) signal_progress;
+
+  /////////////////////////////////////////////////////////////////////////
+  // Signals //
+  /////////////
 
   /////////////
   // Methods //
@@ -186,6 +196,8 @@ public:
   void load_from_file (string filename) {
 
     if (filename == "") return;
+
+    signal_progress.emit ("Loading image", 0.25);
 
     if (mpxbf !is null) { mpxbf.unref(); }
     if (mpxbf_rotated !is null) { mpxbf_rotated.unref(); }
@@ -611,14 +623,21 @@ private:
       mh    = mpxbf_rotated.getHeight ();
       mrs   = mpxbf_rotated.getRowstride ();
 
+      // Loading image is 25%
+      signal_progress.emit ("Counting black-pixels", 0.5);
       count_black_pixels_per_line ();
+      signal_progress.emit ("Creating color-map", 0.75);
       create_color_map ();
+      signal_progress.emit ("Detecting text-lines", 1.00);
       detect_text_lines ();
+
+      // Clear the progress
+      signal_progress.emit ("", 0.00);
   }
   
   //////////
   // Data //
-  //////////
+  /////////////////////////////////////////////////////////////////////////
 
   /**
    * This structure holds information of the text lines detected from
@@ -647,7 +666,7 @@ private:
      */
     int[] histogram;
   }
-
+  
   Pixbuf         mpxbf;
   Pixbuf         mpxbf_rotated;
   char*          mbase;
@@ -677,7 +696,7 @@ unittest {
   assert (i.height == -1);
 
   // hard coded path for now...
-  i.load_image ("../../data/318982rp10.png");
+  i.load_from_file ("../../data/318982rp10.png");
   assert (i.width  != -1);
   assert (i.height != -1);
   assert (i.count_color_pixels (Image.Color.WHITE) >= 0);
