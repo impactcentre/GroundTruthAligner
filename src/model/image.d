@@ -29,6 +29,7 @@ import std.stdio;
 import std.math;
 import core.memory: GC;		// We need to play with the garbage collector
 import std.conv;
+import std.signals;
 
 /////////
 // GDK //
