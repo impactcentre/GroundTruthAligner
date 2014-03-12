@@ -81,10 +81,10 @@ public:
     }
   body {
     if (image_file != "")
-      mimage.load_image (image_file);
+      mimage.load_from_file (image_file);
 
     if (xmltext_file != "")
-      mxmltext.load_xml_contents_from (xmltext_file);
+      mxmltext.load_from_file (xmltext_file);
 
     notify_views ();
   }

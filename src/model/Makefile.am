@@ -31,7 +31,7 @@ tests:
 	    $$(pkg-config --libs gtkd2) $(MVC_LIB)
 
 	@$(DC) -main -unittest $(AM_DFLAGS) $(DFLAGS) xmltext.d -ofxmltext-test \
-            $$(pkg-config --libs gtkd2) $(MV_LIB)
+            $$(pkg-config --libs gtkd2) $(MVC_LIB)
 
 	@$(DC) -main -unittest $(AM_DFLAGS) $(DFLAGS) \
             alignmodel.d image.d xmltext.d \

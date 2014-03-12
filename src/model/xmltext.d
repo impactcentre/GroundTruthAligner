@@ -108,7 +108,7 @@ public:
   // Methods //
   /////////////
   
-  void load_xml_contents_from (string the_file) 
+  void load_from_file (string the_file) 
     in { assert (the_file != "", "XmlText: empty file!"); }
   body {
     mtexts = [];
@@ -160,7 +160,7 @@ unittest {
   Texts tt;
 
   // Hard coded path for now...
-  t.load_xml_contents_from ("../../data/318982.xml");
+  t.load_from_file ("../../data/318982.xml");
   tt = t.get_texts;
 
   writeln ("xmltext tests BEGIN...");

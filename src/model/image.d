@@ -182,7 +182,7 @@ public:
   /**
    * Loads the image in filename into the pixbuf.
    */
-  void load_image (string filename) {
+  void load_from_file (string filename) {
 
     if (filename == "") return;
 
@@ -691,7 +691,7 @@ unittest {
   writefln ("Detected Skew for +10deg is: %d degrees.", i.detect_skew ());
   */
 
-  i.load_image ("../../data/318982rm5.png");
+  i.load_from_file ("../../data/318982rm5.png");
   writefln ("Detected Skew for -5deg is: %d degrees.", i.detect_skew ());
   i.rotate_by (10);
 
@@ -730,7 +730,7 @@ unittest {
   assert (i.height == -1);
 
   // hard coded path for now...
-  i.load_image ("../../data/318982.tif");
+  i.load_from_file ("../../data/318982.tif");
   assert (i.is_valid);
   assert (i.height != -1);
 
