@@ -541,57 +541,53 @@ private:
       mlmargin = 0;
       mrmargin = 0;
 
-      ///////////////////////
-      // 1- Left margin... //
-      ///////////////////////
-      // For every textline
-      for (auto l = 0; l < mtextlines.length; l++) {
-	get_textline_start_height (l, s, h);
-	delta = h / 2.0;
+      ////////////////////////
+      // For every textline //
+      ////////////////////////
+      for (auto l = 0; l < mtextlines.length; l++)
+	{
+	  get_textline_start_height (l, s, h);
+	  delta = h / 2.0;
 
-	int pxi = cast (int) (s - delta);
-	int pxf = cast (int) (s + h + delta);
-	int xmargin = 0;
+	  int pxi = cast (int) (s - delta);
+	  int pxf = cast (int) (s + h + delta);
+	  int xlmargin = 0;
+	  int xrmargin = 0;
 
-	for (int y = pxi; y <= pxf; y++) {
-	  for (int x = 0; x < mw; x++) {
-	    get_rgb (x, y, r, g, b);
-	    if (r == cl && g == cl && b == cl) {
-	      xmargin += x;
-	      break;
+	  for (int y = pxi; y <= pxf; y++)
+	    {
+	      // left margin
+	      for (int x = 0; x < mw; x++) {
+		get_rgb (x, y, r, g, b);
+		if (r == cl && g == cl && b == cl) {
+		  xlmargin += x;
+		  break;
+		}
+	      }
+
+	      // right margin
+	      for (int x = mw-1; x >= 0; x--) {
+		get_rgb (x, y, r, g, b);
+		if (r == cl && g == cl && b == cl) {
+		  xrmargin += x;
+		  break;
+		}
+	      }
+
 	    }
-	  }
+
+	  xlmargin /= (pxf-pxi+1);
+	  xrmargin /= (pxf-pxi+1);
+
+	  debug writefln ("Line %d lmargin: %d , rmargin: %d", l , xlmargin, xrmargin);
+
+	  mlmargin += xlmargin;
+	  mrmargin += xrmargin;
 	}
-	mlmargin += (xmargin / (pxf-pxi+1));
-      }
 
       mlmargin /= mtextlines.length;
-
-      ////////////////////////
-      // 2- Right margin... //
-      ////////////////////////
-      // For every textline
-      for (auto l = 0; l < mtextlines.length; l++) {
-	get_textline_start_height (l, s, h);
-	delta = h / 2.0;
-
-	int pxi = cast (int) (s - delta);
-	int pxf = cast (int) (s + h + delta);
-	int xmargin = 0;
-
-	for (int y = pxi; y <= pxf; y++) {
-	  for (int x = mw-1; x >= 0; x--) {
-	    get_rgb (x, y, r, g, b);
-	    if (r == cl && g == cl && b == cl) {
-	      xmargin += x;
-	      break;
-	    }
-	  }
-	}
-	mrmargin += (xmargin / (pxf-pxi+1));
-      }
-
       mrmargin /= mtextlines.length;
+
     }
   
   /**
