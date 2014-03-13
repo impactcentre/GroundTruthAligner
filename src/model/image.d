@@ -381,8 +381,22 @@ public:
     return mcmap.length;
   }
 
+  /**
+   * Get the number of Text Lines detected.
+   * Returns:
+   *    The number of text lines detected.
+   */
   @property ulong get_num_textlines () { return mtextlines.length; }
 
+  /**
+   * Get the start y-coord of the first pixel of the text line 'l' and
+   * the height in pixels of the baseline also.
+   * 
+   * Parameters:
+   *    l = The text line we are interested in.
+   *    s = The start y-coord of the base line of the textline.
+   *    h = The height in pixels of the baseline
+   */
   void get_textline_start_height (in int l, out int s, out int h)
     in { assert ( l < mtextlines.length); }
   body {
@@ -480,6 +494,7 @@ public:
       build_histogram (mtextlines[i]);
     }
 
+    // Detect the x-coords for the right and left margins.
     detect_margins ();
   }
 
@@ -512,11 +527,73 @@ private:
    * Locate the x-coordinate for the right/left margins of the text lines.
    */
   void detect_margins () 
-    body 
+    in
       {
+	assert (mtextlines !is null);
+      }
+  body
+    {
+      int s, h;
+      float delta;
+      char r,g,b;
+      const Color cl = Color.BLACK;
 
+      mlmargin = 0;
+      mrmargin = 0;
+
+      ///////////////////////
+      // 1- Left margin... //
+      ///////////////////////
+      // For every textline
+      for (auto l = 0; l < mtextlines.length; l++) {
+	get_textline_start_height (l, s, h);
+	delta = h / 2.0;
+
+	int pxi = cast (int) (s - delta);
+	int pxf = cast (int) (s + h + delta);
+	int xmargin = 0;
+
+	for (int y = pxi; y <= pxf; y++) {
+	  for (int x = 0; x < mw; x++) {
+	    get_rgb (x, y, r, g, b);
+	    if (r == cl && g == cl && b == cl) {
+	      xmargin += x;
+	      break;
+	    }
+	  }
+	}
+	mlmargin += (xmargin / (pxf-pxi+1));
       }
 
+      mlmargin /= mtextlines.length;
+
+      ////////////////////////
+      // 2- Right margin... //
+      ////////////////////////
+      // For every textline
+      for (auto l = 0; l < mtextlines.length; l++) {
+	get_textline_start_height (l, s, h);
+	delta = h / 2.0;
+
+	int pxi = cast (int) (s - delta);
+	int pxf = cast (int) (s + h + delta);
+	int xmargin = 0;
+
+	for (int y = pxi; y <= pxf; y++) {
+	  for (int x = mw-1; x >= 0; x--) {
+	    get_rgb (x, y, r, g, b);
+	    if (r == cl && g == cl && b == cl) {
+	      xmargin += x;
+	      break;
+	    }
+	  }
+	}
+	mrmargin += (xmargin / (pxf-pxi+1));
+      }
+
+      mrmargin /= mtextlines.length;
+    }
+  
   /**
    * Builds the skyline of a text line.
    * 
@@ -779,6 +856,8 @@ unittest {
 
   writeln ("· Counting lines...");
   writefln ("This image has [%d] lines... I think :/", i.get_num_textlines);
+
+  writefln ("The left/right margins are at X:[%d] , X:[%d]", i.left_margin, i.right_margin);
 
   writeln ("\n--- 2nd round tests ---\n");
 
