@@ -538,8 +538,10 @@ private:
       char r,g,b;
       const Color cl = Color.BLACK;
 
-      mlmargin = 0;
-      mrmargin = 0;
+      mlmargin = mw;		// We want the minimum x whose
+				// pixel@x,y is black
+      mrmargin = 0;		// We want the maximum x whose
+				// pixel@x,y is black
 
       ////////////////////////
       // For every textline //
@@ -551,8 +553,6 @@ private:
 
 	  int pxi = cast (int) (s - delta);
 	  int pxf = cast (int) (s + h + delta);
-	  int xlmargin = 0;
-	  int xrmargin = 0;
 
 	  for (int y = pxi; y <= pxf; y++)
 	    {
@@ -560,7 +560,7 @@ private:
 	      for (int x = 0; x < mw; x++) {
 		get_rgb (x, y, r, g, b);
 		if (r == cl && g == cl && b == cl) {
-		  xlmargin += x;
+		  if (x < mlmargin) mlmargin = x;
 		  break;
 		}
 	      }
@@ -569,25 +569,14 @@ private:
 	      for (int x = mw-1; x >= 0; x--) {
 		get_rgb (x, y, r, g, b);
 		if (r == cl && g == cl && b == cl) {
-		  xrmargin += x;
+		  if (x > mrmargin) mrmargin = x;
 		  break;
 		}
 	      }
 
 	    }
-
-	  xlmargin /= (pxf-pxi+1);
-	  xrmargin /= (pxf-pxi+1);
-
-	  debug writefln ("Line %d lmargin: %d , rmargin: %d", l , xlmargin, xrmargin);
-
-	  mlmargin += xlmargin;
-	  mrmargin += xrmargin;
 	}
-
-      mlmargin /= mtextlines.length;
-      mrmargin /= mtextlines.length;
-
+      debug writefln ("> lmargin: %d , rmargin: %d", mlmargin, mrmargin);
     }
   
   /**
