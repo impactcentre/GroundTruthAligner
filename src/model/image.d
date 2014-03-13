@@ -66,15 +66,7 @@ public:
   // Constructor //
   /////////////////
   this () {
-    mlwmbp = -1;
-    mbppl = null;
-    mpxbf_rotated = null;
-    mpxbf = null;
-    mbase = null;
-    mnc   = 0;
-    mw    = 0;
-    mh    = 0;
-    mrs   = 0;
+    init_instance_variables ();
   }
   
   /////////////////
@@ -92,16 +84,12 @@ public:
   /////////////
   // Signals //
   /////////////////////////////////////////////////////////////////////////
-
   mixin Signal!(string, float) signal_progress;
-
   /////////////////////////////////////////////////////////////////////////
-  // Signals //
-  /////////////
 
   /////////////
   // Methods //
-  /////////////
+  /////////////////////////////////////////////////////////////////////////
 
   @property Pixbuf data () { return mpxbf_rotated; }
 
@@ -131,6 +119,18 @@ public:
    *     The number of black pixels in the line with most of them.
    */
   @property int bpx_in_blackest_line () { return mbppl[mlwmbp]; }
+
+  /**
+   * Returns:
+   *   The X coordinate for the left margin.
+   */
+  @property int left_margin () { return mlmargin; }
+
+  /**
+   * Returns:
+   *   The X coordinate for the rightt margin.
+   */
+  @property int right_margin () { return mrmargin; }
 
   /**
    * Returns the mean and the variance of the black pixels from the
@@ -216,15 +216,7 @@ public:
 		      mpxbf.getWidth(), 
 		      mpxbf.getHeight());
     } else {
-      mlwmbp = -1;
-      mbppl = null;
-      mpxbf_rotated = null;
-      mpxbf = null;
-      mbase = null;
-      mnc   = 0;
-      mw    = 0;
-      mh    = 0;
-      mrs   = 0;
+      init_instance_variables ();
     }
   }
 
@@ -425,7 +417,7 @@ public:
     ulong  maxd  = 0;
     ulong  curd  = 0;           // digits of the number of blackpixels
 				// of the current line
-    int    l     = 0;	        // current line of pixels being processed
+    int    l     = 0;	        // current line of pixels being processed: 0..mh
     bool   must_exit = false;	// Are al pixel-lines processed?
     float  m,v;
     int    ph    = 0;		// Pixel height of current text line
@@ -471,29 +463,24 @@ public:
     }
 
     float phmean = cast(float)(sh) / tl.length;	// Pixel height mean
+						// for every possible
+						// TextLine.
 
+    // We now filter out the TextLines that aren't according to
+    // the phmean.
+    auto min_pxheight = phmean / 2.0;
     for (auto i = 0; i < tl.length; i++) {
-      if ( abs (tl[i].pixel_height - phmean) < (phmean/2.0) )
+      if ( abs (tl[i].pixel_height - phmean) < min_pxheight )
 	mtextlines ~= tl[i];
     }
 
     // The SkyLine + Histogram for every text line detected
     for (auto i = 0; i < mtextlines.length; i++) {
-      
-      /*debug writefln ("Before building skmap length: %d , PTR= %x",
-	mtextlines[i].skyline.length, mtextlines[i].skyline.ptr);*/
-      
       build_skyline (mtextlines[i]);
       build_histogram (mtextlines[i]);
-
-      /*debug writefln ("After building skmap length: %d , PTR= %x",
-	mtextlines[i].skyline.length, mtextlines[i].skyline.ptr);*/
-
-      /*debug for (int x = 0; x < mw; x++) {
-	writefln ("BuilT SkyLine[PS: %d PH: %d] for x: %d gives y: %d.",
-	mtextlines[i].pixel_start, mtextlines[i].pixel_height, x, mtextlines[i].skyline[x]);
-      }*/
     }
+
+    detect_margins ();
   }
 
 private:
@@ -505,6 +492,30 @@ private:
     if (mpxbf is null)
       assert (mbase is null);
   }
+
+  void init_instance_variables () {
+      mlwmbp = -1;
+      mbppl = null;
+      mpxbf_rotated = null;
+      mpxbf = null;
+      mbase = null;
+      mnc   = 0;
+      mw    = 0;
+      mh    = 0;
+      mrs   = 0;
+      mtextlines = null;
+      mrmargin = -1;
+      mlmargin = -1;
+  }
+
+  /**
+   * Locate the x-coordinate for the right/left margins of the text lines.
+   */
+  void detect_margins () 
+    body 
+      {
+
+      }
 
   /**
    * Builds the skyline of a text line.
@@ -678,6 +689,8 @@ private:
   int            mlwmbp;	// Line with most black pixels
   int[string]    mcmap;		// Color map of the image
   TextLineInfo[] mtextlines;	// Detected text lines in bitmap, pixel start and pixel height
+  int            mrmargin;	// X-coord for the right margin.
+  int            mlmargin;	// X-coord for the left margin.
 }
 
 ////////////////////////////////////////////////////////////////////////////////
