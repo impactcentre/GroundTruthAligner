@@ -533,6 +533,7 @@ private:
       }
   body
     {
+      int pcount; 		// White/Black pixels count
       int s, h;
       float delta;
       char r,g,b;
@@ -553,6 +554,8 @@ private:
 
 	  int pxi = cast (int) (s - delta);
 	  int pxf = cast (int) (s + h + delta);
+
+	  pcount += pxf-pxi+1;
 
 	  for (int y = pxi; y <= pxf; y++)
 	    {
@@ -577,6 +580,7 @@ private:
 	    }
 	}
       debug writefln ("> lmargin: %d , rmargin: %d", mlmargin, mrmargin);
+      debug writefln ("> Total vertical px count: %d", pcount);
     }
   
   /**
