@@ -30,6 +30,7 @@ import std.math;
 import core.memory: GC;		// We need to play with the garbage collector
 import std.conv;
 import std.signals;
+import std.algorithm;
 
 /////////
 // GDK //
@@ -563,8 +564,12 @@ private:
 	      for (int x = 0; x < mw; x++) {
 		get_rgb (x, y, r, g, b);
 		if (r == cl && g == cl && b == cl) {
-		  if (x < mlmargin) mlmargin = x;
-		  break;
+		  if ( (x < mlmargin) && 
+		       (!is_pixel_alone (x, y, pxi, pxf)) )
+		    {
+		      mlmargin = x;
+		      break;
+		    }
 		}
 	      }
 
@@ -572,8 +577,12 @@ private:
 	      for (int x = mw-1; x >= 0; x--) {
 		get_rgb (x, y, r, g, b);
 		if (r == cl && g == cl && b == cl) {
-		  if (x > mrmargin) mrmargin = x;
-		  break;
+		  if ( (x > mrmargin) && 
+		       (!is_pixel_alone (x, y, pxi, pxf)) )
+		    {
+		      mrmargin = x;
+		      break;
+		    }
 		}
 	      }
 
@@ -582,7 +591,40 @@ private:
       debug writefln ("> lmargin: %d , rmargin: %d", mlmargin, mrmargin);
       debug writefln ("> Total vertical px count: %d", pcount);
     }
-  
+
+  /**
+   * We are interested in knowing if pixel@(x,y) is alone -a kind of island-.
+   * yb and ye are the initial and final y-coords of a textline.
+   * So we check vertically from (x, yb..y..ye) and count black pixels in that pixel line.
+   *
+   * Returns:
+   *   true if the count of black pixels is less than the half of pixels in that line.
+   */
+  bool is_pixel_alone (in int x, in int y, in int yb, in int ye) 
+    in { 
+      assert (x < mw);
+      assert (y < mh);
+    }
+  body {
+    char r,g,b;
+    const Color clb = Color.BLACK;
+    int x1, y1, x2, y2;
+    int bpc = 0; 		// Black pixel count
+    int half = (ye-yb+1)/2;	// (total pix. count)/2
+
+    for (int ly = yb; ly < ye; ly++) {
+      get_rgb (x, ly, r, g, b);
+      if (r == clb && g == clb && b == clb) {
+	bpc++;
+      }
+    }
+
+    debug writefln ("x: %d, y: %d, half:%d , bpc:%d , alone: %s", x, y, half, bpc, bpc<half);
+
+    // 
+    return (bpc < half);
+  }
+
   /**
    * Builds the skyline of a text line.
    * 

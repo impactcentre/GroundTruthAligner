@@ -661,8 +661,22 @@ public:
       // ctx.stroke ();			   //
       ///////////////////////////////////////
     }
-
     ctx.stroke ();
+
+    // Draw the margins...
+    ctx.setSourceRgb (0.2, 0.1, 0.7);
+    ctx.setLineWidth (1.0);
+
+    int marginx = malignmodel.get_image.left_margin;
+    int marginy = malignmodel.get_image_height;
+    ctx.moveTo (marginx, 0);
+    ctx.lineTo (marginx, malignmodel.get_image_height);
+
+    marginx = malignmodel.get_image.right_margin;
+    ctx.moveTo (marginx, 0);
+    ctx.lineTo (marginx, malignmodel.get_image_height);
+    ctx.stroke ();
+
     ctx.restore ();
   }
 
