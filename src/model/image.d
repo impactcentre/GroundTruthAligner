@@ -528,10 +528,9 @@ private:
    * Locate the x-coordinate for the right/left margins of the text lines.
    */
   void detect_margins () 
-    in
-      {
-	assert (mtextlines !is null);
-      }
+    in {
+      assert (mtextlines !is null);
+    }
   body
     {
       int pcount; 		// White/Black pixels count
@@ -619,9 +618,10 @@ private:
       }
     }
 
-    debug writefln ("x: %d, y: %d, half:%d , bpc:%d , alone: %s", x, y, half, bpc, bpc<half);
+    debug writefln ("x: %d, y: %d, half:%d , bpc:%d , alone: %s",
+		    x, y, half, bpc, bpc<half);
 
-    // 
+    // Pixel@(x,y) is almos alone if...
     return (bpc < half);
   }
 
