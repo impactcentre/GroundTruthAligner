@@ -621,7 +621,7 @@ private:
     // debug writefln ("x: %d, y: %d, half:%d , bpc:%d , alone: %s",
     // 		    x, y, half, bpc, bpc<half);
 
-    // Pixel@(x,y) is almos alone if...
+    // Pixel@(x,y) is almost alone if...
     return (bpc < half);
   }
 
