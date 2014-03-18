@@ -50,30 +50,37 @@ public:
   
   //-- Methods -----------------------------------------------
 
+  @property bool has_alpha () {
+    if (the_pixbuf !is null)
+      return cast(bool) the_pixbuf.getHasAlpha ();
+    else
+      return false;
+  }
+
   @property char* base () {
     if (the_pixbuf !is null)
-      return the_pixbuf.getPixels();
+      return the_pixbuf.getPixels ();
     else
       return null;
   }
 
   @property int nchannels () {
     if (the_pixbuf !is null)
-      return the_pixbuf.getNChannels();
+      return the_pixbuf.getNChannels ();
     else
       return -1;
   }
 
   @property int width () {
     if (the_pixbuf !is null)
-      return the_pixbuf.getWidth();
+      return the_pixbuf.getWidth ();
     else
       return -1;
   }
 
   @property int height () {
     if (the_pixbuf !is null)
-      return the_pixbuf.getHeight();
+      return the_pixbuf.getHeight ();
     else
       return -1;
   }
@@ -87,6 +94,11 @@ public:
 
   /// Low level access
   @property Pixbuf data () { return the_pixbuf; }
+  @property Pixbuf get_gdkpixbuf () { return the_pixbuf; }
+  void set_gdkpixbuf (Pixbuf p) {
+     if (the_pixbuf !is null) { the_pixbuf.unref(); }
+     the_pixbuf = p;
+  }
 
   /**
    * Get the RGB values from pixel x,y,
@@ -119,25 +131,28 @@ public:
     free_resources ();
 
     original_pixbuf = new Pixbuf (file_name);
-    the_pixbuf = original_pixbuf.copy ();
+    if (original_pixbuf !is null)
+      the_pixbuf = original_pixbuf.copy ();
   }
 
   @property bool is_valid_pixmap () { return (the_pixbuf !is null); }
 
 private:
   
-  /////////////////////
-  // Class invariant //
-  /////////////////////
+  //-- Class invariant -----------------------------------------
+
+  /// The exported pixbuf is null iff original_pixbuf is null
   invariant () {
-    
+    assert ( the_pixbuf is null && original_pixbuf is null );
   }
 
+  /// Initializes instance variables of the Pixmap class
   void init_instance_variables () { 
     file_name = "";
     the_pixbuf = original_pixbuf = null;
   }
 
+  /// Frees the resources, the two Gdk.Pixbuf's
   void free_resources () {
     if (the_pixbuf !is null) the_pixbuf.unref ();
     if (original_pixbuf !is null) original_pixbuf.unref ();

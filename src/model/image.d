@@ -95,20 +95,15 @@ public:
   // Methods //
   /////////////////////////////////////////////////////////////////////////
 
-  @property Pixbuf data () { return mpxbf_rotated; }
+  @property Pixbuf data () { return the_pixmap.get_gdkpixbuf; }
+  @property Pixmap get_pixmap () { return the_pixmap; }
 
   @property int width () {
-    if (mpxbf !is null)
-      return mpxbf.getWidth();
-    else
-      return -1;
+    return the_pixmap.width;
   }
 
   @property int height () {
-    if (mpxbf !is null)
-      return mpxbf.getHeight();
-    else
-      return -1;
+    return the_pixmap.height;
   }
 
   /**
@@ -167,12 +162,12 @@ public:
    *     the number of black pixels in line 'y'.
    */
   int get_black_pixels_in_line (int y) 
-    in { 
-      assert (y < mh);
+    in {
+      assert (the_pixmap.is_valid_pixmap);
+      assert (y < the_pixmap.height);
     }
   body {
-    if (mpxbf !is null) return mbppl[y];
-    return 0;
+    return mbppl[y];
   }
 
   /**
@@ -185,8 +180,8 @@ public:
     char r,g,b;
     int c = 0;
     
-    for (int x = 0; x < mw; x++)
-      for (int y = 0; y < mh; y++) {
+    for (int x = 0; x < the_pixmap.width; x++)
+      for (int y = 0; y < the_pixmap.height; y++) {
 	get_rgb (x, y, r, g, b);
 	if (r == cl && g == cl && b == cl)
 	  c++;
@@ -202,24 +197,10 @@ public:
     if (filename == "") return;
 
     signal_progress.emit ("Loading image", 0.25);
+    the_pixmap.load_from_file (filename);
 
-    // the_pixmap.free_resources ();
-    if (mpxbf !is null) { mpxbf.unref(); }
-    if (mpxbf_rotated !is null) { mpxbf_rotated.unref(); }
-
-    mpxbf = new Pixbuf (filename);
-
-    if (mpxbf !is null) {
-
-      if (mpxbf_rotated !is null) { mpxbf_rotated.unref(); }
-      mpxbf_rotated = mpxbf.copy ();	// We save the original image
-					// in case we rotate/scale it.
+    if (the_pixmap.is_valid_pixmap) {
       get_image_parameters ();
-      //count_black_pixels_per_line ();  // <- invoked inside "get_image_parameters"
-
-      debug writefln ("Pixbuf loaded:\nImage is %u X %u pixels\n", 
-		      mpxbf.getWidth(), 
-		      mpxbf.getHeight());
     } else {
       init_instance_variables ();
     }
@@ -229,35 +210,22 @@ public:
    * Get the RGB values from pixel x,y,
    */
   void get_rgb (in int x, in int y, out char r, out char g, out char b) {
-    if (mpxbf_rotated !is null) {
-      if ( (x < mw) && (y < mh) ) {
-	  char* e = cast(char*) (mbase + (y * mrs) + (x * mnc));
-	  r = e[0];
-	  g = e[1];
-	  b = e[2];
-	} else r = g = b = 0;
-    } else r = g = b = 0;
+    the_pixmap.get_rgb (x,y,r,g,b);
   }
 
   /**
    * Set the RGB values for pixel x,y,
    */
   void set_rgb (in int x, in int y, in char r, in char g, in char b) {
-    if (mpxbf_rotated !is null) {
-      if ( (x < mw) && (y < mh) ) {
-	  char* e = cast(char*) (mbase + (y * mrs) + (x * mnc));
-	  e[0] = r;
-	  e[1] = g;
-	  e[2] = b;
-	}
-    }
+    the_pixmap.set_rgb (x,y,r,g,b);
   }
 
   /**
    * Checks for a valid image loaded.
    */
   @property bool is_valid () {
-    return mpxbf !is null;
+    return the_pixmap.is_valid_pixmap;
+    //return mpxbf !is null;
   }
 
   /**
@@ -268,13 +236,13 @@ public:
    */
   public void rotate_by (float deg) {
 
-    if (mpxbf !is null) {
+    if (the_pixmap.is_valid_pixmap) {
       //mpxbf = mpxbf_orig;
 
-      CairoFormat  fmt = mpxbf.getHasAlpha () ? CairoFormat.ARGB32 : CairoFormat.RGB24;
-      //int            w = mpxbf.getWidth ();
-      //int            h = mpxbf.getHeight ();
-      ImageSurface ims = ImageSurface.create (fmt, mw, mh);
+      CairoFormat  fmt = the_pixmap.has_alpha () ? CairoFormat.ARGB32 : CairoFormat.RGB24;
+      int            w = the_pixmap.width ();
+      int            h = the_pixmap.height ();
+      ImageSurface ims = ImageSurface.create (fmt, w, h);
       Context      ctx = Context.create (ims);
       float        rad = deg * PI / 180.0;
 
@@ -285,16 +253,16 @@ public:
 	GC.collect();
       }
 
-      ctx.translate (mw/2.0, mh/2.0);
+      ctx.translate (w/2.0, h/2.0);
       ctx.rotate (rad);
-      ctx.setSourcePixbuf (mpxbf, -mw/2.0, -mh/2.0);
+      ctx.setSourcePixbuf (the_pixmap.get_gdkpixbuf, -w/2.0, -h/2.0);
       ctx.paint ();
 
       //ims.writeToPng ("/tmp/rotated.png");
 
-      if (mpxbf_rotated !is null) { mpxbf_rotated.unref(); }
-      mpxbf_rotated = Pixbuf.getFromSurface (ims, 0, 0, 
-					     ims.getWidth(), ims.getHeight ());
+      the_pixmap.set_gdkpixbuf (Pixbuf.getFromSurface (ims, 0, 0, 
+						       ims.getWidth(), 
+						       ims.getHeight ()));
       get_image_parameters ();
       //count_black_pixels_per_line ();  // <- invoked inside "get_image_parameters"
     }
@@ -308,7 +276,7 @@ public:
    *     Skew angle detected in degrees.
    */
   int detect_skew () 
-    in { assert (mpxbf !is null); }
+    in { assert (the_pixmap.is_valid_pixmap); }
     body {
 
     struct SkewInfo {
@@ -346,7 +314,8 @@ public:
 	ra = si_aux.deg;
       }
 
-      writefln ("v: %f , deg: %d , maxv: %f , ra: %d", si_aux.variance, si_aux.deg, maxv , ra);
+      debug writefln ("v: %f , deg: %d , maxv: %f , ra: %d", 
+		      si_aux.variance, si_aux.deg, maxv , ra);
     }
 
     return ra;
@@ -357,15 +326,14 @@ public:
    */
   void create_color_map () 
     in {
-      assert (mh > 0);
-      assert (mw > 0);
+      assert (the_pixmap.is_valid_pixmap);
     }
   body {
     char r,g,b;
     string cname;
 
-    for (int y = 0; y < mh; y++) {
-      for (int x = 0; x < mw; x++) {
+    for (int y = 0; y < the_pixmap.height; y++) {
+      for (int x = 0; x < the_pixmap.width; x++) {
 	get_rgb (x, y, r, g, b);
 	
 	cname = "";
@@ -428,7 +396,7 @@ public:
    */
   void detect_text_lines ()
     in {
-      assert (mh > 0);
+      assert (the_pixmap.is_valid_pixmap);
     }
   body {
     alias to_str = to!string;
@@ -458,7 +426,7 @@ public:
     do {
       // Going up in black pixels
       while ((curd < maxd) && (!must_exit)) {
-	if (l >= mh) must_exit = true;
+	if (l >= the_pixmap.height) must_exit = true;
 	else curd = to_str(get_black_pixels_in_line (l++)).length;
       }
 
@@ -466,7 +434,7 @@ public:
       ipxl = l;
       // Same number == maxd of black pixels
       while ((curd == maxd) && (!must_exit)) {
-	if (l >= mh) must_exit = true;
+	if (l >= the_pixmap.height) must_exit = true;
 	else {
 	  ph++;
 	  curd = to_str(get_black_pixels_in_line (l++)).length;
@@ -509,23 +477,27 @@ private:
   // Class invariant //
   /////////////////////
   invariant () {
-    if (mpxbf is null)
-      assert (mbase is null);
   }
 
   void init_instance_variables () {
       mlwmbp = -1;
       mbppl = null;
-      mpxbf_rotated = null;
-      mpxbf = null;
-      mbase = null;
-      mnc   = 0;
-      mw    = 0;
-      mh    = 0;
-      mrs   = 0;
+
+      // mpxbf_rotated = null;
+      // mpxbf = null;
+      // mbase = null;
+      // mnc   = 0;
+      // mw    = 0;
+      // mh    = 0;
+      // mrs   = 0;
+
       mtextlines = null;
       mrmargin = -1;
       mlmargin = -1;
+
+      if (the_pixmap !is null)
+	the_pixmap.destroy ();	// Free resources...
+      the_pixmap = new Pixmap;
   }
 
   /**
@@ -543,7 +515,7 @@ private:
       char r,g,b;
       const Color cl = Color.BLACK;
 
-      mlmargin = mw;		// We want the minimum x whose
+      mlmargin = the_pixmap.width; // We want the minimum x whose
 				// pixel@x,y is black
       mrmargin = 0;		// We want the maximum x whose
 				// pixel@x,y is black
@@ -564,7 +536,7 @@ private:
 	  for (int y = pxi; y <= pxf; y++)
 	    {
 	      // left margin
-	      for (int x = 0; x < mw; x++) {
+	      for (int x = 0; x < the_pixmap.width; x++) {
 		get_rgb (x, y, r, g, b);
 		if (r == cl && g == cl && b == cl) {
 		  if ( (x < mlmargin) && 
@@ -577,7 +549,7 @@ private:
 	      }
 
 	      // right margin
-	      for (int x = mw-1; x >= 0; x--) {
+	      for (int x = (the_pixmap.width - 1); x >= 0; x--) {
 		get_rgb (x, y, r, g, b);
 		if (r == cl && g == cl && b == cl) {
 		  if ( (x > mrmargin) && 
@@ -605,8 +577,8 @@ private:
    */
   bool is_pixel_alone (in int x, in int y, in int yb, in int ye) 
     in { 
-      assert (x < mw);
-      assert (y < mh);
+      assert (x < the_pixmap.width);
+      assert (y < the_pixmap.height);
     }
   body {
     char r,g,b;
@@ -642,10 +614,10 @@ private:
     char r,g,b;
     const Color cl = Color.BLACK;
 
-    tl.skyline = new int[mw];
+    tl.skyline = new int[the_pixmap.width];
     //debug writefln ("Building SkyLine PTR: %x", tl.skyline.ptr);
 
-    for (int x = 0; x < mw; x++) {
+    for (int x = 0; x < the_pixmap.width; x++) {
 
       with (tl) {		// Sweet Pascal memories...
 
@@ -681,10 +653,10 @@ private:
     char r,g,b;
     const Color cl = Color.BLACK;
 
-    tl.histogram = new int[mw];
+    tl.histogram = new int[the_pixmap.width];
     //debug writefln ("Building SkyLine PTR: %x", tl.skyline.ptr);
 
-    for (int x = 0; x < mw; x++) {
+    for (int x = 0; x < the_pixmap.width; x++) {
 
       with (tl) {		// Sweet Pascal memories...
 
@@ -709,19 +681,18 @@ private:
    * Counts and caches black pixels per line.
    */
   void count_black_pixels_per_line () 
-    in { 
-      assert (mh > 0); 
-      assert (mw > 0); 
+    in {
+      assert (the_pixmap.is_valid_pixmap); 
     }
   body {
     char  r,g,b;
     Color cl = Color.BLACK;
     int   mbp = -1;
 
-    mbppl = new int[mh];
+    mbppl = new int[the_pixmap.height];
 
-    for (int y = 0; y < mh; y++) {
-      for (int x = 0; x < mw; x++) {
+    for (int y = 0; y < the_pixmap.height; y++) {
+      for (int x = 0; x < the_pixmap.width; x++) {
 	get_rgb (x, y, r, g, b);
 	if (r == cl && g == cl && b == cl)
 	  ++mbppl[y];
@@ -738,13 +709,13 @@ private:
    * Caches the Pixbuf metadata.
    */
   void get_image_parameters () 
-    in { assert (mpxbf !is null); }
+    in { assert (the_pixmap.is_valid_pixmap); }
   body {
-      mbase = mpxbf_rotated.getPixels ();
-      mnc   = mpxbf_rotated.getNChannels ();
-      mw    = mpxbf_rotated.getWidth ();
-      mh    = mpxbf_rotated.getHeight ();
-      mrs   = mpxbf_rotated.getRowstride ();
+      // mbase = mpxbf_rotated.getPixels ();
+      // mnc   = mpxbf_rotated.getNChannels ();
+      // mw    = mpxbf_rotated.getWidth ();
+      // mh    = mpxbf_rotated.getHeight ();
+      // mrs   = mpxbf_rotated.getRowstride ();
 
       // Loading image is 25%
       signal_progress.emit ("Counting black-pixels", 0.5);
@@ -789,14 +760,19 @@ private:
      */
     int[] histogram;
   }
-  
-  Pixbuf         mpxbf;
-  Pixbuf         mpxbf_rotated;
-  char*          mbase;
-  int            mnc;
-  int            mw ;
-  int            mh ;
-  int            mrs;
+
+  // These vars must disappear...
+  // Pixbuf         mpxbf;
+  // Pixbuf         mpxbf_rotated;
+  // char*          mbase;
+  // int            mnc;
+  // int            mw ;
+  // int            mh ;
+  // int            mrs;
+  // These vars must disappear...
+
+  Pixmap         the_pixmap;
+
   int[]          mbppl;		// Black Pixels Per Line
   int            mlwmbp;	// Line with most black pixels
   int[string]    mcmap;		// Color map of the image
