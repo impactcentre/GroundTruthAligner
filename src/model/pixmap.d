@@ -39,16 +39,13 @@ public:
   /////////////////
   // Constructor //
   /////////////////
-  this () {
-    
-  }
-  
+  this () { init_instance_variables (); }
+
   /////////////////
   // Destructor  //
   /////////////////
   ~this () {
-    if (the_pixbuf !is null) the_pixbuf.unref ();
-    if (original_pixbuf !is null) original_pixbuf.unref ();
+    free_resources ();
   }
   
   //-- Methods -----------------------------------------------
@@ -88,11 +85,13 @@ public:
       return -1;
   }
 
+  /// Low level access
+  @property Pixbuf data () { return the_pixbuf; }
+
   /**
    * Get the RGB values from pixel x,y,
    */
-  void get_rgb (in int x, in int y, out char r, out char g, out char b)
-  {
+  void get_rgb (in int x, in int y, out char r, out char g, out char b) {
     if (the_pixbuf !is null) {
       if ( (x < width) && (y < height) ) {
 	  char* e = cast(char*) (base + (y * row_stride) + (x * nchannels));
@@ -104,8 +103,7 @@ public:
   /**
    * Set the RGB values for pixel x,y,
    */
-  void set_rgb (in int x, in int y, in char r, in char g, in char b) 
-  {
+  void set_rgb (in int x, in int y, in char r, in char g, in char b) {
     if (the_pixbuf !is null) {
       if ( (x < width) && (y < height) ) {
 	  char* e = cast(char*) (base + (y * row_stride) + (x * nchannels));
@@ -113,6 +111,18 @@ public:
 	}
     }
   }
+
+  /// Load image (pixbuf) from file 'f'
+  void load_from_file (string f) {
+    file_name = f;
+
+    free_resources ();
+
+    original_pixbuf = new Pixbuf (file_name);
+    the_pixbuf = original_pixbuf.copy ();
+  }
+
+  @property bool is_valid_pixmap () { return (the_pixbuf !is null); }
 
 private:
   
@@ -122,11 +132,21 @@ private:
   invariant () {
     
   }
+
+  void init_instance_variables () { 
+    file_name = "";
+    the_pixbuf = original_pixbuf = null;
+  }
+
+  void free_resources () {
+    if (the_pixbuf !is null) the_pixbuf.unref ();
+    if (original_pixbuf !is null) original_pixbuf.unref ();
+  }
   
   //////////
   // Data //
   //////////
   Pixbuf         the_pixbuf;
   Pixbuf         original_pixbuf;
-
+  string         file_name;
 }

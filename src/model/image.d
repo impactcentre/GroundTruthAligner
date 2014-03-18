@@ -50,6 +50,9 @@ import cairo.Surface;
 /////////
 //import mvc.modelview;
 
+//-- Model -----------------------------------------------------------
+import model.pixmap;
+
 ////////////////
 // Code begin //
 //////////////////////////////////////////////////////////////////////
@@ -200,6 +203,7 @@ public:
 
     signal_progress.emit ("Loading image", 0.25);
 
+    // the_pixmap.free_resources ();
     if (mpxbf !is null) { mpxbf.unref(); }
     if (mpxbf_rotated !is null) { mpxbf_rotated.unref(); }
 
