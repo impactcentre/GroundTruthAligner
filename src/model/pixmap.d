@@ -95,7 +95,7 @@ public:
   }
 
   /// Low level access
-  @property Pixbuf data () { return the_pixbuf; }
+  //@property Pixbuf data () { return the_pixbuf; }
   @property Pixbuf get_gdkpixbuf () { return the_pixbuf; }
   void set_gdkpixbuf (Pixbuf p) {
      if (the_pixbuf !is null) { the_pixbuf.unref(); }
