@@ -22,6 +22,8 @@
 
 module model.pixmap;
 
+import std.stdio;
+
 //-- GDK -----------------------------------------------
 import gdk.Pixbuf;
 
@@ -143,19 +145,21 @@ private:
 
   /// The exported pixbuf is null iff original_pixbuf is null
   invariant () {
-    assert ( the_pixbuf is null && original_pixbuf is null );
   }
 
   /// Initializes instance variables of the Pixmap class
   void init_instance_variables () { 
     file_name = "";
-    the_pixbuf = original_pixbuf = null;
+    //the_pixbuf = original_pixbuf = null;
+    free_resources ();
   }
 
   /// Frees the resources, the two Gdk.Pixbuf's
   void free_resources () {
     if (the_pixbuf !is null) the_pixbuf.unref ();
     if (original_pixbuf !is null) original_pixbuf.unref ();
+
+    the_pixbuf = original_pixbuf = null;
   }
   
   //////////

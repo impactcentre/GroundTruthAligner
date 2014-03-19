@@ -30,14 +30,14 @@ tests:
 	@$(DC) -main -unittest $(AM_DFLAGS) $(DFLAGS) pixmap.d -ofpixmap-test \
 	    $$(pkg-config --libs gtkd2)
 
-	@$(DC) -main -unittest $(AM_DFLAGS) $(DFLAGS) image.d -ofimage-test \
+	@$(DC) -main -unittest $(AM_DFLAGS) $(DFLAGS) image.d pixmap.d -ofimage-test \
 	    $$(pkg-config --libs gtkd2) $(MVC_LIB)
 
 	@$(DC) -main -unittest $(AM_DFLAGS) $(DFLAGS) xmltext.d -ofxmltext-test \
             $$(pkg-config --libs gtkd2) $(MVC_LIB)
 
 	@$(DC) -main -unittest $(AM_DFLAGS) $(DFLAGS) \
-            alignmodel.d image.d xmltext.d \
+            alignmodel.d image.d xmltext.d pixmap.d \
             -ofalignmodel-test $$(pkg-config --libs gtkd2) $(MVC_LIB)
 
 
@@ -61,6 +61,6 @@ pass-tests: tests
 ###############
 # Extra Clean #
 ###############
-CLEANFILES = *~ $(noinst_LIBRARIES)
+CLEANFILES = *~ $(noinst_LIBRARIES) *-test
 
 .PHONY: doc tests pass-tests

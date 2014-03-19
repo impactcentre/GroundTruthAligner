@@ -101,7 +101,7 @@ public:
   ////////////////////////////
   // Image relative methods //
   ////////////////////////////
-  @property Pixbuf get_image_data() { return mimage.data; }
+  @property Pixbuf get_image_data() { return mimage.raw_data; }
   @property int get_image_width() { return mimage.width; }
   @property int get_image_height() { return mimage.height; }
 
@@ -151,7 +151,7 @@ private:
   // Class invariant //
   /////////////////////
   invariant () {
-    assert (mimage !is null);
+    assert (mimage   !is null);
     assert (mxmltext !is null);
   }
 

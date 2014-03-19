@@ -95,7 +95,7 @@ public:
   // Methods //
   /////////////////////////////////////////////////////////////////////////
 
-  @property Pixbuf data () { return the_pixmap.get_gdkpixbuf; }
+  @property Pixbuf raw_data () { return the_pixmap.get_gdkpixbuf; }
   @property Pixmap get_pixmap () { return the_pixmap; }
 
   @property int width () {
@@ -845,7 +845,7 @@ unittest {
 
   writeln ("\n--- 2nd round tests ---");
 
-  assert (i.data   is null);
+  assert (i.data is null);
   assert (!i.is_valid);
   assert (i.width  == -1);
   assert (i.height == -1);
@@ -855,10 +855,8 @@ unittest {
   assert (i.is_valid);
   assert (i.height != -1);
 
-  // for (int l = 0; l < i.height; l++) {
-  //   writefln ("%d : %d", l, i.get_black_pixels_in_line (l));
-  // }
-
+  writefln ("Image width: %d height: %d", i.width, i.height);
+  /*
   writefln ("\n\tLine %d has %d blackpixels.", 
 	    i.blackest_line, i.bpx_in_blackest_line);
 
@@ -871,5 +869,5 @@ unittest {
   writefln ("The left/right margins are at X:[%d] , X:[%d]", i.left_margin, i.right_margin);
 
   writeln ("\n--- 2nd round tests ---\n");
-
+  */
 }
