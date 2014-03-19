@@ -22,7 +22,7 @@
 
 module model.pixmap;
 
-import std.stdio;
+//import std.stdio;
 
 //-- GDK -----------------------------------------------
 import gdk.Pixbuf;
@@ -165,7 +165,7 @@ private:
   //////////
   // Data //
   //////////
-  Pixbuf         the_pixbuf;
-  Pixbuf         original_pixbuf;
-  string         file_name;
+  Pixbuf the_pixbuf;
+  Pixbuf original_pixbuf;
+  string file_name;
 }

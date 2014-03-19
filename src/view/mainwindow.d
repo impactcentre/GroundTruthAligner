@@ -22,7 +22,7 @@
 
 // gdc -I/usr/include/dmd/gtkd2 reparent.d -o reparent -lgtk-3 -L ~/Descargas/gtkd -l gtkd-2 -ldl
 
-module gui.MainWindow;
+module view.mainwindow;
 
 /////////
 // GTK //

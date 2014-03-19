@@ -266,7 +266,6 @@ public:
       get_image_parameters ();
       //count_black_pixels_per_line ();  // <- invoked inside "get_image_parameters"
     }
-
   }
 
   /**
@@ -276,8 +275,10 @@ public:
    *     Skew angle detected in degrees.
    */
   int detect_skew () 
-    in { assert (the_pixmap.is_valid_pixmap); }
-    body {
+    in {
+      assert (the_pixmap.is_valid_pixmap);
+    }
+  body {
 
     struct SkewInfo {
       int deg;
@@ -314,8 +315,8 @@ public:
 	ra = si_aux.deg;
       }
 
-      debug writefln ("v: %f , deg: %d , maxv: %f , ra: %d", 
-		      si_aux.variance, si_aux.deg, maxv , ra);
+      /*  debug writefln ("v: %f , deg: %d , maxv: %f , ra: %d", 
+	  si_aux.variance, si_aux.deg, maxv , ra);*/
     }
 
     return ra;
@@ -371,20 +372,26 @@ public:
    *    h = The height in pixels of the baseline
    */
   void get_textline_start_height (in int l, out int s, out int h)
-    in { assert ( l < mtextlines.length); }
+    in {
+      assert ( l < mtextlines.length);
+    }
   body {
     s = mtextlines[l].pixel_start;
     h = mtextlines[l].pixel_height;
   }
 
   int[] get_textline_skyline (in int l)
-    in { assert ( l < mtextlines.length); }
+    in {
+      assert ( l < mtextlines.length);
+    }
   body {
     return mtextlines[l].skyline;
   }
 
   int[] get_textline_histogram (in int l)
-    in { assert ( l < mtextlines.length); }
+    in {
+      assert ( l < mtextlines.length);
+    }
   body {
     return mtextlines[l].histogram;
   }
@@ -497,6 +504,7 @@ private:
 
       if (the_pixmap !is null)
 	the_pixmap.destroy ();	// Free resources...
+
       the_pixmap = new Pixmap;
   }
 
@@ -563,8 +571,6 @@ private:
 
 	    }
 	}
-      debug writefln ("> lmargin: %d , rmargin: %d", mlmargin, mrmargin);
-      debug writefln ("> Total vertical px count: %d", pcount);
     }
 
   /**
@@ -593,9 +599,6 @@ private:
 	bpc++;
       }
     }
-
-    // debug writefln ("x: %d, y: %d, half:%d , bpc:%d , alone: %s",
-    // 		    x, y, half, bpc, bpc<half);
 
     // Pixel@(x,y) is almost alone if...
     return (bpc < half);
@@ -634,8 +637,6 @@ private:
 	    break;
 	  }
 	}
-	/*debug writefln ("Building SkyLine[PS: %d, PH:%d] for x: %d gives y: %d.",
-	  pixel_start, pixel_height, x, skyline[x]);*/
       }
     }
   }
@@ -671,8 +672,6 @@ private:
 	    histogram[x]++;
 	  }
 	}
-	/*debug writefln ("Building SkyLine[PS: %d, PH:%d] for x: %d gives y: %d.",
-	  pixel_start, pixel_height, x, skyline[x]);*/
       }
     }
   }
@@ -709,14 +708,10 @@ private:
    * Caches the Pixbuf metadata.
    */
   void get_image_parameters () 
-    in { assert (the_pixmap.is_valid_pixmap); }
+    in {
+      assert (the_pixmap.is_valid_pixmap);
+    }
   body {
-      // mbase = mpxbf_rotated.getPixels ();
-      // mnc   = mpxbf_rotated.getNChannels ();
-      // mw    = mpxbf_rotated.getWidth ();
-      // mh    = mpxbf_rotated.getHeight ();
-      // mrs   = mpxbf_rotated.getRowstride ();
-
       // Loading image is 25%
       signal_progress.emit ("Counting black-pixels", 0.5);
       count_black_pixels_per_line ();
@@ -745,7 +740,7 @@ private:
     int pixel_start;
     /**
      * The height in pixels of the 'core' of the text line, that is,
-     * it does not inlcude upper and lower rectangles that hold
+     * it does not include upper and lower rectangles that hold
      * 'htqg...' chars.
      */
     int pixel_height;
@@ -761,18 +756,7 @@ private:
     int[] histogram;
   }
 
-  // These vars must disappear...
-  // Pixbuf         mpxbf;
-  // Pixbuf         mpxbf_rotated;
-  // char*          mbase;
-  // int            mnc;
-  // int            mw ;
-  // int            mh ;
-  // int            mrs;
-  // These vars must disappear...
-
-  Pixmap         the_pixmap;
-
+  Pixmap         the_pixmap;	// The pixmap abstraction used to hold the scanned page
   int[]          mbppl;		// Black Pixels Per Line
   int            mlwmbp;	// Line with most black pixels
   int[string]    mcmap;		// Color map of the image
