@@ -283,7 +283,7 @@ public:
     struct SkewInfo {
       int deg;
       float variance;
-    };
+    }
 
     const angle = 10;		// we'll try from -angle..angle , step 1
     float m, v, maxv;
