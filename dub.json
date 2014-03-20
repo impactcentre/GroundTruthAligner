@@ -1,0 +1,17 @@
+{
+    "name":         "d-images",
+    "description":  "Succeed aligner.",
+    "copyright":    "Copyright © 2014, acorbi",
+    "authors":      ["Antonio-M. Corbi Bellot"],
+    "license" :     "Boost Software License - Version 1.0",
+    "dependencies": {
+    },
+
+    "targetType":          "executable",
+    "targetPath":          "bin",
+    "sourcePaths":         ["src"],
+    "importPaths":         ["src"],
+    "excludedSourceFiles": ["src/examples/*.d"],
+    "dflags":              ["-I/usr/include/dmd/gtkd2"],
+    "libs":                ["gtkd2", "gtk-3", "phobos2"]
+}
