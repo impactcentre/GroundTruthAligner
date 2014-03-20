@@ -487,20 +487,11 @@ private:
   }
 
   void init_instance_variables () {
-      mlwmbp = -1;
-      mbppl = null;
-
-      // mpxbf_rotated = null;
-      // mpxbf = null;
-      // mbase = null;
-      // mnc   = 0;
-      // mw    = 0;
-      // mh    = 0;
-      // mrs   = 0;
-
+      mlwmbp     = -1;
+      mbppl      = null;
       mtextlines = null;
-      mrmargin = -1;
-      mlmargin = -1;
+      mrmargin   = -1;
+      mlmargin   = -1;
 
       if (the_pixmap !is null)
 	the_pixmap.destroy ();	// Free resources...
