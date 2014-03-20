@@ -16,6 +16,6 @@
     "sourcePaths":         ["src"],
     "sourceFiles":         ["src/config/constants.d"],
     "excludedSourceFiles": ["src/examples/*.d"],
-    "dflags":              ["-I/usr/include/dmd/gtkd2"],
+    "dflags":              ["-I/usr/include/dmd/gtkd2", "-inline"],
     "libs":                ["gtkd2", "gtk-3", "phobos2"]
 }
