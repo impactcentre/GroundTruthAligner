@@ -829,7 +829,7 @@ unittest {
 
   writeln ("\n--- 2nd round tests ---");
 
-  assert (i.data is null);
+  assert (i.raw_data is null);
   assert (!i.is_valid);
   assert (i.width  == -1);
   assert (i.height == -1);
