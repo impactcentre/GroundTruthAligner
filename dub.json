@@ -7,10 +7,14 @@
     "dependencies": {
     },
 
+    "preGenerateCommands": ["sed -e 's#@abs_top_srcdir@#'`pwd`'#' src/config/constants.d.in > src/config/constants.d"],
+
     "targetType":          "executable",
     "targetPath":          "bin",
-    "sourcePaths":         ["src"],
+
     "importPaths":         ["src"],
+    "sourcePaths":         ["src"],
+    "sourceFiles":         ["src/config/constants.d"],
     "excludedSourceFiles": ["src/examples/*.d"],
     "dflags":              ["-I/usr/include/dmd/gtkd2"],
     "libs":                ["gtkd2", "gtk-3", "phobos2"]
