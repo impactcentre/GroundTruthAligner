@@ -2,19 +2,19 @@
 include ../d-support.mk
 
 bin_PROGRAMS      = d-images
-d_images_SOURCES  = main.d $(top_srcdir)/src/config/constants.d
+d_images_SOURCES  = main.d $(abs_top_builddir)/src/config/constants.d
 
 if DMD
-d_images_DFLAGS             = -I$(top_srcdir)/src $(CORE_DEPS_CFLAGS)
-d_images_LDFLAGS            = -L-L$(top_srcdir)/src/mvc \
-                              -L-L$(top_srcdir)/src/view \
-                              -L-L$(top_srcdir)/src/model
+d_images_DFLAGS             = -I$(abs_top_srcdir)/src -I$(abs_top_builddir)/src $(CORE_DEPS_CFLAGS)
+d_images_LDFLAGS            = -L-L$(abs_top_builddir)/src/mvc \
+                              -L-L$(abs_top_builddir)/src/view \
+                              -L-L$(abs_top_builddir)/src/model
 d_images_LDADD              = -L-l:libgui.a -L-l:libmvc.a \
                               -L-l:libmodel.a $(CORE_DEPS_LIBS)
-EXTRA_d_images_DEPENDENCIES = $(top_srcdir)/src/view/libgui.a \
-                              $(top_srcdir)/src/mvc/libmvc.a \
-                              $(top_srcdir)/src/model/libmodel.a
-d_images_DOC                = -D -Dd$(top_srcdir)/src/doc
+EXTRA_d_images_DEPENDENCIES = $(abs_top_builddir)/src/view/libgui.a \
+                              $(abs_top_builddir)/src/mvc/libmvc.a \
+                              $(abs_top_builddir)/src/model/libmodel.a
+d_images_DOC                = -D -Dd$(abs_top_builddir)/src/doc
 else
 d_images_DFLAGS   = -O2 $(CORE_DEPS_CFLAGS)
 d_images_LDFLAGS  = -lsqlite3 $(CORE_DEPS_LIBS)
