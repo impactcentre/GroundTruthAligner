@@ -4,8 +4,7 @@
     "copyright":    "Copyright © 2014, acorbi",
     "authors":      ["Antonio-M. Corbi Bellot"],
     "license" :     "Boost Software License - Version 1.0",
-    "dependencies": {
-    },
+    "dependencies": {},
 
     "preGenerateCommands": ["sed -e 's#@abs_top_srcdir@#'`pwd`'#' src/config/constants.d.in > src/config/constants.d"],
 
@@ -16,6 +15,12 @@
     "sourcePaths":         ["src"],
     "sourceFiles":         ["src/config/constants.d"],
     "excludedSourceFiles": ["src/examples/*.d"],
-    "dflags":              ["-I/usr/include/dmd/gtkd2", "-inline"],
-    "libs":                ["gtkd2", "gtk-3", "phobos2"]
+    "dflags":              ["-I/usr/include/dmd/gtkd2"],
+    "libs":                ["gtkd2", "gtk-3", "phobos2"],
+
+    "buildTypes": {
+	"debug": {
+	    "buildOptions": ["debugMode", "debugInfoC", "alwaysStackFrame"]
+	}
+    },
 }
