@@ -22,7 +22,7 @@
 
 module model.pixmap;
 
-//import std.stdio;
+import std.stdio;
 
 //-- GDK -----------------------------------------------
 import gdk.Pixbuf;
@@ -47,7 +47,9 @@ public:
   // Destructor  //
   /////////////////
   ~this () {
+    debug writeln ("Destroying Pixmap!");
     free_resources ();
+    debug writeln ("After freeing pixmap resources!");
   }
   
   //-- Methods -----------------------------------------------
@@ -132,9 +134,10 @@ public:
 
     free_resources ();
 
-    original_pixbuf = new Pixbuf (file_name);
+    the_pixbuf = new Pixbuf (file_name);
+    /*original_pixbuf = new Pixbuf (file_name);
     if (original_pixbuf !is null)
-      the_pixbuf = original_pixbuf.copy ();
+    the_pixbuf = original_pixbuf.copy ();*/
   }
 
   @property bool is_valid_pixmap () { return (the_pixbuf !is null); }
@@ -150,13 +153,15 @@ private:
   /// Initializes instance variables of the Pixmap class
   void init_instance_variables () { 
     file_name = "";
-    //the_pixbuf = original_pixbuf = null;
-    free_resources ();
+    the_pixbuf = original_pixbuf = null;
+    //free_resources ();
   }
 
   /// Frees the resources, the two Gdk.Pixbuf's
   void free_resources () {
+    debug writeln ("pixbuf_unref");
     if (the_pixbuf !is null) the_pixbuf.unref ();
+    debug writeln ("orig-pixbuf_unref");
     if (original_pixbuf !is null) original_pixbuf.unref ();
 
     the_pixbuf = original_pixbuf = null;

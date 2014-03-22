@@ -70,6 +70,7 @@ public:
   // Constructor //
   /////////////////
   this () {
+    the_pixmap = null;
     init_instance_variables ();
   }
   
@@ -78,6 +79,9 @@ public:
   /////////////////
   ~this () {
     debug writeln ("Destroying Image!");
+    the_pixmap.destroy ();
+    the_pixmap = null;
+    debug writeln ("After dstroying the_pixmap!");
   }
 
   ///////////
@@ -95,7 +99,11 @@ public:
   // Methods //
   /////////////////////////////////////////////////////////////////////////
 
-  @property Pixbuf raw_data () { return the_pixmap.get_gdkpixbuf; }
+  @property Pixbuf raw_data () 
+    in { assert (the_pixmap !is null, "Uh Oh!"); }
+    body {
+      return the_pixmap.get_gdkpixbuf;
+    }
   @property Pixmap get_pixmap () { return the_pixmap; }
 
   @property int width () {
@@ -817,6 +825,7 @@ unittest {
 
 unittest {
   Image i = new Image;
+  i.destroy ();
 
   writeln ("\n--- 2nd round tests ---");
 
@@ -826,11 +835,19 @@ unittest {
   assert (i.height == -1);
 
   // hard coded path for now...
-  i.load_from_file ("../../data/318982.tif");
-  assert (i.is_valid);
-  assert (i.height != -1);
+  foreach (f ; ["../../data/318982.tif",  "../../data/439040bn.tif",  "../../data/8048.tif"]) {
+    i = new Image;
+    i.load_from_file (f);
 
-  writefln ("Image width: %d height: %d", i.width, i.height);
+    assert (i.is_valid);
+    assert (i.height != -1);
+
+    writefln ("Image width: %d height: %d colours: %d", 
+	      i.width, i.height, i.get_num_colours);
+
+    //i.destroy ();
+  }
+
   /*
   writefln ("\n\tLine %d has %d blackpixels.", 
 	    i.blackest_line, i.bpx_in_blackest_line);
