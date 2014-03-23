@@ -22,7 +22,9 @@
 
 module model.pixmap;
 
+//-- STD + CORE ----------------------------------------
 import std.stdio;
+import core.memory: GC;		// We need to play with the garbage collector
 
 //-- GDK -----------------------------------------------
 import gdk.Pixbuf;
@@ -47,9 +49,9 @@ public:
   // Destructor  //
   /////////////////
   ~this () {
-    debug writeln ("Destroying Pixmap!");
+    // debug writeln ("Destroying Pixmap!");
     free_resources ();
-    debug writeln ("After freeing pixmap resources!");
+    // debug writeln ("After freeing pixmap resources!");
   }
   
   //-- Methods -----------------------------------------------
@@ -161,8 +163,11 @@ private:
   void free_resources () {
     debug writeln ("pixbuf_unref");
     if (the_pixbuf !is null) the_pixbuf.unref ();
+
     debug writeln ("orig-pixbuf_unref");
     if (original_pixbuf !is null) original_pixbuf.unref ();
+
+    GC.collect ();
 
     the_pixbuf = original_pixbuf = null;
   }

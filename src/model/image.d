@@ -79,8 +79,10 @@ public:
   /////////////////
   ~this () {
     debug writeln ("Destroying Image!");
+  
     the_pixmap.destroy ();
     the_pixmap = null;
+
     debug writeln ("After dstroying the_pixmap!");
   }
 
@@ -100,10 +102,12 @@ public:
   /////////////////////////////////////////////////////////////////////////
 
   @property Pixbuf raw_data () 
-    in { assert (the_pixmap !is null, "Uh Oh!"); }
-    body {
+  {
+    if (the_pixmap is null)
+      return null;
+    else
       return the_pixmap.get_gdkpixbuf;
-    }
+  }
   @property Pixmap get_pixmap () { return the_pixmap; }
 
   @property int width () {
@@ -232,7 +236,10 @@ public:
    * Checks for a valid image loaded.
    */
   @property bool is_valid () {
-    return the_pixmap.is_valid_pixmap;
+    if (the_pixmap !is null)
+      return the_pixmap.is_valid_pixmap;
+    else
+      return false;
     //return mpxbf !is null;
   }
 
@@ -825,7 +832,7 @@ unittest {
 
 unittest {
   Image i = new Image;
-  i.destroy ();
+  //i.destroy ();
 
   writeln ("\n--- 2nd round tests ---");
 
@@ -836,7 +843,7 @@ unittest {
 
   // hard coded path for now...
   foreach (f ; ["../../data/318982.tif",  "../../data/439040bn.tif",  "../../data/8048.tif"]) {
-    i = new Image;
+    //i = new Image;
     i.load_from_file (f);
 
     assert (i.is_valid);
