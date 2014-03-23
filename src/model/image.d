@@ -144,26 +144,11 @@ public:
    */
   @property int right_margin () { return mrmargin; }
 
-  /**
-   * Returns the mean and the variance of the black pixels from the
-   * Image.
-   */
-  void get_mean_variance_bpixels (out float mean, out float variance) {
-    mean = variance = 0.0;
-    if (mbppl !is null) {
-      // Mean
-      for (int i = 0; i<mbppl.length ; i++) {
-	mean += mbppl[i];
-      }
-      mean /= mbppl.length;
 
-      // Variance
-      for (int i = 0; i<mbppl.length ; i++) {
-	variance += (mbppl[i]-mean)^^2.0;
-      }
-      variance /= mbppl.length;
-    }
-  }
+  /// Get the black pixels mean
+  @property float get_black_pixels_mean () { return mbpmean; }
+  /// Get the black pixels variance
+  @property float get_black_pixels_variance () { return mbpvariance; }
 
   /**
    * Counts black pixels in one line.
@@ -254,7 +239,7 @@ public:
    * Params:
    *   deg = The number of degrees to rotate the image.
    */
-  public void rotate_by (float deg) {
+  void rotate_by (float deg) {
 
     if (the_pixmap.is_valid_pixmap) {
       //mpxbf = mpxbf_orig;
@@ -312,15 +297,14 @@ public:
     SkewInfo[] si;
 
     // Initial variance...rotation angle is supposed to be 0 deg.
-    get_mean_variance_bpixels (m, v);
-    si ~= SkewInfo (0, v);
+    si ~= SkewInfo (0, mbpvariance);
     for (int a = -angle; a <= angle; a += 1) {
       if (a != 0) {
 
 	rotate_by (a);
-	get_mean_variance_bpixels (m, v);
+	//get_mean_variance_bpixels (m, v);
 
-	si ~= SkewInfo (a, v);
+	si ~= SkewInfo (a, mbpvariance);
       }
     }
 
@@ -440,11 +424,11 @@ public:
 
     mtextlines.length = 0;	// Clear the previous TextLineInfo data
 
-    get_mean_variance_bpixels (m, v); // Mean of black pixels per line
-    maxd = to_str(cast(int) m).length; // How many digits does have the mean of black pixels?
+    //get_mean_variance_bpixels (m, v); // Mean of black pixels per line
+    maxd = to_str(cast(int) mbpmean).length; // How many digits does have the mean of black pixels?
 
     debug writefln ("Max bpx: %s , mean bpx: %s , maxd: %s", 
-		    bpx_in_blackest_line, m, maxd);
+		    bpx_in_blackest_line, mbpmean, maxd);
 
     // number of digits of the figure of black pixels of the current
     // line (l)
@@ -708,6 +692,30 @@ private:
 	mlwmbp = y;
       }
     }
+
+    // Calculate the mean and the variance of black pixels.
+    calculate_mean_variance_bpixels ();
+  }
+
+  /**
+   * Returns the mean and the variance of the black pixels from the
+   * Image.
+   */
+  void calculate_mean_variance_bpixels () {
+    mbpmean = mbpvariance = 0.0;
+    if (mbppl !is null) {
+      // Mean
+      for (int i = 0; i<mbppl.length ; i++) {
+	mbpmean += mbppl[i];
+      }
+      mbpmean /= mbppl.length;
+
+      // Variance
+      for (int i = 0; i<mbppl.length ; i++) {
+	mbpvariance += (mbppl[i]-mbpmean)^^2.0;
+      }
+      mbpvariance /= mbppl.length;
+    }
   }
 
   /**
@@ -764,6 +772,8 @@ private:
 
   Pixmap         the_pixmap;	// The pixmap abstraction used to hold the scanned page
   int[]          mbppl;		// Black Pixels Per Line
+  float          mbpmean;	// The black pixels per line mean
+  float          mbpvariance;	// The black pixels per line variance
   int            mlwmbp;	// Line with most black pixels
   int[string]    mcmap;		// Color map of the image
   TextLineInfo[] mtextlines;	// Detected text lines in bitmap, pixel start and pixel height
