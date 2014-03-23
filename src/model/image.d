@@ -70,7 +70,8 @@ public:
   // Constructor //
   /////////////////
   this () {
-    the_pixmap = null;
+    the_pixmap = new Pixmap;	// The pixmap is alive all the time
+
     init_instance_variables ();
   }
   
@@ -78,12 +79,12 @@ public:
   // Destructor  //
   /////////////////
   ~this () {
-    debug writeln ("Destroying Image!");
+    //debug writeln ("Destroying Image!");
   
     the_pixmap.destroy ();
-    the_pixmap = null;
+    //the_pixmap = null;
 
-    debug writeln ("After dstroying the_pixmap!");
+    //debug writeln ("After dstroying the_pixmap!");
   }
 
   ///////////
@@ -204,7 +205,11 @@ public:
   /**
    * Loads the image in filename into the pixbuf.
    */
-  void load_from_file (string filename) {
+  void load_from_file (string filename) 
+    in {
+      assert (the_pixmap !is null);
+    }
+  body {
 
     if (filename == "") return;
 
@@ -507,11 +512,6 @@ private:
       mtextlines = null;
       mrmargin   = -1;
       mlmargin   = -1;
-
-      if (the_pixmap !is null)
-	the_pixmap.destroy ();	// Free resources...
-
-      the_pixmap = new Pixmap;
   }
 
   /**
@@ -841,32 +841,35 @@ unittest {
   assert (i.width  == -1);
   assert (i.height == -1);
 
-  // hard coded path for now...
-  foreach (f ; ["../../data/318982.tif",  "../../data/439040bn.tif",  "../../data/8048.tif"]) {
-    //i = new Image;
-    i.load_from_file (f);
+  // hard coded paths for now...
+  foreach (f ; ["../../data/318982.tif",  "../../data/439040bn.tif",  
+		"../../data/8048.tif"]) 
+    {  
+      //i = new Image;
+      writeln (" ---------===============------------- ");
+      i.load_from_file (f);
 
-    assert (i.is_valid);
-    assert (i.height != -1);
+      assert (i.is_valid);
+      assert (i.height != -1);
 
-    writefln ("Image width: %d height: %d colours: %d", 
-	      i.width, i.height, i.get_num_colours);
+      writefln ("Image width: %d height: %d colours: %d", 
+		i.width, i.height, i.get_num_colours);
 
-    //i.destroy ();
-  }
+      i.init_instance_variables ();
+    }
 
   /*
-  writefln ("\n\tLine %d has %d blackpixels.", 
-	    i.blackest_line, i.bpx_in_blackest_line);
+    writefln ("\n\tLine %d has %d blackpixels.", 
+    i.blackest_line, i.bpx_in_blackest_line);
 
-  writefln ("\tNumber %d has %d digits.\n", 
-	    i.bpx_in_blackest_line, to!string(i.bpx_in_blackest_line).length );
+    writefln ("\tNumber %d has %d digits.\n", 
+    i.bpx_in_blackest_line, to!string(i.bpx_in_blackest_line).length );
 
-  writeln ("· Counting lines...");
-  writefln ("This image has [%d] lines... I think :/", i.get_num_textlines);
+    writeln ("· Counting lines...");
+    writefln ("This image has [%d] lines... I think :/", i.get_num_textlines);
 
-  writefln ("The left/right margins are at X:[%d] , X:[%d]", i.left_margin, i.right_margin);
+    writefln ("The left/right margins are at X:[%d] , X:[%d]", i.left_margin, i.right_margin);
 
-  writeln ("\n--- 2nd round tests ---\n");
+    writeln ("\n--- 2nd round tests ---\n");
   */
 }
