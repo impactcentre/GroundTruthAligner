@@ -486,7 +486,7 @@ public:
       // 2. SkyLine //
       ////////////////
       if (mshowskyline.getActive) {
-	show_skylines (ctx);
+	show_sky_bottom_lines (ctx);
 	show_histograms (ctx);
       }
 
@@ -539,12 +539,13 @@ public:
   /**
    * Visually show the text skylines for each line.
    */
-  private void show_skylines (Context ctx) {
+  private void show_sky_bottom_lines (Context ctx) {
 
     int s, h;
     int w = malignmodel.get_image_width;
     float delta;
-    int[] sl;
+    int[] sl;			// Skyline
+    int[] bl;			// Bottomline
 
     ctx.save ();
 
@@ -553,14 +554,26 @@ public:
 
     for (int l = 0; l < malignmodel.get_image.get_num_textlines; l++) {
       sl = malignmodel.get_image.get_textline_skyline (l);
+      bl = malignmodel.get_image.get_textline_bottomline (l);
 
+      // skyline
+      //ctx.setSourceRgb (0.75, 0.1, 0.1);
       ctx.moveTo (0, sl[0]);
       for (int x = 1; x < sl.length-1; x++) {
 	ctx.lineTo (x+1, sl[x+1]);
       }
+      ctx.stroke ();
+
+      // bottomline
+      //ctx.setSourceRgb (0.1, 0.75, 0.4);
+      ctx.moveTo (0, bl[0]);
+      for (int x = 1; x < sl.length-1; x++) {
+	ctx.lineTo (x+1, bl[x+1]);
+      }
+      ctx.stroke ();
+
     }
 
-    ctx.stroke ();
     ctx.restore ();
   }
 

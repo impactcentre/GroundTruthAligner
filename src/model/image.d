@@ -392,6 +392,14 @@ public:
     return mtextlines[l].skyline;
   }
 
+  int[] get_textline_bottomline (in int l)
+    in {
+      assert ( l < mtextlines.length);
+    }
+  body {
+    return mtextlines[l].bottomline;
+  }
+
   int[] get_textline_histogram (in int l)
     in {
       assert ( l < mtextlines.length);
@@ -474,7 +482,7 @@ public:
 
     // The SkyLine + Histogram for every text line detected
     for (auto i = 0; i < mtextlines.length; i++) {
-      build_skyline (mtextlines[i]);
+      build_sky_bottom_line (mtextlines[i]);
       build_histogram (mtextlines[i]);
     }
 
@@ -603,11 +611,13 @@ private:
    * Parameters:
    *    tl = The TextLineInfo tho build the Skyline for.
    */
-  void build_skyline (ref TextLineInfo tl) {
+  void build_sky_bottom_line (ref TextLineInfo tl) {
     char r,g,b;
     const Color cl = Color.BLACK;
 
     tl.skyline = new int[the_pixmap.width];
+    tl.bottomline = new int[the_pixmap.width];
+
     //debug writefln ("Building SkyLine PTR: %x", tl.skyline.ptr);
 
     for (int x = 0; x < the_pixmap.width; x++) {
@@ -615,18 +625,28 @@ private:
       with (tl) {		// Sweet Pascal memories...
 
 	int d = pixel_height / 2;
+	int start =  pixel_start-d;
 	int finish = pixel_start + pixel_height + d;
 
 	//skyline[x] = pixel_start-d;
 	skyline[x] = finish;
+	bottomline[x] = start;
 
-	for (int y = pixel_start-d; y < finish; y++) {
+	for (int y = start; y < finish; y++) {
 	  get_rgb (x, y, r, g, b);
 	  if (r == cl && g == cl && b == cl) {
 	    skyline[x] = y;
 	    break;
 	  }
 	}
+	for (int y = finish; y > start; y--) {
+	  get_rgb (x, y, r, g, b);
+	  if (r == cl && g == cl && b == cl) {
+	    bottomline[x] = y;
+	    break;
+	  }
+	}
+
       }
     }
   }
@@ -763,6 +783,11 @@ private:
      * The SkyLine of the text line.
      */
     int[] skyline;
+
+    /**
+     * The BottomLine of the text line.
+     */
+    int[] bottomline;
 
     /**
      * The Histogram of the text line.
