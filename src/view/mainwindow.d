@@ -89,6 +89,11 @@ import mvc.modelview;
 ///////////
 import model.alignmodel;
 
+////////////
+// Config //
+////////////
+import config.types;
+
 /////////////
 // Aliases //
 /////////////
@@ -544,8 +549,8 @@ public:
     int s, h;
     int w = malignmodel.get_image_width;
     float delta;
-    int[] sl;			// Skyline
-    int[] bl;			// Bottomline
+    coord_t[] sl;			// Skyline
+    coord_t[] bl;			// Bottomline
 
     ctx.save ();
 
@@ -586,7 +591,7 @@ public:
     int w = malignmodel.get_image_width;
     float delta;
     int y;
-    int[] hist;
+    coord_t[] hist;
 
     ctx.save ();
 

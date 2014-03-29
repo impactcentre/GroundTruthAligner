@@ -50,6 +50,11 @@ import cairo.Surface;
 /////////
 //import mvc.modelview;
 
+////////////
+// Config //
+////////////
+import config.types;
+
 //-- Model -----------------------------------------------------------
 import model.pixmap;
 
@@ -384,7 +389,7 @@ public:
     h = mtextlines[l].pixel_height;
   }
 
-  int[] get_textline_skyline (in int l)
+  coord_t[] get_textline_skyline (in int l)
     in {
       assert ( l < mtextlines.length);
     }
@@ -392,7 +397,7 @@ public:
     return mtextlines[l].skyline;
   }
 
-  int[] get_textline_bottomline (in int l)
+  coord_t[] get_textline_bottomline (in int l)
     in {
       assert ( l < mtextlines.length);
     }
@@ -400,7 +405,7 @@ public:
     return mtextlines[l].bottomline;
   }
 
-  int[] get_textline_histogram (in int l)
+  coord_t[] get_textline_histogram (in int l)
     in {
       assert ( l < mtextlines.length);
     }
@@ -423,11 +428,11 @@ public:
     ulong  maxd  = 0;
     ulong  curd  = 0;           // digits of the number of blackpixels
 				// of the current line
-    int    l     = 0;	        // current line of pixels being processed: 0..mh
+    coord_t    l     = 0;	        // current line of pixels being processed: 0..mh
     bool   must_exit = false;	// Are al pixel-lines processed?
     float  m,v;
-    int    ph    = 0;		// Pixel height of current text line
-    int    ipxl  = 0;		// Initial y-coord in pixels of the current text line
+    coord_t    ph    = 0;		// Pixel height of current text line
+    coord_t    ipxl  = 0;		// Initial y-coord in pixels of the current text line
     TextLineInfo[] tl;
 
     mtextlines.length = 0;	// Clear the previous TextLineInfo data
@@ -615,8 +620,8 @@ private:
     char r,g,b;
     const Color cl = Color.BLACK;
 
-    tl.skyline = new int[the_pixmap.width];
-    tl.bottomline = new int[the_pixmap.width];
+    tl.skyline    = new coord_t[the_pixmap.width];
+    tl.bottomline = new coord_t[the_pixmap.width];
 
     //debug writefln ("Building SkyLine PTR: %x", tl.skyline.ptr);
 
@@ -624,22 +629,22 @@ private:
 
       with (tl) {		// Sweet Pascal memories...
 
-	int d = pixel_height / 2;
-	int start =  pixel_start-d;
-	int finish = pixel_start + pixel_height + d;
+	coord_t d = pixel_height / 2;
+	coord_t start =  cast (coord_t) (pixel_start - d);
+	coord_t finish = cast (coord_t) (pixel_start + pixel_height + d);
 
 	//skyline[x] = pixel_start-d;
 	skyline[x] = finish;
 	bottomline[x] = start;
 
-	for (int y = start; y < finish; y++) {
+	for (coord_t y = start; y < finish; y++) {
 	  get_rgb (x, y, r, g, b);
 	  if (r == cl && g == cl && b == cl) {
 	    skyline[x] = y;
 	    break;
 	  }
 	}
-	for (int y = finish; y > start; y--) {
+	for (coord_t y = finish; y > start; y--) {
 	  get_rgb (x, y, r, g, b);
 	  if (r == cl && g == cl && b == cl) {
 	    bottomline[x] = y;
@@ -664,7 +669,7 @@ private:
     char r,g,b;
     const Color cl = Color.BLACK;
 
-    tl.histogram = new int[the_pixmap.width];
+    tl.histogram = new coord_t[the_pixmap.width];
     //debug writefln ("Building SkyLine PTR: %x", tl.skyline.ptr);
 
     for (int x = 0; x < the_pixmap.width; x++) {
@@ -771,28 +776,28 @@ private:
      * The Y-coordinate of the pixel tha reflects the text line
      * begining.
      */
-    int pixel_start;
+    coord_t pixel_start;
     /**
      * The height in pixels of the 'core' of the text line, that is,
      * it does not include upper and lower rectangles that hold
      * 'htqg...' chars.
      */
-    int pixel_height;
+    coord_t pixel_height;
 
     /**
      * The SkyLine of the text line.
      */
-    int[] skyline;
+    coord_t[] skyline;
 
     /**
      * The BottomLine of the text line.
      */
-    int[] bottomline;
+    coord_t[] bottomline;
 
     /**
      * The Histogram of the text line.
      */
-    int[] histogram;
+    coord_t[] histogram;
   }
 
   Pixmap         the_pixmap;	// The pixmap abstraction used to hold the scanned page
