@@ -145,7 +145,7 @@ public:
 
   /**
    * Returns:
-   *   The X coordinate for the rightt margin.
+   *   The X coordinate for the right margin.
    */
   @property int right_margin () { return mrmargin; }
 
@@ -164,7 +164,7 @@ public:
    * Returns:
    *     the number of black pixels in line 'y'.
    */
-  int get_black_pixels_in_line (int y) 
+  ushort get_black_pixels_in_line (int y) 
     in {
       assert (the_pixmap.is_valid_pixmap);
       assert (y < the_pixmap.height);
@@ -440,14 +440,19 @@ public:
     //get_mean_variance_bpixels (m, v); // Mean of black pixels per line
     maxd = to_str(cast(int) mbpmean).length; // How many digits does have the mean of black pixels?
 
+    debug writefln ("*) Detecting text lines. Height is %d", the_pixmap.height);
     debug writefln ("Max bpx: %s , mean bpx: %s , maxd: %s", 
 		    bpx_in_blackest_line, mbpmean, maxd);
+
+    // throw new Exception ("Exit"); // Kind of exit();
 
     // number of digits of the figure of black pixels of the current
     // line (l)
     curd = to_str(get_black_pixels_in_line (l++)).length;
 
     do {
+      debug writefln ("Climbing mountain...l=(%d), curd(%d) maxd(%d)", l, curd, maxd);
+
       // Going up in black pixels
       while ((curd < maxd) && (!must_exit)) {
 	if (l >= the_pixmap.height) must_exit = true;
@@ -456,6 +461,9 @@ public:
 
       ph = 1;
       ipxl = l;
+
+      debug writefln ("Up in the mountain...l(%d), curd(%d) maxd(%d)", l, curd, maxd);
+
       // Same number == maxd of black pixels
       while ((curd == maxd) && (!must_exit)) {
 	if (l >= the_pixmap.height) must_exit = true;
@@ -468,6 +476,8 @@ public:
 
     } while (!must_exit);
 
+    debug writeln ("Adding heights...");
+
     int sh = 0;			// Sum of heights
     for (auto i = 0; i < tl.length; i++) {
       sh += tl[i].pixel_height;
@@ -477,6 +487,8 @@ public:
 						// for every possible
 						// TextLine.
 
+    debug writeln ("Filtering TextLines...");
+
     // We now filter out the TextLines that aren't according to
     // the phmean.
     auto min_pxheight = phmean / 2.0;
@@ -485,11 +497,15 @@ public:
 	mtextlines ~= tl[i];
     }
 
+    debug writeln ("Building skybot+hist...");
+
     // The SkyLine + Histogram for every text line detected
     for (auto i = 0; i < mtextlines.length; i++) {
       build_sky_bottom_line (mtextlines[i]);
       build_histogram (mtextlines[i]);
     }
+
+    debug writeln ("Detecting margins...");
 
     // Detect the x-coords for the right and left margins.
     detect_margins ();
@@ -624,6 +640,7 @@ private:
     tl.bottomline = new coord_t[the_pixmap.width];
 
     //debug writefln ("Building SkyLine PTR: %x", tl.skyline.ptr);
+    debug writeln  ("*) Building Sky/Bottom lines.");
 
     for (int x = 0; x < the_pixmap.width; x++) {
 
@@ -671,6 +688,7 @@ private:
 
     tl.histogram = new coord_t[the_pixmap.width];
     //debug writefln ("Building SkyLine PTR: %x", tl.skyline.ptr);
+    debug writeln  ("*) Building Histogram lines.");
 
     for (int x = 0; x < the_pixmap.width; x++) {
 
@@ -703,7 +721,7 @@ private:
     Color cl = Color.BLACK;
     int   mbp = -1;
 
-    mbppl = new int[the_pixmap.height];
+    mbppl = new ushort[the_pixmap.height];
 
     for (int y = 0; y < the_pixmap.height; y++) {
       for (int x = 0; x < the_pixmap.width; x++) {
@@ -730,7 +748,7 @@ private:
     mbpmean = mbpvariance = 0.0;
     if (mbppl !is null) {
       // Mean
-      for (int i = 0; i<mbppl.length ; i++) {
+      for (int i = 0; i < mbppl.length ; i++) {
 	mbpmean += mbppl[i];
       }
       mbpmean /= mbppl.length;
@@ -801,7 +819,7 @@ private:
   }
 
   Pixmap         the_pixmap;	// The pixmap abstraction used to hold the scanned page
-  int[]          mbppl;		// Black Pixels Per Line
+  ushort[]       mbppl;		// Black Pixels Per Line
   float          mbpmean;	// The black pixels per line mean
   float          mbpvariance;	// The black pixels per line variance
   int            mlwmbp;	// Line with most black pixels
@@ -882,8 +900,9 @@ unittest {
   assert (i.height == -1);
 
   // hard coded paths for now...
-  foreach (f ; ["../../data/318982.tif",  "../../data/439040bn.tif",  
-		"../../data/8048.tif"]) 
+  // foreach (f ; ["../../data/318982.tif",  "../../data/439040bn.tif",  
+  // 		"../../data/8048.tif", "../../data/317548.tif"]) 
+  foreach (f ; ["../../data/317548.tif"])
     {  
       //i = new Image;
       writeln (" ---------===============------------- ");
