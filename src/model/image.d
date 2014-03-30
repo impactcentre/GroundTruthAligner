@@ -465,7 +465,7 @@ public:
       debug writefln ("Up in the mountain...l(%d), curd(%d) maxd(%d)", l, curd, maxd);
 
       // Same number == maxd of black pixels
-      while ((curd == maxd) && (!must_exit)) {
+      while ((curd >= maxd) && (!must_exit)) {
 	if (l >= the_pixmap.height) must_exit = true;
 	else {
 	  ph++;
