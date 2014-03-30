@@ -306,6 +306,9 @@ public:
       // The showskyline toggle
       mshowskyline = cast(ToggleButton) mbuilder.getObject ("showskyline");
       mshowskyline.addOnToggled ( (tb) => update() );
+      // The showhist toggle
+      mshowhist = cast(ToggleButton) mbuilder.getObject ("showhist");
+      mshowhist.addOnToggled ( (tb) => update() );
 
       // The text view + the text buffer
       mtextview = cast(TextView) mbuilder.getObject ("textview");
@@ -492,11 +495,17 @@ public:
       ////////////////
       if (mshowskyline.getActive) {
 	show_sky_bottom_lines (ctx);
+      }
+
+      //////////////////
+      // 3. Histogram //
+      //////////////////
+      if (mshowhist.getActive) {
 	show_histograms (ctx);
       }
 
       /////////////////////////////////////
-      // 3. Draw longest and space lines //
+      // 4. Draw longest and space lines //
       /////////////////////////////////////
       if (mshowlines.getActive) {
       	//show_longest_line (ctx);
@@ -504,7 +513,7 @@ public:
       }
 
       /////////////////////////////////////////////////
-      // 3. Draw the points loaded from the XML file //
+      // 5. Draw the points loaded from the XML file //
       /////////////////////////////////////////////////
       if (mshowcontours.getActive) draw_points_from_xml (ctx);
     }
@@ -812,6 +821,7 @@ public:
   ToggleButton      mshowcontours;
   ToggleButton      mshowpage;
   ToggleButton      mshowskyline;
+  ToggleButton      mshowhist;
   FileChooserButton mimagechooser;
   FileChooserButton mxmlchooser;
   TextView          mtextview;
