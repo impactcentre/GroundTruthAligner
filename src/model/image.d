@@ -563,8 +563,8 @@ class Image {
 	    get_textline_start_height (l, s, h);
 	    delta = h / 2.0;
 
-	    int pxi = cast (int) (s - delta);
-	    int pxf = cast (int) (s + h + delta);
+	    int pxi = min(cast (int) (s - delta), the_pixmap.height);
+	    int pxf = min(cast (int) (s + h + delta), the_pixmap.height);
 
 	    pcount += pxf-pxi+1;
 
@@ -610,8 +610,8 @@ class Image {
      */
     bool is_pixel_alone (in int x, in int y, in int yb, in int ye) 
       in { 
-	assert (x < the_pixmap.width);
-	assert (y < the_pixmap.height);
+	assert (x <= the_pixmap.width, "is_pixel_alone: x-coord overflow.");
+	assert (y <= the_pixmap.height, "is_pixel_alone: y-coord overflow.");
       }
     body {
       char r,g,b;
