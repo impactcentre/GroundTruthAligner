@@ -26,6 +26,9 @@ module utils.statistic;
 
 import std.math;
 
+
+//-- algorithms ------------------------------------------------------
+
 T min(T) (T a, T b)
 {
     return (a < b) ? a : b;
@@ -37,25 +40,12 @@ T max(T) (T a, T b)
 }
 
 /**
- * @param array array of int
- * @return the sum of all ints in array
+ * @param array array of T
+ * @return the sum of all T's in array
  */
-public static int sum(int[] array) {
-  int sum = 0;
+public T sum(T)(T[] array) {
+  T sum = T.init;
 
-  for (int n = 0; n < array.length; ++n) {
-    sum += array[n];
-  }
-  return sum;
-}
-
-/**
- *
- * @param array array of double
- * @return the sum of all doubles in array
- */
-public static double sum(double[] array) {
-  double sum = 0;
   for (int n = 0; n < array.length; ++n) {
     sum += array[n];
   }
@@ -68,7 +58,7 @@ public static double sum(double[] array) {
  * @param array integer array
  * @return the array of double precision values
  */
-public static double[] toDouble(int[] array) {
+public double[] toDouble(int[] array) {
   double[] darray = new double[array.length];
   for (int i = 0; i < array.length; i++) {
     darray[i] = array[i];
@@ -82,21 +72,7 @@ public static double[] toDouble(int[] array) {
  * @param array integer array
  * @return the array of logs
  */
-public static double[] log(int[] array) {
-  double[] darray = new double[array.length];
-  for (int i = 0; i < array.length; i++) {
-    darray[i] = std.math.log(array[i]);
-  }
-  return darray;
-}
-
-/**
- * Create an array containing the logarithms of the source array
- *
- * @param array array of double
- * @return the array of logs
- */
-public static double[] log(double[] array) {
+public double[] log(T) (T[] array) {
   double[] darray = new double[array.length];
   for (int i = 0; i < array.length; i++) {
     darray[i] = std.math.log(array[i]);
@@ -106,37 +82,18 @@ public static double[] log(double[] array) {
 
 /**
  * @param array
- * @return the average of all integers in an array
+ * @return the average of all T's in an array
  */
-public static double average(int[] array) {
+public double average(T) (T[] array) {
   return sum(array) / cast(double) array.length;
 }
 
-/**
- * The average of all doubles in an array
- *
- * @param array
- * @return the average of all doubles in an array
- */
-public static double average(double[] array) {
-  return sum(array) / array.length;
-}
 
 /**
  * @param array
- * @return the geometric mean (log-average) of all integers in an array
+ * @return the geometric mean (log-average) of all T's in an array
  */
-public static double logaverage(int[] array) {
-  return exp(average(log(array)));
-}
-
-/**
- * The geometric mean (log-average) of all doubles in an array
- *
- * @param array
- * @return the average of all doubles in an array
- */
-public static double logaverage(double[] array) {
+public double logaverage(T)(T[] array) {
   return exp(average(log(array)));
 }
 
@@ -147,7 +104,7 @@ public static double logaverage(double[] array) {
  * @param y the second array
  * @return the scalar product of x and y
  */
-public static double scalar(double[] x, double[] y) {
+public double scalar(double[] x, double[] y) {
   double sum = 0;
   for (int n = 0; n < x.length; ++n) {
     sum += x[n] * y[n];
@@ -156,11 +113,11 @@ public static double scalar(double[] x, double[] y) {
 }
 
 /**
- * @param array int array
- * @return the max value in int array
+ * @param array array of T's
+ * @return the max value in array
  */
-public static int max(int[] array) {
-  int mu = array[0];
+public T max(T)(T[] array) {
+  T mu = array[0];
 
   for (int n = 1; n < array.length; ++n) {
     mu = max(mu, array[n]);
@@ -169,24 +126,11 @@ public static int max(int[] array) {
 }
 
 /**
- * @param array array of doubles
- * @return the max value in this array
+ * @param array array of T's
+ * @return the min value in array
  */
-public static double max(double[] array) {
-  double mu = array[0];
-
-  for (int n = 1; n < array.length; ++n) {
-    mu = max(mu, array[n]);
-  }
-  return mu;
-}
-
-/**
- * @param array int array
- * @return the min value in int array
- */
-public static int min(int[] array) {
-  int mu = array[0];
+public T min(T)(int[] array) {
+  T mu = array[0];
 
   for (int n = 1; n < array.length; ++n) {
     mu = min(mu, array[n]);
@@ -194,24 +138,12 @@ public static int min(int[] array) {
   return mu;
 }
 
-/**
- * @param array array of doubles
- * @return the min value in this array
- */
-public static double min(double[] array) {
-  double mu = array[0];
-
-  for (int n = 1; n < array.length; ++n) {
-    mu = min(mu, array[n]);
-  }
-  return mu;
-}
 
 /**
  * @param array int array
  * @return first position containing the max value in int array
  */
-public static int argmax(int[] array) {
+public int argmax(T)(T[] array) {
   int pos = 0;
 
   for (int n = 1; n < array.length; ++n) {
@@ -226,7 +158,7 @@ public static int argmax(int[] array) {
  * @param array int array
  * @return first position containing the min value in int array
  */
-public static int argmin(int[] array) {
+public int argmin(T)(T[] array) {
   int pos = 0;
 
   for (int n = 1; n < array.length; ++n) {
@@ -243,7 +175,7 @@ public static int argmin(int[] array) {
  * @return the covariance of two variables X and Y are expected to have same
  * length
  */
-public static double cov(int[] X, int[] Y) {
+public double cov(T)(T[] X, T[] Y) {
   ulong len = min(X.length, Y.length);
   double sum = 0;  // double safer against overflows
 
@@ -251,40 +183,13 @@ public static double cov(int[] X, int[] Y) {
     sum += X[n] * cast(double) Y[n];
   }
 
-  return sum / len - average(X) * average(Y);
-}
-
-/**
- * Covariance of two variables
- *
- * @param X array of double
- * @param Y another array of double
- * @return Covariance of X and Y
- */
-public static double cov(double[] X, double[] Y) {
-  ulong len = min(X.length, Y.length);
-  double sum = 0;
-
-  for (int n = 0; n < len; ++n) {
-    sum += X[n] * Y[n];
-  }
-  return sum / len - average(X) * average(Y);
+  return (sum / len) - (average(X) * average(Y));
 }
 
 /**
  * @param X the array with the values of the variable
  * @return the standard deviation of the values in X
  */
-public static double stdev(int[] X) {
-  return sqrt(cov(X, X));
-}
-
-/**
- * Standard deviation
- *
- * @param X the array with the values of the variable
- * @return the standard deviation of the values in X
- */
-public static double stdev(double[] X) {
+public static double stdev(T)(T[] X) {
   return sqrt(cov(X, X));
 }
