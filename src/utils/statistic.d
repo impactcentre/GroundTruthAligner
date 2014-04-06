@@ -244,7 +244,7 @@ public static int argmin(int[] array) {
  * length
  */
 public static double cov(int[] X, int[] Y) {
-  int len = min(X.length, Y.length);
+  ulong len = min(X.length, Y.length);
   double sum = 0;  // double safer against overflows
 
   for (int n = 0; n < len; ++n) {
@@ -262,7 +262,7 @@ public static double cov(int[] X, int[] Y) {
  * @return Covariance of X and Y
  */
 public static double cov(double[] X, double[] Y) {
-  int len = min(X.length, Y.length);
+  ulong len = min(X.length, Y.length);
   double sum = 0;
 
   for (int n = 0; n < len; ++n) {
