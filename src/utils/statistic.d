@@ -25,11 +25,13 @@ module utils.statistic;
 //-- std -------------------------------------------------------------
 
 import std.math;
+import std.algorithm;
 
+alias min = std.algorithm.min;
 
 //-- algorithms ------------------------------------------------------
 
-T min(T) (T a, T b)
+/*T min(T) (T a, T b)
 {
     return (a < b) ? a : b;
 }
@@ -37,7 +39,7 @@ T min(T) (T a, T b)
 T max(T) (T a, T b)
 {
     return (a > b) ? a : b;
-}
+}*/
 
 /**
  * @param array array of T
@@ -129,7 +131,7 @@ public T max(T)(T[] array) {
  * @param array array of T's
  * @return the min value in array
  */
-public T min(T)(int[] array) {
+public T min(T)(T[] array) {
   T mu = array[0];
 
   for (int n = 1; n < array.length; ++n) {
@@ -176,7 +178,7 @@ public int argmin(T)(T[] array) {
  * length
  */
 public double cov(T)(T[] X, T[] Y) {
-  ulong len = min(X.length, Y.length);
+  ulong len = std.algorithm.min(X.length, Y.length);
   double sum = 0;  // double safer against overflows
 
   for (int n = 0; n < len; ++n) {

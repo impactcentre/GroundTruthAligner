@@ -58,6 +58,9 @@ import config.types;
 //-- Model -----------------------------------------------------------
 import model.pixmap;
 
+//-- Utils -----------------------------------------------------------
+import utils.statistic;
+
 ////////////////
 // Code begin //
 //////////////////////////////////////////////////////////////////////
@@ -897,7 +900,7 @@ unittest {
 }
 +/
 
-unittest {
+/+unittest {
   Image i = new Image;
   //i.destroy ();
 
@@ -940,4 +943,31 @@ unittest {
 
     writeln ("\n--- 2nd round tests ---\n");
   */
+}+/
+
+unittest {
+  Image i = new Image;
+
+  writeln ("\n--- Statistic tests ---");
+
+  assert (i.raw_data is null);
+  assert (!i.is_valid);
+  assert (i.width  == -1);
+  assert (i.height == -1);
+
+  // hard coded paths for now...
+  // foreach (f ; ["../../data/318982.tif",  "../../data/439040bn.tif",  
+  // 		"../../data/8048.tif", "../../data/317548.tif"]) 
+  foreach (f ; ["../../data/317548.tif"])
+    {  
+      //i = new Image;
+      writeln (" ---------===============------------- ");
+      i.load_from_file (f);
+
+      assert (i.is_valid);
+      assert (i.height != -1);
+
+      writefln ("Image width: %d height: %d", i.width, i.height);
+      writefln ("·-> average: %f stdev: %f", i.mbppl.average, i.mbppl.stdev);
+    }
 }
