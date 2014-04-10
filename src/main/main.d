@@ -23,11 +23,6 @@
 module main;
 
 /////////
-// GTK //
-/////////
-import gtk.Main;
-
-/////////
 // STD //
 /////////
 import std.stdio;
@@ -35,47 +30,17 @@ import std.stdio;
 ///////////////////
 // Local imports //
 ///////////////////
-import config.constants;
-import view.mainwindow;
+import app.application;
 
 /**
  * Usage ./gladeText /path/to/your/glade/file.glade
  */
 int main(string[] args)
 {
-  string gladefile;
+  Application app = new Application (args);
 
-  Main.init(args);
-
-  if(args.length > 1) {
-    writefln("Loading %s", args[1]);
-    gladefile = args[1];
-  }
-  else {
-    gladefile = UIPATH;
-    debug writefln("·> No glade file specified, using [%s]",gladefile);
-  }
-
-  auto mw = new MainWindow (gladefile);
-  //scope (exit) mw.destroy ();
-
-  /*
-   * Raw strings: r" ... "
-   *            : ` ... `
-   */
-  mw.replace_text (`Calling super.
-	Checking invariant.
-	Checking invariant.
-	Checking invariant.
-	Checking invariant.
-	Checking invariant.
-	Checking invariant.
-	Checking invariant.
-	Checking invariant.
-	Checking invariant.`);
-  mw.show ();
-
-  Main.run ();
+  app.show_main_window ();
+  app.run ();
 
   return 0;
 }

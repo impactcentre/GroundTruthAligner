@@ -2,7 +2,9 @@
 include ../d-support.mk
 
 bin_PROGRAMS      = d-images
-d_images_SOURCES  = main.d $(abs_top_builddir)/src/config/constants.d
+d_images_SOURCES  = main.d\
+		    $(abs_top_builddir)/src/app/application.d\
+		    $(abs_top_builddir)/src/config/constants.d
 
 if DMD
 d_images_DFLAGS             = -I$(abs_top_srcdir)/src -I$(abs_top_builddir)/src $(CORE_DEPS_CFLAGS)
