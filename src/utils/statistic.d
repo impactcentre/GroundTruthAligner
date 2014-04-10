@@ -25,9 +25,10 @@ module utils.statistic;
 //-- std -------------------------------------------------------------
 
 import std.math;
+import std.conv;
 import std.algorithm;
 
-alias min = std.algorithm.min;
+//alias min = std.algorithm.min;
 
 //-- algorithms ------------------------------------------------------
 
@@ -60,12 +61,9 @@ public T sum(T)(T[] array) {
  * @param array integer array
  * @return the array of double precision values
  */
+
 public double[] toDouble(int[] array) {
-  double[] darray = new double[array.length];
-  for (int i = 0; i < array.length; i++) {
-    darray[i] = array[i];
-  }
-  return darray;
+  return array.to!(double[]);
 }
 
 /**
