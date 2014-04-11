@@ -166,18 +166,22 @@ public:
   // Base class methods //
   ///////////////////////////////////////////////////////////
   override void update () {
+
+    debug writeln ("Update received!!");
+
     if (!mloading_data) {
       mpage_image.queueDraw ();	// 1- The Image part
       show_the_texts ();	// 2- The XmlText part
     } else {
+
+      debug writeln ("Update the pbar!!");
+
       // Loading data...progress show
       mpbar.setText (malignmodel.get_current_action);
       mpbar.setFraction (malignmodel.get_fraction_current_action);
 
       mpbar.queueDraw ();	// Update the progressbar.
       process_pending_events (); // I mean it!!
-
-      //debug writeln ("Update the pbar!!");
     }
   }
 
