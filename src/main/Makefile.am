@@ -13,13 +13,14 @@ d_images_LDFLAGS            = -L-L$(abs_top_builddir)/src/mvc\
                               -L-L$(abs_top_builddir)/src/model\
                               -L-L$(abs_top_builddir)/src/app
 
-d_images_LDADD              = -L-l:libgui.a -L-l:libmvc.a -L-l:libapp.a\
+## LIB ORDER MATTERS HEAR!!!
+d_images_LDADD              = -L-l:libapp.a -L-l:libgui.a -L-l:libmvc.a\
                               -L-l:libmodel.a $(CORE_DEPS_LIBS)
 
-EXTRA_d_images_DEPENDENCIES = $(abs_top_builddir)/src/app/libapp.a\
-			      $(abs_top_builddir)/src/view/libgui.a\
-                              $(abs_top_builddir)/src/mvc/libmvc.a\
-                              $(abs_top_builddir)/src/model/libmodel.a
+EXTRA_d_images_DEPENDENCIES = $(abs_top_builddir)/src/mvc/libmvc.a\
+                              $(abs_top_builddir)/src/view/libgui.a\
+                              $(abs_top_builddir)/src/model/libmodel.a\
+                              $(abs_top_builddir)/src/app/libapp.a
 
 d_images_DOC                = -D -Dd$(abs_top_builddir)/src/doc
 else
