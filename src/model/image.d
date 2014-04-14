@@ -769,6 +769,14 @@ class Image {
 	  mbpvariance += (mbppl[i]-mbpaverage)^^2.0;
 	}
 	mbpvariance /= mbppl.length;
+
+	debug {
+	  writefln ("Old avg[%s] / stdvev[%s] - New avg[%s] / stdev[%s]",
+		    mbpaverage, sqrt(mbpvariance),
+		    average(mbppl), stdev(mbppl));
+
+	}
+
       }
     }
 

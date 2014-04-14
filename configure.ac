@@ -64,6 +64,7 @@ AC_CONFIG_FILES([
 	src/mvc/Makefile
 	src/model/Makefile
 	src/app/Makefile
+	src/utils/Makefile
 	src/config/constants.d
 ])
 

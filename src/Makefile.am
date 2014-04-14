@@ -1,5 +1,5 @@
 EXTRA_DIST  = ui/*.ui
-SUBDIRS     = app mvc model view main
+SUBDIRS     = app mvc model view utils main
 TESTSUBDIRS = model
 
 doc:
