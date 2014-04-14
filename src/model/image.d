@@ -156,8 +156,8 @@ class Image {
     @property int right_margin () { return mrmargin; }
 
 
-    /// Get the black pixels mean
-    @property float get_black_pixels_mean () { return mbpmean; }
+    /// Get the black pixels average
+    @property float get_black_pixels_average () { return mbpaverage; }
     /// Get the black pixels variance
     @property float get_black_pixels_variance () { return mbpvariance; }
 
@@ -313,7 +313,7 @@ class Image {
 	if (a != 0) {
 
 	  rotate_by (a);
-	  //get_mean_variance_bpixels (m, v);
+	  //get_average_variance_bpixels (m, v);
 
 	  si ~= SkewInfo (a, mbpvariance);
 	}
@@ -443,12 +443,12 @@ class Image {
 
       mtextlines.length = 0;	// Clear the previous TextLineInfo data
 
-      //get_mean_variance_bpixels (m, v); // Mean of black pixels per line
-      maxd = to_str(cast(int) mbpmean).length; // How many digits does have the mean of black pixels?
+      //get_average_variance_bpixels (m, v); // Average of black pixels per line
+      maxd = to_str(cast(int) mbpaverage).length; // How many digits does have the average of black pixels?
 
       debug writefln ("*) Detecting text lines. Height is %d", the_pixmap.height);
-      debug writefln ("Max bpx: %s , mean bpx: %s , maxd: %s", 
-		      bpx_in_blackest_line, mbpmean, maxd);
+      debug writefln ("Max bpx: %s , average bpx: %s , maxd: %s", 
+		      bpx_in_blackest_line, mbpaverage, maxd);
 
       // throw new Exception ("Exit"); // Kind of exit();
 
@@ -490,17 +490,17 @@ class Image {
 	sh += tl[i].pixel_height;
       }
 
-      float phmean = cast(float)(sh) / tl.length;	// Pixel height mean
+      float phaverage = cast(float)(sh) / tl.length;	// Pixel height average
       // for every possible
       // TextLine.
 
       debug writeln ("Filtering TextLines...");
 
       // We now filter out the TextLines that aren't according to
-      // the phmean.
-      auto min_pxheight = phmean / 2.0;
+      // the phaverage.
+      auto min_pxheight = phaverage / 2.0;
       for (auto i = 0; i < tl.length; i++) {
-	if ( abs (tl[i].pixel_height - phmean) < min_pxheight )
+	if ( abs (tl[i].pixel_height - phaverage) < min_pxheight )
 	  mtextlines ~= tl[i];
       }
 
@@ -747,26 +747,26 @@ class Image {
 	}
       }
 
-      // Calculate the mean and the variance of black pixels.
-      calculate_mean_variance_bpixels ();
+      // Calculate the average and the variance of black pixels.
+      calculate_average_variance_bpixels ();
     }
 
     /**
-     * Returns the mean and the variance of the black pixels from the
+     * Returns the average and the variance of the black pixels from the
      * Image.
      */
-    void calculate_mean_variance_bpixels () {
-      mbpmean = mbpvariance = 0.0;
+    void calculate_average_variance_bpixels () {
+      mbpaverage = mbpvariance = 0.0;
       if (mbppl !is null) {
-	// Mean
+	// Average
 	for (int i = 0; i < mbppl.length ; i++) {
-	  mbpmean += mbppl[i];
+	  mbpaverage += mbppl[i];
 	}
-	mbpmean /= mbppl.length;
+	mbpaverage /= mbppl.length;
 
 	// Variance
 	for (int i = 0; i<mbppl.length ; i++) {
-	  mbpvariance += (mbppl[i]-mbpmean)^^2.0;
+	  mbpvariance += (mbppl[i]-mbpaverage)^^2.0;
 	}
 	mbpvariance /= mbppl.length;
       }
@@ -831,7 +831,7 @@ class Image {
 
     Pixmap         the_pixmap;	// The pixmap abstraction used to hold the scanned page
     ushort[]       mbppl;	// Black Pixels Per Line
-    float          mbpmean;	// The black pixels per line mean
+    float          mbpaverage;	// The black pixels per line average
     float          mbpvariance;	// The black pixels per line variance
     int            mlwmbp;	// Line with most black pixels
     int[string]    mcmap;	// Color map of the image
@@ -866,8 +866,8 @@ unittest {
   /*
   float m, v;
   int l;
-  i.get_mean_variance_bpixels (m, v);
-  writefln ("Max blk pixels: %d , Mean bpx: %f , Variance bpx: %f", i.get_max_black_pixels_line (l), m, v);
+  i.get_average_variance_bpixels (m, v);
+  writefln ("Max blk pixels: %d , Average bpx: %f , Variance bpx: %f", i.get_max_black_pixels_line (l), m, v);
 
   writefln ("Detected Skew for +10deg is: %d degrees.", i.detect_skew ());
   */
