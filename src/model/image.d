@@ -424,6 +424,35 @@ class Image {
      * stores the begining pixel of the text line and its height in
      * pixels.
      */
+    void detect_text_lines_new ()
+      in {
+	assert (the_pixmap.is_valid_pixmap);
+      }
+    body {
+
+      double finger_print (coord_t line) {
+	return (get_black_pixels_in_line (line) - get_black_pixels_average()) / get_black_pixels_variance.sqrt();
+      }
+
+      double  k = 6;
+      double  stdev = get_black_pixels_variance.sqrt();
+      double  avg = get_black_pixels_average();
+      uint    most_bpx = bpx_in_blackest_line ();
+      double  bpx_fingerprint = ((most_bpx - avg)/stdev) / k;
+      double  line_fingerprint = 0.0;
+      coord_t l     = 0; // current line of pixels being processed: 0..mh
+
+      writefln ("bpx_fp: %s", bpx_fingerprint);
+      for ( l = 0 ; l < mbppl.length; l++)
+	writefln ("px(%s) fp[%s]: %s (%s)", mbppl[l], l, finger_print(l), finger_print(l) >= bpx_fingerprint);
+      
+    }
+
+    /**
+     * Tries to detect the number of text lines in the image.  It also
+     * stores the begining pixel of the text line and its height in
+     * pixels.
+     */
     void detect_text_lines ()
       in {
 	assert (the_pixmap.is_valid_pixmap);
@@ -984,5 +1013,6 @@ unittest {
       //foreach (v ; i.mbppl) writeln (v);
 
       writeln ("Suma de pixels en mbppl: ", i.mbppl.sum);
+      i.detect_text_lines_new ();
     }
 }
