@@ -24,6 +24,7 @@ module utils.statistic;
 
 //-- std -------------------------------------------------------------
 
+import std.stdio;
 import std.math;
 import std.conv;
 import std.algorithm;
@@ -47,12 +48,12 @@ T max(T) (T a, T b)
  * @return the sum of all T's in array
  */
 public T sum(T)(T[] array) {
-  T sum = T.init;
+  T res = T.init;
 
   for (int n = 0; n < array.length; ++n) {
-    sum += array[n];
+    res += array[n];
   }
-  return sum;
+  return res;
 }
 
 /**
