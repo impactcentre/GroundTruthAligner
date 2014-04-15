@@ -170,7 +170,7 @@ class Image {
      * Returns:
      *     the number of black pixels in line 'y'.
      */
-    ushort get_black_pixels_in_line (int y) 
+    uint get_black_pixels_in_line (int y) 
       in {
 	assert (the_pixmap.is_valid_pixmap);
 	assert (y < the_pixmap.height);
@@ -431,14 +431,14 @@ class Image {
     body {
       alias to_str = to!string;
 
-      ulong  maxd  = 0;
-      ulong  curd  = 0;           // digits of the number of blackpixels
-      // of the current line
-      coord_t    l     = 0;	        // current line of pixels being processed: 0..mh
+      ulong  maxd      = 0;
+      ulong  curd      = 0;	// digits of the number of blackpixels
+				// of the current line
+      coord_t    l     = 0; // current line of pixels being processed: 0..mh
       bool   must_exit = false;	// Are al pixel-lines processed?
       float  m,v;
-      coord_t    ph    = 0;		// Pixel height of current text line
-      coord_t    ipxl  = 0;		// Initial y-coord in pixels of the current text line
+      coord_t    ph    = 0;	// Pixel height of current text line
+      coord_t    ipxl  = 0; // Initial y-coord in pixels of the current text line
       TextLineInfo[] tl;
 
       mtextlines.length = 0;	// Clear the previous TextLineInfo data
@@ -446,9 +446,11 @@ class Image {
       //get_average_variance_bpixels (m, v); // Average of black pixels per line
       maxd = to_str(cast(int) mbpaverage).length; // How many digits does have the average of black pixels?
 
-      debug writefln ("*) Detecting text lines. Height is %d", the_pixmap.height);
-      debug writefln ("Max bpx: %s , average bpx: %s , maxd: %s", 
-		      bpx_in_blackest_line, mbpaverage, maxd);
+      debug {
+	writefln ("*) Detecting text lines. Height is %d", the_pixmap.height);
+	writefln ("Max bpx: %s , average bpx: %s , maxd: %s", 
+		  bpx_in_blackest_line, mbpaverage, maxd);
+      }
 
       // throw new Exception ("Exit"); // Kind of exit();
 
@@ -457,7 +459,7 @@ class Image {
       curd = to_str(get_black_pixels_in_line (l++)).length;
 
       do {
-	debug writefln ("Climbing mountain...l=(%d), curd(%d) maxd(%d)", l, curd, maxd);
+	//debug writefln ("Climbing mountain...l=(%d), curd(%d) maxd(%d)", l, curd, maxd);
 
 	// Going up in black pixels
 	while ((curd <= maxd) && (!must_exit)) {
@@ -468,7 +470,7 @@ class Image {
 	ph = 1;
 	ipxl = l;
 
-	debug writefln ("Up in the mountain...l(%d), curd(%d) maxd(%d)", l, curd, maxd);
+	//debug writefln ("Up in the mountain...l(%d), curd(%d) maxd(%d)", l, curd, maxd);
 
 	// Same number == maxd of black pixels
 	while ((curd >= maxd) && (!must_exit)) {
@@ -651,7 +653,7 @@ class Image {
       tl.bottomline = new coord_t[the_pixmap.width];
 
       //debug writefln ("Building SkyLine PTR: %x", tl.skyline.ptr);
-      debug writeln  ("*) Building Sky/Bottom lines.");
+      //debug writeln  ("*) Building Sky/Bottom lines.");
 
       for (int x = 0; x < the_pixmap.width; x++) {
 
@@ -699,7 +701,7 @@ class Image {
 
       tl.histogram = new coord_t[the_pixmap.width];
       //debug writefln ("Building SkyLine PTR: %x", tl.skyline.ptr);
-      debug writeln  ("*) Building Histogram lines.");
+      //debug writeln  ("*) Building Histogram lines.");
 
       for (int x = 0; x < the_pixmap.width; x++) {
 
@@ -730,9 +732,9 @@ class Image {
     body {
       char  r,g,b;
       Color cl = Color.BLACK;
-      int   mbp = -1;
+      uint  mbp = 0;
 
-      mbppl = new ushort[the_pixmap.height];
+      mbppl = new uint[the_pixmap.height];
 
       for (int y = 0; y < the_pixmap.height; y++) {
 	for (int x = 0; x < the_pixmap.width; x++) {
@@ -773,7 +775,7 @@ class Image {
 	debug {
 	  writefln ("Old avg[%s] / stdvev[%s] - New avg[%s] / stdev[%s]",
 		    mbpaverage, sqrt(mbpvariance),
-		    average(mbppl), stdev(mbppl));
+		    mbppl.average(), mbppl.stdev());
 
 	}
 
@@ -838,7 +840,7 @@ class Image {
     }
 
     Pixmap         the_pixmap;	// The pixmap abstraction used to hold the scanned page
-    ushort[]       mbppl;	// Black Pixels Per Line
+    uint[]         mbppl;	// Black Pixels Per Line
     float          mbpaverage;	// The black pixels per line average
     float          mbpvariance;	// The black pixels per line variance
     int            mlwmbp;	// Line with most black pixels
@@ -976,6 +978,11 @@ unittest {
       assert (i.height != -1);
 
       writefln ("Image width: %d height: %d", i.width, i.height);
+      writefln ("·-> old average: %f old stdev: %f", i.mbpaverage, i.mbpvariance.sqrt);
       writefln ("·-> average: %f stdev: %f", i.mbppl.average, i.mbppl.stdev);
+
+      //foreach (v ; i.mbppl) writeln (v);
+
+      writeln ("Suma de pixels en mbppl: ", i.mbppl.sum);
     }
 }
