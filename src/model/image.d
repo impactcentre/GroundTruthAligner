@@ -424,7 +424,7 @@ class Image {
      * stores the begining pixel of the text line and its height in
      * pixels.
      */
-    void detect_text_lines_new ()
+    void detect_text_lines ()
       in {
 	assert (the_pixmap.is_valid_pixmap);
       }
@@ -435,7 +435,8 @@ class Image {
        * average and the std.dev.
        */
       double finger_print (coord_t line) {
-	return (get_black_pixels_in_line (line) - get_black_pixels_average()) / get_black_pixels_variance.sqrt();
+	return (get_black_pixels_in_line (line) - 
+		get_black_pixels_average()) / get_black_pixels_variance.sqrt();
       }
 
       double  k                = 5;		// Kth part of bpx_fingerprint
@@ -446,17 +447,22 @@ class Image {
       double  line_fingerprint = 0.0;
       coord_t l                = 0; // current line of pixels being processed: 0..mh
       uint    tlc              = 0; // text line count
-      bool    position, new_position;
+      bool    in_textline,
+	      new_position;
+      coord_t        ph        = 0;	// Pixel height of current text line
+      coord_t        ipxl      = 0; // Initial y-coord in pixels of the current text line
 
       //writefln ("bpx_fp: %s", bpx_fingerprint);
+
+      mtextlines.length = 0;	// Clear the previous TextLineInfo data
 
       // Lets position ourselves in the firs text line....more or
       // less...
       l = 0;
       do {
-	position = finger_print(l) >= bpx_fingerprint;
+	in_textline = finger_print(l) >= bpx_fingerprint;
 	l++;
-      } while (!position);
+      } while ((!in_textline) && (l < mbppl.length));
 
       writefln ("bpx_fp: %s / First txtline starts at %s y-pixel.", bpx_fingerprint, l);
 
@@ -464,18 +470,26 @@ class Image {
 
 	tlc++;
 
+	ph = 1;			// Pixel height of current line now is 1px
+	ipxl = l;		// The initial pixel of current line is 'l'.
+
 	// In a text line...jump it...
-	writeln ("Text Line.");
+	//writeln ("Text Line.");
 	do {
 	  new_position = finger_print(l) >= bpx_fingerprint;
 	  l++;
+	  
+	  ph++;
+	  
 	  if (l >= mbppl.length)
 	    break;
-	} while (position == new_position);
-	position = new_position;
+	} while (in_textline == new_position);
+	in_textline = new_position;
+
+	mtextlines ~= TextLineInfo(ipxl, ph);
 
 	// Now we are in a white line....let's jump over it!
-	writeln ("White Line.");
+	//writeln ("White Line.");
 	do {
 	  l++;
 
@@ -484,8 +498,8 @@ class Image {
 	  else {
 	    new_position = finger_print(l) >= bpx_fingerprint;
 	  }
-	} while (position == new_position);
-	position = new_position;
+	} while (in_textline == new_position);
+	in_textline = new_position;
 
 	if (l >= mbppl.length)
 	  break;
@@ -496,8 +510,13 @@ class Image {
 		  finger_print(l) >= bpx_fingerprint ? "text line" : "white line");*/
       }
 
-      writefln ("This page has %s text lines.", tlc);
-      
+      //writefln ("This page has %s text lines.", tlc);
+
+      // The SkyLine + Histogram for every text line detected
+      for (auto i = 0; i < mtextlines.length; i++) {
+	build_sky_bottom_line (mtextlines[i]);
+	build_histogram (mtextlines[i]);
+      }
     }
 
     /**
@@ -505,7 +524,7 @@ class Image {
      * stores the begining pixel of the text line and its height in
      * pixels.
      */
-    void detect_text_lines ()
+    void detect_text_lines_old ()
       in {
 	assert (the_pixmap.is_valid_pixmap);
       }
@@ -1049,7 +1068,7 @@ unittest {
   // hard coded paths for now...
   // foreach (f ; ["../../data/318982.tif",  "../../data/439040bn.tif",  
   // 		"../../data/8048.tif", "../../data/317548.tif"]) 
-  foreach (f ; ["../../data/317548.tif"])
+  foreach (f ; ["../../data/318982.tif","../../data/317548.tif"])
     {  
       //i = new Image;
       writeln (" ---------===============------------- ");
