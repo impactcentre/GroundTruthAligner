@@ -430,21 +430,40 @@ class Image {
       }
     body {
 
+      /**
+       * Get the fingerprint for pixel line 'line' based on the
+       * average and the std.dev.
+       */
       double finger_print (coord_t line) {
 	return (get_black_pixels_in_line (line) - get_black_pixels_average()) / get_black_pixels_variance.sqrt();
       }
 
-      double  k = 6;
+      double  k = 6;		// Kth part of bpx_fingerprint
       double  stdev = get_black_pixels_variance.sqrt();
       double  avg = get_black_pixels_average();
       uint    most_bpx = bpx_in_blackest_line ();
       double  bpx_fingerprint = ((most_bpx - avg)/stdev) / k;
       double  line_fingerprint = 0.0;
       coord_t l     = 0; // current line of pixels being processed: 0..mh
+      uint    tlc   = 0; // text line count
+      bool    position, new_position;
 
-      writefln ("bpx_fp: %s", bpx_fingerprint);
-      for ( l = 0 ; l < mbppl.length; l++)
-	writefln ("px(%s) fp[%s]: %s (%s)", mbppl[l], l, finger_print(l), finger_print(l) >= bpx_fingerprint);
+      //writefln ("bpx_fp: %s", bpx_fingerprint);
+
+      position = finger_print(0) >= bpx_fingerprint;
+      for ( l = 1 ; l < mbppl.length; l++) {
+	
+	new_position = finger_print(l) >= bpx_fingerprint;
+	if (position != new_position) {
+	  tlc++;
+	  position = new_position;
+	}
+	/*writefln ("px(%s) fp[%s]: %s (%s)", 
+		  mbppl[l], l, finger_print(l), 
+		  finger_print(l) >= bpx_fingerprint ? "text line" : "white line");*/
+      }
+
+      writefln ("This page has %s text lines.", tlc);
       
     }
 
