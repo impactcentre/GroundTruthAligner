@@ -438,26 +438,59 @@ class Image {
 	return (get_black_pixels_in_line (line) - get_black_pixels_average()) / get_black_pixels_variance.sqrt();
       }
 
-      double  k = 6;		// Kth part of bpx_fingerprint
-      double  stdev = get_black_pixels_variance.sqrt();
-      double  avg = get_black_pixels_average();
-      uint    most_bpx = bpx_in_blackest_line ();
-      double  bpx_fingerprint = ((most_bpx - avg)/stdev) / k;
+      double  k                = 5;		// Kth part of bpx_fingerprint
+      double  stdev            = get_black_pixels_variance.sqrt();
+      double  avg              = get_black_pixels_average();
+      uint    most_bpx         = bpx_in_blackest_line ();
+      double  bpx_fingerprint  = ((most_bpx - avg)/stdev) / k;
       double  line_fingerprint = 0.0;
-      coord_t l     = 0; // current line of pixels being processed: 0..mh
-      uint    tlc   = 0; // text line count
+      coord_t l                = 0; // current line of pixels being processed: 0..mh
+      uint    tlc              = 0; // text line count
       bool    position, new_position;
 
       //writefln ("bpx_fp: %s", bpx_fingerprint);
 
-      position = finger_print(0) >= bpx_fingerprint;
-      for ( l = 1 ; l < mbppl.length; l++) {
+      // Lets position ourselves in the firs text line....more or
+      // less...
+      l = 0;
+      do {
+	position = finger_print(l) >= bpx_fingerprint;
+	l++;
+      } while (!position);
+
+      writefln ("bpx_fp: %s / First txtline starts at %s y-pixel.", bpx_fingerprint, l);
+
+      for ( ; l < mbppl.length; l++) {
+
+	tlc++;
+
+	// In a text line...jump it...
+	writeln ("Text Line.");
+	do {
+	  new_position = finger_print(l) >= bpx_fingerprint;
+	  l++;
+	  if (l >= mbppl.length)
+	    break;
+	} while (position == new_position);
+	position = new_position;
+
+	// Now we are in a white line....let's jump over it!
+	writeln ("White Line.");
+	do {
+	  l++;
+
+	  if (l >= mbppl.length)
+	    break;
+	  else {
+	    new_position = finger_print(l) >= bpx_fingerprint;
+	  }
+	} while (position == new_position);
+	position = new_position;
+
+	if (l >= mbppl.length)
+	  break;
 	
-	new_position = finger_print(l) >= bpx_fingerprint;
-	if (position != new_position) {
-	  tlc++;
-	  position = new_position;
-	}
+
 	/*writefln ("px(%s) fp[%s]: %s (%s)", 
 		  mbppl[l], l, finger_print(l), 
 		  finger_print(l) >= bpx_fingerprint ? "text line" : "white line");*/
