@@ -1084,6 +1084,6 @@ unittest {
       //foreach (v ; i.mbppl) writeln (v);
 
       writeln ("Suma de pixels en mbppl: ", i.mbppl.sum);
-      i.detect_text_lines_new ();
+      i.detect_text_lines ();
     }
 }
