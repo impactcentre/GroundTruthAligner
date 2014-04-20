@@ -109,7 +109,12 @@ public:
   /**
    * Get the RGB values from pixel x,y,
    */
-  void get_rgb (in int x, in int y, out char r, out char g, out char b) {
+  void get_rgb (in int x, in int y, out char r, out char g, out char b) 
+    in {
+      assert ( x>=0, "Pixmap.get_rgb 'x' coord must be >=0.");
+      assert ( y>=0, "Pixmap.get_rgb 'y' coord must be >=0.");
+    }
+  body {
     if (the_pixbuf !is null) {
       if ( (x < width) && (y < height) ) {
 	  char* e = cast(char*) (base + (y * row_stride) + (x * nchannels));
@@ -121,7 +126,12 @@ public:
   /**
    * Set the RGB values for pixel x,y,
    */
-  void set_rgb (in int x, in int y, in char r, in char g, in char b) {
+  void set_rgb (in int x, in int y, in char r, in char g, in char b) 
+    in {
+      assert ( x>=0, "Pixmap.set_rgb 'x' coord must be >=0.");
+      assert ( y>=0, "Pixmap.set_rgb 'y' coord must be >=0.");
+    }
+  body {
     if (the_pixbuf !is null) {
       if ( (x < width) && (y < height) ) {
 	  char* e = cast(char*) (base + (y * row_stride) + (x * nchannels));
@@ -144,12 +154,27 @@ public:
 
   @property bool is_valid_pixmap () { return (the_pixbuf !is null); }
 
+  uint get_composite_value (in int x, in int y) {
+    IntUnion iu;
+    char r,g,b;
+    
+    get_rgb (x, y, r, g, b);
+    iu.ca[0] = r; iu.ca[1] = g; iu.ca[2] = b; iu.ca[3] = 0;
+
+    return iu.i;
+  }
+
 private:
   
   //-- Class invariant -----------------------------------------
 
   /// The exported pixbuf is null iff original_pixbuf is null
   invariant () {
+  }
+
+  union IntUnion {
+    uint i;			// 32 bits unsigned integer
+    char[4] ca;			// 32 bits 
   }
 
   /// Initializes instance variables of the Pixmap class
