@@ -50,13 +50,13 @@ public class Model {
     int pos = -1;
     for (int i = 0; i < m_vl.length; i++)
       if (m_vl[i] == v) {
-	pos = i;
-	break;
+        pos = i;
+        break;
       }
     if (pos != -1) { // v found
       auto vaux = m_vl[0..pos];
       if (pos != m_vl.length)
-	vaux ~= m_vl[pos+1..$];
+        vaux ~= m_vl[pos+1..$];
 
       m_vl = vaux;
     }

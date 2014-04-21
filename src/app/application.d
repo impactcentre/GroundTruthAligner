@@ -62,15 +62,15 @@ class Application {
      *            : ` ... `
      */
     mw.replace_text (`Calling super.
-	Checking invariant.
-	Checking invariant.
-	Checking invariant.
-	Checking invariant.
-	Checking invariant.
-	Checking invariant.
-	Checking invariant.
-	Checking invariant.
-	Checking invariant.`);
+        Checking invariant.
+        Checking invariant.
+        Checking invariant.
+        Checking invariant.
+        Checking invariant.
+        Checking invariant.
+        Checking invariant.
+        Checking invariant.
+        Checking invariant.`);
   }
 
   public void show_main_window () {

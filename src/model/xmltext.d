@@ -125,10 +125,10 @@ public:
       t.type = xml.tag.attr["type"];
 
       xml.onEndTag["Point"] = delegate (in Element e) { 
-	int x, y;
-	x = to!int (xml.tag.attr["x"]);
-	y = to!int (xml.tag.attr["y"]);
-	t.points ~= Point (x,y); 
+        int x, y;
+        x = to!int (xml.tag.attr["x"]);
+        y = to!int (xml.tag.attr["y"]);
+        t.points ~= Point (x,y); 
       };
       xml.onEndTag["Unicode"] = (in Element e) { t.content = e.text(); };
 

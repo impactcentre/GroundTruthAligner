@@ -24,7 +24,7 @@ module model.pixmap;
 
 //-- STD + CORE ----------------------------------------
 import std.stdio;
-import core.memory: GC;		// We need to play with the garbage collector
+import core.memory: GC;         // We need to play with the garbage collector
 
 //-- GDK -----------------------------------------------
 import gdk.Pixbuf;
@@ -117,9 +117,9 @@ public:
   body {
     if (the_pixbuf !is null) {
       if ( (x < width) && (y < height) ) {
-	  char* e = cast(char*) (base + (y * row_stride) + (x * nchannels));
-	  r = e[0]; g = e[1]; b = e[2];
-	} else r = g = b = 0;
+          char* e = cast(char*) (base + (y * row_stride) + (x * nchannels));
+          r = e[0]; g = e[1]; b = e[2];
+        } else r = g = b = 0;
     } else r = g = b = 0;
   }
 
@@ -134,9 +134,9 @@ public:
   body {
     if (the_pixbuf !is null) {
       if ( (x < width) && (y < height) ) {
-	  char* e = cast(char*) (base + (y * row_stride) + (x * nchannels));
-	  e[0] = r; e[1] = g; e[2] = b;
-	}
+          char* e = cast(char*) (base + (y * row_stride) + (x * nchannels));
+          e[0] = r; e[1] = g; e[2] = b;
+        }
     }
   }
 
@@ -173,8 +173,8 @@ private:
   }
 
   union IntUnion {
-    uint i;			// 32 bits unsigned integer
-    char[4] ca;			// 32 bits 
+    uint i;                     // 32 bits unsigned integer
+    char[4] ca;                 // 32 bits 
   }
 
   /// Initializes instance variables of the Pixmap class

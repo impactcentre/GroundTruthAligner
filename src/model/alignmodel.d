@@ -173,8 +173,8 @@ private:
   //////////
   Image mimage;
   XmlText mxmltext;
-  string  mcurr_action;		// Current action being done by the model
-  float   mfraction;		// Fraction done.
+  string  mcurr_action;         // Current action being done by the model
+  float   mfraction;            // Fraction done.
 }
 
 unittest {

@@ -27,7 +27,7 @@ module model.image;
 ////////////////
 import std.stdio;
 import std.math;
-import core.memory: GC;		// We need to play with the garbage collector
+import core.memory: GC;         // We need to play with the garbage collector
 import std.conv;
 import std.signals;
 import std.algorithm;
@@ -71,37 +71,37 @@ import utils.statistic;
  *
  */
 class Image {
-  
-  //-- Public part --------------------------------------------------------------
 
-  public
-  {
-  
-    /////////////////
-    // Constructor //
-    /////////////////
-    this () {
-      the_pixmap = new Pixmap;	// The pixmap is alive all the time
+        //-- Public part --------------------------------------------------------------
 
-      init_instance_variables ();
-    }
-  
-    /////////////////
-    // Destructor  //
-    /////////////////
-    ~this () {
-      //debug writeln ("Destroying Image!");
-  
-      the_pixmap.destroy ();
-      //the_pixmap = null;
+        public
+        {
 
-      //debug writeln ("After dstroying the_pixmap!");
-    }
+                /////////////////
+                // Constructor //
+                /////////////////
+                this () {
+                        the_pixmap = new Pixmap;        // The pixmap is alive all the time
 
-    ///////////
-    // Enums //
-    ///////////
-    enum Color { BLACK = 0, WHITE = 255 };
+                        init_instance_variables ();
+                }
+
+                /////////////////
+                // Destructor  //
+                /////////////////
+                ~this () {
+                        //debug writeln ("Destroying Image!");
+
+                        the_pixmap.destroy ();
+                        //the_pixmap = null;
+
+                        //debug writeln ("After dstroying the_pixmap!");
+                }
+
+                ///////////
+                // Enums //
+                ///////////
+                enum Color { BLACK = 0, WHITE = 255 };
 
     /////////////
     // Signals //
@@ -116,9 +116,9 @@ class Image {
     @property Pixbuf raw_data () 
     {
       if (the_pixmap is null)
-	return null;
+        return null;
       else
-	return the_pixmap.get_gdkpixbuf;
+        return the_pixmap.get_gdkpixbuf;
     }
     @property Pixmap get_pixmap () { return the_pixmap; }
 
@@ -172,8 +172,8 @@ class Image {
      */
     uint get_black_pixels_in_line (int y) 
       in {
-	assert (the_pixmap.is_valid_pixmap);
-	assert (y < the_pixmap.height);
+        assert (the_pixmap.is_valid_pixmap);
+        assert (y < the_pixmap.height);
       }
     body {
       return mbppl[y];
@@ -190,11 +190,11 @@ class Image {
       int c = 0;
     
       for (int x = 0; x < the_pixmap.width; x++)
-	for (int y = 0; y < the_pixmap.height; y++) {
-	  get_rgb (x, y, r, g, b);
-	  if (r == cl && g == cl && b == cl)
-	    c++;
-	}
+        for (int y = 0; y < the_pixmap.height; y++) {
+          get_rgb (x, y, r, g, b);
+          if (r == cl && g == cl && b == cl)
+            c++;
+        }
       return c;
     }
   
@@ -203,7 +203,7 @@ class Image {
      */
     void load_from_file (string filename) 
       in {
-	assert (the_pixmap !is null);
+        assert (the_pixmap !is null);
       }
     body {
 
@@ -213,9 +213,9 @@ class Image {
       the_pixmap.load_from_file (filename);
 
       if (the_pixmap.is_valid_pixmap) {
-	get_image_parameters ();
+        get_image_parameters ();
       } else {
-	init_instance_variables ();
+        init_instance_variables ();
       }
     }
 
@@ -238,9 +238,9 @@ class Image {
      */
     @property bool is_valid () {
       if (the_pixmap !is null)
-	return the_pixmap.is_valid_pixmap;
+        return the_pixmap.is_valid_pixmap;
       else
-	return false;
+        return false;
       //return mpxbf !is null;
     }
 
@@ -253,34 +253,34 @@ class Image {
     void rotate_by (float deg) {
 
       if (the_pixmap.is_valid_pixmap) {
-	//mpxbf = mpxbf_orig;
+        //mpxbf = mpxbf_orig;
 
-	CairoFormat  fmt = the_pixmap.has_alpha () ? CairoFormat.ARGB32 : CairoFormat.RGB24;
-	int            w = the_pixmap.width ();
-	int            h = the_pixmap.height ();
-	ImageSurface ims = ImageSurface.create (fmt, w, h);
-	Context      ctx = Context.create (ims);
-	float        rad = deg * PI / 180.0;
+        CairoFormat  fmt = the_pixmap.has_alpha () ? CairoFormat.ARGB32 : CairoFormat.RGB24;
+        int            w = the_pixmap.width ();
+        int            h = the_pixmap.height ();
+        ImageSurface ims = ImageSurface.create (fmt, w, h);
+        Context      ctx = Context.create (ims);
+        float        rad = deg * PI / 180.0;
 
-	// memory free in a much cleaner way...
-	scope (exit) {
-	  ctx.destroy ();
-	  ims.destroy ();
-	  GC.collect();
-	}
+        // memory free in a much cleaner way...
+        scope (exit) {
+          ctx.destroy ();
+          ims.destroy ();
+          GC.collect();
+        }
 
-	ctx.translate (w/2.0, h/2.0);
-	ctx.rotate (rad);
-	ctx.setSourcePixbuf (the_pixmap.get_gdkpixbuf, -w/2.0, -h/2.0);
-	ctx.paint ();
+        ctx.translate (w/2.0, h/2.0);
+        ctx.rotate (rad);
+        ctx.setSourcePixbuf (the_pixmap.get_gdkpixbuf, -w/2.0, -h/2.0);
+        ctx.paint ();
 
-	//ims.writeToPng ("/tmp/rotated.png");
+        //ims.writeToPng ("/tmp/rotated.png");
 
-	the_pixmap.set_gdkpixbuf (Pixbuf.getFromSurface (ims, 0, 0, 
-							 ims.getWidth(), 
-							 ims.getHeight ()));
-	get_image_parameters ();
-	//count_black_pixels_per_line ();  // <- invoked inside "get_image_parameters"
+        the_pixmap.set_gdkpixbuf (Pixbuf.getFromSurface (ims, 0, 0, 
+                                                         ims.getWidth(), 
+                                                         ims.getHeight ()));
+        get_image_parameters ();
+        //count_black_pixels_per_line ();  // <- invoked inside "get_image_parameters"
       }
     }
 
@@ -292,31 +292,31 @@ class Image {
      */
     int detect_skew ()
       in {
-	assert (the_pixmap.is_valid_pixmap);
+        assert (the_pixmap.is_valid_pixmap);
       }
     body {
 
       struct SkewInfo {
-	int deg;
-	float variance;
+        int deg;
+        float variance;
       }
 
-      const angle = 10;		// we'll try from -angle..angle , step 1
+      const angle = 10;         // we'll try from -angle..angle , step 1
       float m, v, maxv;
-      int ra;			// Rotation angle detected
+      int ra;                   // Rotation angle detected
 
       SkewInfo[] si;
 
       // Initial variance...rotation angle is supposed to be 0 deg.
       si ~= SkewInfo (0, mbpvariance);
       for (int a = -angle; a <= angle; a += 1) {
-	if (a != 0) {
+        if (a != 0) {
 
-	  rotate_by (a);
-	  //get_average_variance_bpixels (m, v);
+          rotate_by (a);
+          //get_average_variance_bpixels (m, v);
 
-	  si ~= SkewInfo (a, mbpvariance);
-	}
+          si ~= SkewInfo (a, mbpvariance);
+        }
       }
 
       // Initial values to compare with
@@ -325,13 +325,13 @@ class Image {
 
       foreach ( si_aux ; si) {
 
-	if (si_aux.variance > maxv) {
-	  maxv = si_aux.variance;
-	  ra = si_aux.deg;
-	}
+        if (si_aux.variance > maxv) {
+          maxv = si_aux.variance;
+          ra = si_aux.deg;
+        }
 
-	/*  debug writefln ("v: %f , deg: %d , maxv: %f , ra: %d", 
-	    si_aux.variance, si_aux.deg, maxv , ra);*/
+        /*  debug writefln ("v: %f , deg: %d , maxv: %f , ra: %d", 
+            si_aux.variance, si_aux.deg, maxv , ra);*/
       }
 
       return ra;
@@ -342,22 +342,22 @@ class Image {
      */
     void create_color_map () 
       in {
-	assert (the_pixmap.is_valid_pixmap);
+        assert (the_pixmap.is_valid_pixmap);
       }
     body {
       char r,g,b;
       string cname;
 
       for (int y = 0; y < the_pixmap.height; y++) {
-	for (int x = 0; x < the_pixmap.width; x++) {
-	  get_rgb (x, y, r, g, b);
-	
-	  cname = "";
-	  cname ~= r;
-	  cname ~= g;
-	  cname ~= b;
-	  mcmap[cname]++;
-	}
+        for (int x = 0; x < the_pixmap.width; x++) {
+          get_rgb (x, y, r, g, b);
+        
+          cname = "";
+          cname ~= r;
+          cname ~= g;
+          cname ~= b;
+          mcmap[cname]++;
+        }
       }
     }
 
@@ -388,7 +388,7 @@ class Image {
      */
     void get_textline_start_height (in int l, out int s, out int h)
       in {
-	assert ( l < mtextlines.length);
+        assert ( l < mtextlines.length);
       }
     body {
       s = mtextlines[l].pixel_start;
@@ -397,7 +397,7 @@ class Image {
 
     coord_t[] get_textline_skyline (in int l)
       in {
-	assert ( l < mtextlines.length);
+        assert ( l < mtextlines.length);
       }
     body {
       return mtextlines[l].skyline;
@@ -405,7 +405,7 @@ class Image {
 
     coord_t[] get_textline_bottomline (in int l)
       in {
-	assert ( l < mtextlines.length);
+        assert ( l < mtextlines.length);
       }
     body {
       return mtextlines[l].bottomline;
@@ -413,7 +413,7 @@ class Image {
 
     coord_t[] get_textline_histogram (in int l)
       in {
-	assert ( l < mtextlines.length);
+        assert ( l < mtextlines.length);
       }
     body {
       return mtextlines[l].histogram;
@@ -426,7 +426,7 @@ class Image {
      */
     void detect_text_lines ()
       in {
-	assert (the_pixmap.is_valid_pixmap);
+        assert (the_pixmap.is_valid_pixmap);
       }
     body {
 
@@ -435,87 +435,87 @@ class Image {
        * average and the std.dev.
        */
       double finger_print (coord_t line) {
-	return (get_black_pixels_in_line (line) - 
-		get_black_pixels_average()) / get_black_pixels_variance.sqrt();
+        return (get_black_pixels_in_line (line) - 
+                get_black_pixels_average()) / get_black_pixels_variance.sqrt();
       }
 
-      double  k                = 5;		// Kth part of bpx_fingerprint
+      double  k                = 7;             // Kth part of bpx_fingerprint
       double  stdev            = get_black_pixels_variance.sqrt();
       double  avg              = get_black_pixels_average();
       uint    most_bpx         = bpx_in_blackest_line ();
-      double  bpx_fingerprint  = ((most_bpx - avg)/stdev) / k;
+      double  bpx_fingerprint  = ((most_bpx - avg) / stdev) / k;
       double  line_fingerprint = 0.0;
       coord_t l                = 0; // current line of pixels being processed: 0..mh
       uint    tlc              = 0; // text line count
       bool    in_textline,
-	      new_position;
-      coord_t        ph        = 0;	// Pixel height of current text line
+              new_position;
+      coord_t        ph        = 0;     // Pixel height of current text line
       coord_t        ipxl      = 0; // Initial y-coord in pixels of the current text line
 
       //writefln ("bpx_fp: %s", bpx_fingerprint);
 
-      mtextlines.length = 0;	// Clear the previous TextLineInfo data
+      mtextlines.length = 0;    // Clear the previous TextLineInfo data
 
       // Lets position ourselves in the firs text line....more or
       // less...
       l = 0;
       do {
-	in_textline = finger_print(l) >= bpx_fingerprint;
-	l++;
+        in_textline = finger_print(l) >= bpx_fingerprint;
+        l++;
       } while ((!in_textline) && (l < mbppl.length));
 
       writefln ("bpx_fp: %s / First txtline starts at %s y-pixel.", bpx_fingerprint, l);
 
       for ( ; l < mbppl.length; l++) {
 
-	tlc++;
+        tlc++;
 
-	ph = 1;			// Pixel height of current line now is 1px
-	ipxl = l;		// The initial pixel of current line is 'l'.
+        ph = 1;                 // Pixel height of current line now is 1px
+        ipxl = l;               // The initial pixel of current line is 'l'.
 
-	// In a text line...jump it...
-	//writeln ("Text Line.");
-	do {
-	  new_position = finger_print(l) >= bpx_fingerprint;
-	  l++;
-	  
-	  ph++;
-	  
-	  if (l >= mbppl.length)
-	    break;
-	} while (in_textline == new_position);
-	in_textline = new_position;
+        // In a text line...jump it...
+        //writeln ("Text Line.");
+        do {
+          new_position = finger_print(l) >= bpx_fingerprint;
+          l++;
+          
+          ph++;
+          
+          if (l >= mbppl.length)
+            break;
+        } while (in_textline == new_position);
+        in_textline = new_position;
 
-	mtextlines ~= TextLineInfo(ipxl, ph);
+        mtextlines ~= TextLineInfo(ipxl, ph);
 
-	// Now we are in a white line....let's jump over it!
-	//writeln ("White Line.");
-	do {
-	  l++;
+        // Now we are in a white line....let's jump over it!
+        //writeln ("White Line.");
+        do {
+          l++;
 
-	  if (l >= mbppl.length)
-	    break;
-	  else {
-	    new_position = finger_print(l) >= bpx_fingerprint;
-	  }
-	} while (in_textline == new_position);
-	in_textline = new_position;
+          if (l >= mbppl.length)
+            break;
+          else {
+            new_position = finger_print(l) >= bpx_fingerprint;
+          }
+        } while (in_textline == new_position);
+        in_textline = new_position;
 
-	if (l >= mbppl.length)
-	  break;
-	
+        if (l >= mbppl.length)
+          break;
+        
 
-	/*writefln ("px(%s) fp[%s]: %s (%s)", 
-		  mbppl[l], l, finger_print(l), 
-		  finger_print(l) >= bpx_fingerprint ? "text line" : "white line");*/
+        /*writefln ("px(%s) fp[%s]: %s (%s)", 
+                  mbppl[l], l, finger_print(l), 
+                  finger_print(l) >= bpx_fingerprint ? "text line" : "white line");*/
       }
 
-      //writefln ("This page has %s text lines.", tlc);
+      writefln ("This page has %s text lines.", tlc);
 
       // The SkyLine + Histogram for every text line detected
       for (auto i = 0; i < mtextlines.length; i++) {
-	build_sky_bottom_line (mtextlines[i]);
-	build_histogram (mtextlines[i]);
+        build_sky_bottom_line (mtextlines[i]);
+        build_histogram (mtextlines[i]);
       }
     }
 
@@ -526,30 +526,30 @@ class Image {
      */
     void detect_text_lines_old ()
       in {
-	assert (the_pixmap.is_valid_pixmap);
+        assert (the_pixmap.is_valid_pixmap);
       }
     body {
       alias to_str = to!string;
 
       ulong  maxd      = 0;
-      ulong  curd      = 0;	// digits of the number of blackpixels
-				// of the current line
+      ulong  curd      = 0;     // digits of the number of blackpixels
+                                // of the current line
       coord_t    l     = 0; // current line of pixels being processed: 0..mh
-      bool   must_exit = false;	// Are al pixel-lines processed?
+      bool   must_exit = false; // Are al pixel-lines processed?
       float  m,v;
-      coord_t    ph    = 0;	// Pixel height of current text line
+      coord_t    ph    = 0;     // Pixel height of current text line
       coord_t    ipxl  = 0; // Initial y-coord in pixels of the current text line
       TextLineInfo[] tl;
 
-      mtextlines.length = 0;	// Clear the previous TextLineInfo data
+      mtextlines.length = 0;    // Clear the previous TextLineInfo data
 
       //get_average_variance_bpixels (m, v); // Average of black pixels per line
       maxd = to_str(cast(int) mbpaverage).length; // How many digits does have the average of black pixels?
 
       debug {
-	writefln ("*) Detecting text lines. Height is %d", the_pixmap.height);
-	writefln ("Max bpx: %s , average bpx: %s , maxd: %s", 
-		  bpx_in_blackest_line, mbpaverage, maxd);
+        writefln ("*) Detecting text lines. Height is %d", the_pixmap.height);
+        writefln ("Max bpx: %s , average bpx: %s , maxd: %s", 
+                  bpx_in_blackest_line, mbpaverage, maxd);
       }
 
       // throw new Exception ("Exit"); // Kind of exit();
@@ -559,40 +559,40 @@ class Image {
       curd = to_str(get_black_pixels_in_line (l++)).length;
 
       do {
-	//debug writefln ("Climbing mountain...l=(%d), curd(%d) maxd(%d)", l, curd, maxd);
+        //debug writefln ("Climbing mountain...l=(%d), curd(%d) maxd(%d)", l, curd, maxd);
 
-	// Going up in black pixels
-	while ((curd <= maxd) && (!must_exit)) {
-	  if (l >= the_pixmap.height) must_exit = true;
-	  else curd = to_str(get_black_pixels_in_line (l++)).length;
-	}
+        // Going up in black pixels
+        while ((curd <= maxd) && (!must_exit)) {
+          if (l >= the_pixmap.height) must_exit = true;
+          else curd = to_str(get_black_pixels_in_line (l++)).length;
+        }
 
-	ph = 1;
-	ipxl = l;
+        ph = 1;
+        ipxl = l;
 
-	//debug writefln ("Up in the mountain...l(%d), curd(%d) maxd(%d)", l, curd, maxd);
+        //debug writefln ("Up in the mountain...l(%d), curd(%d) maxd(%d)", l, curd, maxd);
 
-	// Same number == maxd of black pixels
-	while ((curd >= maxd) && (!must_exit)) {
-	  if (l >= the_pixmap.height) must_exit = true;
-	  else {
-	    ph++;
-	    curd = to_str(get_black_pixels_in_line (l++)).length;
-	  }
-	}
+        // Same number == maxd of black pixels
+        while ((curd >= maxd) && (!must_exit)) {
+          if (l >= the_pixmap.height) must_exit = true;
+          else {
+            ph++;
+            curd = to_str(get_black_pixels_in_line (l++)).length;
+          }
+        }
 
-	tl ~= TextLineInfo(ipxl, ph);
+        tl ~= TextLineInfo(ipxl, ph);
 
       } while (!must_exit);
 
       debug writeln ("Adding heights...");
 
-      int sh = 0;			// Sum of heights
+      int sh = 0;                       // Sum of heights
       for (auto i = 0; i < tl.length; i++) {
-	sh += tl[i].pixel_height;
+        sh += tl[i].pixel_height;
       }
 
-      float phaverage = cast(float)(sh) / tl.length;	// Pixel height average
+      float phaverage = cast(float)(sh) / tl.length;    // Pixel height average
       // for every possible
       // TextLine.
 
@@ -602,16 +602,16 @@ class Image {
       // the phaverage.
       auto min_pxheight = phaverage / 2.0;
       for (auto i = 0; i < tl.length; i++) {
-	if ( abs (tl[i].pixel_height - phaverage) < min_pxheight )
-	  mtextlines ~= tl[i];
+        if ( abs (tl[i].pixel_height - phaverage) < min_pxheight )
+          mtextlines ~= tl[i];
       }
 
       debug writeln ("Building skybot+hist...");
 
       // The SkyLine + Histogram for every text line detected
       for (auto i = 0; i < mtextlines.length; i++) {
-	build_sky_bottom_line (mtextlines[i]);
-	build_histogram (mtextlines[i]);
+        build_sky_bottom_line (mtextlines[i]);
+        build_histogram (mtextlines[i]);
       }
 
       debug writeln ("Detecting margins...");
@@ -645,64 +645,64 @@ class Image {
      */
     void detect_margins () 
       in {
-	assert (mtextlines !is null);
+        assert (mtextlines !is null);
       }
     body
       {
-	int pcount; 		// White/Black pixels count
-	int s, h;
-	float delta;
-	char r,g,b;
-	const Color cl = Color.BLACK;
+        int pcount;             // White/Black pixels count
+        int s, h;
+        float delta;
+        char r,g,b;
+        const Color cl = Color.BLACK;
 
-	mlmargin = the_pixmap.width; // We want the minimum x whose
-	// pixel@x,y is black
-	mrmargin = 0;		// We want the maximum x whose
-				// pixel@x,y is black
+        mlmargin = the_pixmap.width; // We want the minimum x whose
+        // pixel@x,y is black
+        mrmargin = 0;           // We want the maximum x whose
+                                // pixel@x,y is black
 
-	////////////////////////
-	// For every textline //
-	////////////////////////
-	for (auto l = 0; l < mtextlines.length; l++)
-	  {
-	    get_textline_start_height (l, s, h);
-	    delta = h / 2.0;
+        ////////////////////////
+        // For every textline //
+        ////////////////////////
+        for (auto l = 0; l < mtextlines.length; l++)
+          {
+            get_textline_start_height (l, s, h);
+            delta = h / 2.0;
 
-	    int pxi = min(cast (int) (s - delta), the_pixmap.height);
-	    int pxf = min(cast (int) (s + h + delta), the_pixmap.height);
+            int pxi = min(cast (int) (s - delta), the_pixmap.height);
+            int pxf = min(cast (int) (s + h + delta), the_pixmap.height);
 
-	    pcount += pxf-pxi+1;
+            pcount += pxf-pxi+1;
 
-	    for (int y = pxi; y <= pxf; y++)
-	      {
-		// left margin
-		for (int x = 0; x < the_pixmap.width; x++) {
-		  get_rgb (x, y, r, g, b);
-		  if (r == cl && g == cl && b == cl) {
-		    if ( (x < mlmargin) && 
-			 (!is_pixel_alone (x, y, pxi, pxf)) )
-		      {
-			mlmargin = x;
-			break;
-		      }
-		  }
-		}
+            for (int y = pxi; y <= pxf; y++)
+              {
+                // left margin
+                for (int x = 0; x < the_pixmap.width; x++) {
+                  get_rgb (x, y, r, g, b);
+                  if (r == cl && g == cl && b == cl) {
+                    if ( (x < mlmargin) && 
+                         (!is_pixel_alone (x, y, pxi, pxf)) )
+                      {
+                        mlmargin = x;
+                        break;
+                      }
+                  }
+                }
 
-		// right margin
-		for (int x = (the_pixmap.width - 1); x >= 0; x--) {
-		  get_rgb (x, y, r, g, b);
-		  if (r == cl && g == cl && b == cl) {
-		    if ( (x > mrmargin) && 
-			 (!is_pixel_alone (x, y, pxi, pxf)) )
-		      {
-			mrmargin = x;
-			break;
-		      }
-		  }
-		}
+                // right margin
+                for (int x = (the_pixmap.width - 1); x >= 0; x--) {
+                  get_rgb (x, y, r, g, b);
+                  if (r == cl && g == cl && b == cl) {
+                    if ( (x > mrmargin) && 
+                         (!is_pixel_alone (x, y, pxi, pxf)) )
+                      {
+                        mrmargin = x;
+                        break;
+                      }
+                  }
+                }
 
-	      }
-	  }
+              }
+          }
       }
 
     /**
@@ -715,21 +715,21 @@ class Image {
      */
     bool is_pixel_alone (in int x, in int y, in int yb, in int ye) 
       in { 
-	assert (x <= the_pixmap.width, "is_pixel_alone: x-coord overflow.");
-	assert (y <= the_pixmap.height, "is_pixel_alone: y-coord overflow.");
+        assert (x <= the_pixmap.width, "is_pixel_alone: x-coord overflow.");
+        assert (y <= the_pixmap.height, "is_pixel_alone: y-coord overflow.");
       }
     body {
       char r,g,b;
       const Color clb = Color.BLACK;
       int x1, y1, x2, y2;
-      int bpc = 0; 		// Black pixel count
-      int half = (ye-yb+1)/2;	// (total pix. count)/2
+      int bpc = 0;              // Black pixel count
+      int half = (ye-yb+1)/2;   // (total pix. count)/2
 
       for (int ly = yb; ly < ye; ly++) {
-	get_rgb (x, ly, r, g, b);
-	if (r == clb && g == clb && b == clb) {
-	  bpc++;
-	}
+        get_rgb (x, ly, r, g, b);
+        if (r == clb && g == clb && b == clb) {
+          bpc++;
+        }
       }
 
       // Pixel@(x,y) is almost alone if...
@@ -757,32 +757,32 @@ class Image {
 
       for (int x = 0; x < the_pixmap.width; x++) {
 
-	with (tl) {		// Sweet Pascal memories...
+        with (tl) {             // Sweet Pascal memories...
 
-	  coord_t d = pixel_height / 2;
-	  coord_t start =  cast (coord_t) (pixel_start - d);
-	  coord_t finish = cast (coord_t) (pixel_start + pixel_height + d);
+          coord_t d = pixel_height / 2;
+          coord_t start =  cast (coord_t) (pixel_start - d);
+          coord_t finish = cast (coord_t) (pixel_start + pixel_height + d);
 
-	  //skyline[x] = pixel_start-d;
-	  skyline[x] = finish;
-	  bottomline[x] = start;
+          //skyline[x] = pixel_start-d;
+          skyline[x] = finish;
+          bottomline[x] = start;
 
-	  for (coord_t y = start; y < finish; y++) {
-	    get_rgb (x, y, r, g, b);
-	    if (r == cl && g == cl && b == cl) {
-	      skyline[x] = y;
-	      break;
-	    }
-	  }
-	  for (coord_t y = finish; y > start; y--) {
-	    get_rgb (x, y, r, g, b);
-	    if (r == cl && g == cl && b == cl) {
-	      bottomline[x] = y;
-	      break;
-	    }
-	  }
+          for (coord_t y = start; y < finish; y++) {
+            get_rgb (x, y, r, g, b);
+            if (r == cl && g == cl && b == cl) {
+              skyline[x] = y;
+              break;
+            }
+          }
+          for (coord_t y = finish; y > start; y--) {
+            get_rgb (x, y, r, g, b);
+            if (r == cl && g == cl && b == cl) {
+              bottomline[x] = y;
+              break;
+            }
+          }
 
-	}
+        }
       }
     }
 
@@ -805,20 +805,20 @@ class Image {
 
       for (int x = 0; x < the_pixmap.width; x++) {
 
-	with (tl) {		// Sweet Pascal memories...
+        with (tl) {             // Sweet Pascal memories...
 
-	  int d = pixel_height / 2;
-	  int finish = pixel_start + pixel_height + d;
+          int d = pixel_height / 2;
+          int finish = pixel_start + pixel_height + d;
 
-	  histogram[x] = 0;	// Not necessary in D
+          histogram[x] = 0;     // Not necessary in D
 
-	  for (int y = pixel_start-d; y < finish; y++) {
-	    get_rgb (x, y, r, g, b);
-	    if (r == cl && g == cl && b == cl) {
-	      histogram[x]++;
-	    }
-	  }
-	}
+          for (int y = pixel_start-d; y < finish; y++) {
+            get_rgb (x, y, r, g, b);
+            if (r == cl && g == cl && b == cl) {
+              histogram[x]++;
+            }
+          }
+        }
       }
     }
 
@@ -827,7 +827,7 @@ class Image {
      */
     void count_black_pixels_per_line () 
       in {
-	assert (the_pixmap.is_valid_pixmap); 
+        assert (the_pixmap.is_valid_pixmap); 
       }
     body {
       char  r,g,b;
@@ -837,16 +837,16 @@ class Image {
       mbppl = new uint[the_pixmap.height];
 
       for (int y = 0; y < the_pixmap.height; y++) {
-	for (int x = 0; x < the_pixmap.width; x++) {
-	  get_rgb (x, y, r, g, b);
-	  if (r == cl && g == cl && b == cl)
-	    ++mbppl[y];
-	}
+        for (int x = 0; x < the_pixmap.width; x++) {
+          get_rgb (x, y, r, g, b);
+          if (r == cl && g == cl && b == cl)
+            ++mbppl[y];
+        }
 
-	if (mbppl[y] > mbp) {
-	  mbp = mbppl[y];
-	  mlwmbp = y;
-	}
+        if (mbppl[y] > mbp) {
+          mbp = mbppl[y];
+          mlwmbp = y;
+        }
       }
 
       // Calculate the average and the variance of black pixels.
@@ -860,24 +860,24 @@ class Image {
     void calculate_average_variance_bpixels () {
       mbpaverage = mbpvariance = 0.0;
       if (mbppl !is null) {
-	// Average
-	for (int i = 0; i < mbppl.length ; i++) {
-	  mbpaverage += mbppl[i];
-	}
-	mbpaverage /= mbppl.length;
+        // Average
+        for (int i = 0; i < mbppl.length ; i++) {
+          mbpaverage += mbppl[i];
+        }
+        mbpaverage /= mbppl.length;
 
-	// Variance
-	for (int i = 0; i<mbppl.length ; i++) {
-	  mbpvariance += (mbppl[i]-mbpaverage)^^2.0;
-	}
-	mbpvariance /= mbppl.length;
+        // Variance
+        for (int i = 0; i<mbppl.length ; i++) {
+          mbpvariance += (mbppl[i]-mbpaverage)^^2.0;
+        }
+        mbpvariance /= mbppl.length;
 
-	debug {
-	  writefln ("Old avg[%s] / stdvev[%s] - New avg[%s] / stdev[%s]",
-		    mbpaverage, sqrt(mbpvariance),
-		    mbppl.average(), mbppl.stdev());
+        debug {
+          writefln ("Old avg[%s] / stdvev[%s] - New avg[%s] / stdev[%s]",
+                    mbpaverage, sqrt(mbpvariance),
+                    mbppl.average(), mbppl.stdev());
 
-	}
+        }
 
       }
     }
@@ -887,7 +887,7 @@ class Image {
      */
     void get_image_parameters () 
       in {
-	assert (the_pixmap.is_valid_pixmap);
+        assert (the_pixmap.is_valid_pixmap);
       }
     body {
       // Loading image is 25%
@@ -939,15 +939,15 @@ class Image {
       coord_t[] histogram;
     }
 
-    Pixmap         the_pixmap;	// The pixmap abstraction used to hold the scanned page
-    uint[]         mbppl;	// Black Pixels Per Line
-    float          mbpaverage;	// The black pixels per line average
-    float          mbpvariance;	// The black pixels per line variance
-    int            mlwmbp;	// Line with most black pixels
-    int[string]    mcmap;	// Color map of the image
-    TextLineInfo[] mtextlines;	// Detected text lines in bitmap, pixel start and pixel height
-    int            mrmargin;	// X-coord for the right margin.
-    int            mlmargin;	// X-coord for the left margin.
+    Pixmap         the_pixmap;  // The pixmap abstraction used to hold the scanned page
+    uint[]         mbppl;       // Black Pixels Per Line
+    float          mbpaverage;  // The black pixels per line average
+    float          mbpvariance; // The black pixels per line variance
+    int            mlwmbp;      // Line with most black pixels
+    int[string]    mcmap;       // Color map of the image
+    TextLineInfo[] mtextlines;  // Detected text lines in bitmap, pixel start and pixel height
+    int            mrmargin;    // X-coord for the right margin.
+    int            mlmargin;    // X-coord for the left margin.
   }
 }
 
@@ -997,12 +997,12 @@ unittest {
 
   foreach (color, times; i.mcmap) {
     writefln ("Color [%s] repeats [%d] times.", 
-	      color, times);
+              color, times);
   }
 
   foreach ( color ; i.mcmap.byKey ) {
     writefln ("Color [%s] repeats [%d] times.", 
-	      color, i.mcmap[color]);
+              color, i.mcmap[color]);
   }
 
   writeln ("\n--- 1st round tests ---\n");
@@ -1023,7 +1023,7 @@ unittest {
 
   // hard coded paths for now...
   // foreach (f ; ["../../data/318982.tif",  "../../data/439040bn.tif",  
-  // 		"../../data/8048.tif", "../../data/317548.tif"]) 
+  //            "../../data/8048.tif", "../../data/317548.tif"]) 
   foreach (f ; ["../../data/317548.tif"])
     {  
       //i = new Image;
@@ -1034,7 +1034,7 @@ unittest {
       assert (i.height != -1);
 
       writefln ("Image width: %d height: %d colours: %d", 
-		i.width, i.height, i.get_num_colours);
+                i.width, i.height, i.get_num_colours);
 
       i.init_instance_variables ();
     }
@@ -1067,7 +1067,7 @@ unittest {
 
   // hard coded paths for now...
   // foreach (f ; ["../../data/318982.tif",  "../../data/439040bn.tif",  
-  // 		"../../data/8048.tif", "../../data/317548.tif"]) 
+  //            "../../data/8048.tif", "../../data/317548.tif"]) 
   foreach (f ; ["../../data/318982.tif","../../data/317548.tif"])
     {  
       //i = new Image;

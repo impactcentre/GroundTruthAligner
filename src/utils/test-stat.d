@@ -35,12 +35,12 @@ void main () {
   
 
   writefln ("%s -> average: %f stdev: %f", 
-	    X, X.average, X.stdev);
+            X, X.average, X.stdev);
 
   writefln ("%s -> average: %f stdev: %f", 
-	    Y, Y.average, Y.stdev);
+            Y, Y.average, Y.stdev);
 
   writefln ("%s -> average: %f stdev: %f", 
-	    Z, Z.average, Z.stdev);
+            Z, Z.average, Z.stdev);
 
 }

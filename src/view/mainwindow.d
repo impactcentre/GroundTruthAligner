@@ -77,7 +77,7 @@ import std.string;
 import std.array;
 import std.format;
 import std.math;
-import core.memory: GC;		// We need to play with the garbage collector
+import core.memory: GC;         // We need to play with the garbage collector
 
 /////////
 // MVC //
@@ -170,8 +170,8 @@ public:
     debug writeln ("Update received!!");
 
     if (!mloading_data) {
-      mpage_image.queueDraw ();	// 1- The Image part
-      show_the_texts ();	// 2- The XmlText part
+      mpage_image.queueDraw (); // 1- The Image part
+      show_the_texts ();        // 2- The XmlText part
     } else {
 
       debug writeln ("Update the pbar!!");
@@ -180,7 +180,7 @@ public:
       mpbar.setText (malignmodel.get_current_action);
       mpbar.setFraction (malignmodel.get_fraction_current_action);
 
-      mpbar.queueDraw ();	// Update the progressbar.
+      mpbar.queueDraw ();       // Update the progressbar.
       process_pending_events (); // I mean it!!
     }
   }
@@ -260,8 +260,8 @@ public:
 
       m_bq = cast(Button) mbuilder.getObject("button_quit");
       if(m_bq !is null) {
-	//b.addOnClicked( delegate void (Button) { Main.quit(); }  );
-	m_bq.addOnClicked( (b) =>  Main.quit()  );
+        //b.addOnClicked( delegate void (Button) { Main.quit(); }  );
+        m_bq.addOnClicked( (b) =>  Main.quit()  );
       }
 
       _imi = cast(ImageMenuItem) mbuilder.getObject("imenuitem_quit");
@@ -277,10 +277,10 @@ public:
       // Drawing Area
       mpage_image = cast(DrawingArea) mbuilder.getObject("page_image");
       if (mpage_image !is null) {
-	mpage_image.addOnDraw (&redraw_page);
-	mpage_image.addOnButtonPress (&button_press);
-	mpage_image.setHasTooltip (true);
-	mpage_image.addOnQueryTooltip (&query_tooltip);
+        mpage_image.addOnDraw (&redraw_page);
+        mpage_image.addOnButtonPress (&button_press);
+        mpage_image.setHasTooltip (true);
+        mpage_image.addOnQueryTooltip (&query_tooltip);
       }
 
       // The paned
@@ -288,7 +288,7 @@ public:
 
       // The scale
       /*mscale = cast(Scale) mbuilder.getObject ("scale");
-	mscale.addOnValueChanged (&rotate_image);*/
+        mscale.addOnValueChanged (&rotate_image);*/
 
       // The progress bar...
       mpbar = cast(ProgressBar) mbuilder.getObject ("pbar");
@@ -355,16 +355,16 @@ public:
     mimagechooser.addFilter (filter);
 
     mimagechooser.addOnSelectionChanged ( delegate void (FileChooserIF fc) {
-	auto uris = mimagechooser.getUris ();
-	debug writeln ("uris.typeid = ", typeid(uris));
+        auto uris = mimagechooser.getUris ();
+        debug writeln ("uris.typeid = ", typeid(uris));
 
-	//foreach (uri ; uris.toArray!(string,string)) {
-	for (int f = 0; f < uris.length(); f++) {
-	  auto uri = to!string (cast(char*) uris.nthData(f));
-	  uri = chompPrefix (uri, "file://");
-	  //writefln ("Selection changed: %s", uri);
-	  load_image (uri);
-	}
+        //foreach (uri ; uris.toArray!(string,string)) {
+        for (int f = 0; f < uris.length(); f++) {
+          auto uri = to!string (cast(char*) uris.nthData(f));
+          uri = chompPrefix (uri, "file://");
+          //writefln ("Selection changed: %s", uri);
+          load_image (uri);
+        }
       }
       );
   }
@@ -380,16 +380,16 @@ public:
     mxmlchooser.addFilter (filter);
 
     mxmlchooser.addOnSelectionChanged ( delegate void (FileChooserIF fc) {
-	auto uris = mxmlchooser.getUris ();
-	debug writeln ("uris.typeid = ", typeid(uris));
+        auto uris = mxmlchooser.getUris ();
+        debug writeln ("uris.typeid = ", typeid(uris));
 
-	//foreach (uri ; uris.toArray!(string,string)) {
-	for (int f = 0; f < uris.length(); f++) {
-	  auto uri = to!string (cast(char*) uris.nthData(f));
-	  uri = chompPrefix (uri, "file://");
-	  //writefln ("Selection changed: %s", uri);
-	  load_xml (uri);
-	}
+        //foreach (uri ; uris.toArray!(string,string)) {
+        for (int f = 0; f < uris.length(); f++) {
+          auto uri = to!string (cast(char*) uris.nthData(f));
+          uri = chompPrefix (uri, "file://");
+          //writefln ("Selection changed: %s", uri);
+          load_xml (uri);
+        }
       }
       );
   }
@@ -412,14 +412,14 @@ public:
 
     if (malignmodel.get_image_data !is null) {
       debug writefln ("Pixbuf loaded:\nImage is %u X %u pixels\n", 
-		      malignmodel.get_image_data.getWidth(), 
-		      malignmodel.get_image_data.getHeight());
+                      malignmodel.get_image_data.getWidth(), 
+                      malignmodel.get_image_data.getHeight());
 
       mmaxbpxl = malignmodel.get_image.blackest_line;
       mll = malignmodel.get_image.bpx_in_blackest_line;
 
       mpage_image.setSizeRequest (malignmodel.get_image_data.getWidth(),
-				  malignmodel.get_image_data.getHeight());
+                                  malignmodel.get_image_data.getHeight());
 
     }
     
@@ -444,10 +444,10 @@ public:
     
     debug {
       writefln ("Loaded text has [%s] regions. The texts are:", 
-		malignmodel.text_nregions);
+                malignmodel.text_nregions);
       foreach (r ; 0..malignmodel.text_nregions) {
-	writefln ("region-%d has %d points associated.", 
-		  r, malignmodel.text_get_points (cast(int) r).length);
+        writefln ("region-%d has %d points associated.", 
+                  r, malignmodel.text_get_points (cast(int) r).length);
       }
     }
 
@@ -490,30 +490,30 @@ public:
       // 1. Draw the Scanned image //
       ///////////////////////////////
       if (mshowpage.getActive) {
-	ctx.setSourcePixbuf (malignmodel.get_image_data, 0.0, 0.0);
-	ctx.paint ();
+        ctx.setSourcePixbuf (malignmodel.get_image_data, 0.0, 0.0);
+        ctx.paint ();
       }
 
       ////////////////
       // 2. SkyLine //
       ////////////////
       if (mshowskyline.getActive) {
-	show_sky_bottom_lines (ctx);
+        show_sky_bottom_lines (ctx);
       }
 
       //////////////////
       // 3. Histogram //
       //////////////////
       if (mshowhist.getActive) {
-	show_histograms (ctx);
+        show_histograms (ctx);
       }
 
       /////////////////////////////////////
       // 4. Draw longest and space lines //
       /////////////////////////////////////
       if (mshowlines.getActive) {
-      	//show_longest_line (ctx);
-      	show_text_lines (ctx);
+        //show_longest_line (ctx);
+        show_text_lines (ctx);
       }
 
       /////////////////////////////////////////////////
@@ -533,19 +533,19 @@ public:
 
     void draw_points (Points p) {
       if (p.length > 0) {
-	ctx.save ();
+        ctx.save ();
 
-	ctx.setSourceRgb (0.0, 0.76, 0.0);
-	ctx.setLineWidth (2.0);
+        ctx.setSourceRgb (0.0, 0.76, 0.0);
+        ctx.setLineWidth (2.0);
 
-	ctx.moveTo (p[0].x, p[0].y);
-	for (int i = 1; i < p.length; i++) {
-	  ctx.lineTo (p[i].x, p[i].y);
-	}
-	ctx.lineTo (p[0].x, p[0].y);
+        ctx.moveTo (p[0].x, p[0].y);
+        for (int i = 1; i < p.length; i++) {
+          ctx.lineTo (p[i].x, p[i].y);
+        }
+        ctx.lineTo (p[0].x, p[0].y);
 
-	ctx.stroke ();
-	ctx.restore ();
+        ctx.stroke ();
+        ctx.restore ();
       }
     }
 
@@ -562,8 +562,8 @@ public:
     int s, h;
     int w = malignmodel.get_image_width;
     float delta;
-    coord_t[] sl;			// Skyline
-    coord_t[] bl;			// Bottomline
+    coord_t[] sl;                       // Skyline
+    coord_t[] bl;                       // Bottomline
 
     ctx.save ();
 
@@ -578,7 +578,7 @@ public:
       //ctx.setSourceRgb (0.75, 0.1, 0.1);
       ctx.moveTo (0, sl[0]);
       for (int x = 1; x < sl.length-1; x++) {
-	ctx.lineTo (x+1, sl[x+1]);
+        ctx.lineTo (x+1, sl[x+1]);
       }
       ctx.stroke ();
 
@@ -586,7 +586,7 @@ public:
       //ctx.setSourceRgb (0.1, 0.75, 0.4);
       ctx.moveTo (0, bl[0]);
       for (int x = 1; x < sl.length-1; x++) {
-	ctx.lineTo (x+1, bl[x+1]);
+        ctx.lineTo (x+1, bl[x+1]);
       }
       ctx.stroke ();
 
@@ -620,8 +620,8 @@ public:
       hist  = malignmodel.get_image.get_textline_histogram (l);
 
       for (int x = 0; x < hist.length; x++) {
-	ctx.moveTo (x, y); // Go deepest in the current line
-	ctx.lineTo (x, y - hist[x]);
+        ctx.moveTo (x, y); // Go deepest in the current line
+        ctx.lineTo (x, y - hist[x]);
       }
     }
 
@@ -650,19 +650,19 @@ public:
       // 1- Upper rectangle
       ///////////////////////////////////////
       // ctx.setSourceRgb (0.1, 0.1, 0.6); //
-      // ctx.setLineWidth (1);		   //
-      // 				   //
-      // ctx.moveTo(0,s-delta);		   //
-      // ctx.lineTo (w, s-delta);	   //
-      // ctx.lineTo (w, s);		   //
-      // ctx.lineTo (0, s);		   //
-      // ctx.lineTo (0, s-delta);	   //
-      // ctx.stroke ();			   //
+      // ctx.setLineWidth (1);             //
+      //                                   //
+      // ctx.moveTo(0,s-delta);            //
+      // ctx.lineTo (w, s-delta);          //
+      // ctx.lineTo (w, s);                //
+      // ctx.lineTo (0, s);                //
+      // ctx.lineTo (0, s-delta);          //
+      // ctx.stroke ();                    //
       ///////////////////////////////////////
 
       // 2- Inner rectangle
       /*ctx.setSourceRgb (0.7, 0.1, 0.1);
-	ctx.setLineWidth (0.5);*/
+        ctx.setLineWidth (0.5);*/
 
       //////////////////////////
       // ctx.moveTo(0,s);     //
@@ -670,7 +670,7 @@ public:
       // ctx.lineTo (w, s+h); //
       // ctx.lineTo (0, s+h); //
       // ctx.lineTo (0, s);   //
-      // ctx.stroke ();	      //
+      // ctx.stroke ();       //
       //////////////////////////
 
       ctx.moveTo (0, s - delta);
@@ -682,14 +682,14 @@ public:
       // 3- Down rectangle
       ///////////////////////////////////////
       // ctx.setSourceRgb (0.1, 0.1, 0.6); //
-      // ctx.setLineWidth (1);		   //
-      // 				   //
-      // ctx.moveTo(0,s+h+delta);	   //
-      // ctx.lineTo (w, s+h+delta);	   //
-      // ctx.lineTo (w, s+h);		   //
-      // ctx.lineTo (0, s+h);		   //
-      // ctx.lineTo (0, s+h+delta);	   //
-      // ctx.stroke ();			   //
+      // ctx.setLineWidth (1);             //
+      //                                   //
+      // ctx.moveTo(0,s+h+delta);          //
+      // ctx.lineTo (w, s+h+delta);        //
+      // ctx.lineTo (w, s+h);              //
+      // ctx.lineTo (0, s+h);              //
+      // ctx.lineTo (0, s+h+delta);        //
+      // ctx.stroke ();                    //
       ///////////////////////////////////////
     }
     ctx.stroke ();
@@ -725,11 +725,11 @@ public:
   }
 
   private void show_lines_toggle (ToggleButton t) {
-    update ();			// Update the view
+    update ();                  // Update the view
   }
 
   private void show_contours_toggle (ToggleButton t) {
-    update ();			// Update the view
+    update ();                  // Update the view
   }
 
   private void rotate_image (Range r) {
@@ -763,7 +763,7 @@ public:
       char rval, gval, bval;
 
       debug writefln ("Black pix. in line [%d]: %d", py, 
-		      malignmodel.get_image.get_black_pixels_in_line (py));
+                      malignmodel.get_image.get_black_pixels_in_line (py));
 
       malignmodel.image_get_rgb (px, py, rval, gval, bval);
 
@@ -775,22 +775,22 @@ public:
   }
 
   private bool query_tooltip (int x, int y, int keyboard_tt, 
-			      Tooltip t, Widget w)
+                              Tooltip t, Widget w)
   {
 
     if ((x < malignmodel.get_image_width()) && 
-	(y < malignmodel.get_image_height()))
+        (y < malignmodel.get_image_height()))
       if ( (!keyboard_tt) && (malignmodel.get_image_data !is null) ) {
-	auto writer = appender!string();
-	char rval, gval, bval;
-	
-	malignmodel.image_get_rgb (x, y, rval, gval, bval);
-	formattedWrite(writer, "@(%d, %d)/(R:%u , G:%u , B: %u)", x,y,rval,gval,bval);
+        auto writer = appender!string();
+        char rval, gval, bval;
+        
+        malignmodel.image_get_rgb (x, y, rval, gval, bval);
+        formattedWrite(writer, "@(%d, %d)/(R:%u , G:%u , B: %u)", x,y,rval,gval,bval);
 
-	//writefln ("Tooltip @(%s,%s)", x, y);
-	t.setText (writer.data);
+        //writefln ("Tooltip @(%s,%s)", x, y);
+        t.setText (writer.data);
 
-	return true;
+        return true;
       }
 
     return false;
@@ -813,8 +813,8 @@ public:
   // Data //
   //////////
   double            mangle;
-  Builder           mbuilder;	/// The Gtk.Builder
-  string            m_gf;	/// Glade file
+  Builder           mbuilder;   /// The Gtk.Builder
+  string            m_gf;       /// Glade file
   Button            m_bq;
   ImageMenuItem     _imi;
   DrawingArea       mpage_image;
@@ -831,8 +831,8 @@ public:
   TextView          mtextview;
   TextBuffer        mtextbuffer;
   AlignModel        malignmodel;
-  int               mll;	// longest line
-  int               mmaxbpxl;	// max black pixels
+  int               mll;        // longest line
+  int               mmaxbpxl;   // max black pixels
   bool              mloading_data; // Flag for knowing if we are
-				   // loading image/xml-text
+                                   // loading image/xml-text
 }
