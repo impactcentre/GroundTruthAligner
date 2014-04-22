@@ -1,22 +1,12 @@
 
-=GroundTruthAligner (GTA)
+= GroundTruthAligner (GTA)
 
 == Technologies employed
 
-- Programming language: D (http://dlang.org), compiler: DMD
-- Configuration done via Autotools (autoconf + automake)
-- GUI toolkit: gtk.org, the adaptation taken from http://gtkd.org
+- Programming language: http://dlang.org[D], compiler: http://dlang.org/download.html[DMD]
 
-== Binarize simple from ocropus:
+- Configuration done via Autotools
+  (http://www.gnu.org/software/autoconf/manual/autoconf.html[autoconf]
+  + https://www.gnu.org/software/automake/[automake])
 
-int binarize_simple(bytearray &result, bytearray &image) {
-    int threshold = (max(image)+min(image))/2;
-    makelike(result,image);
-    for(int i=0;i<image.length1d();i++)
-        result.at1d(i) = image.at1d(i)<threshold ? 0 : 255;
-    return threshold;
-}
-
-int binarize_simple(bytearray &image) {
-    return binarize_simple(image, image);
-}
+- GUI toolkit: gtk.org, the adaptation taken from http://gtkd.org[GtkD]
