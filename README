@@ -1,9 +1,22 @@
-
+// -*- mode: adoc -*-
 GroundTruthAligner (GTA)
 ========================
+:titulo:    GroundTruthAligner (GTA)
+:author:    Antonio-M. Corbí Bellot
+:email:     antonio.corbi@ua.es
+:copyright: {author}, DLSI, UA.
+:backend:   slidy
+:max-width: 120em
+:data-uri:
+:icons:
+:toc:
+:lang:      en
+:encoding:  utf-8
+:toc-title: Table of contents
+:source-highlighter: pygments
+:src_numbered: numbered
 
-Technologies employed
----------------------
+== Technologies employed
 
 - Programming language: http://dlang.org[D], compiler:
   http://dlang.org/download.html[DMD]
@@ -18,13 +31,68 @@ Technologies employed
   (http://www.gnu.org/software/autoconf/manual/autoconf.html[autoconf]
   + https://www.gnu.org/software/automake/[automake])
 
-How to configure and compile:
------------------------------
+
+== Code structure:
+
+The code uses the
+http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller[MVC]
+software pattern.
+
+This MVC implementation is based in:
+
+     - a class (*Model*)
+
+[source, d]
+--------------
+public class Model {
+       public this () {
+              m_vl = [];
+       }
+       ...
+--------------
+
+     - and an interface (*View*):
+
+[source, d]
+--------------
+public interface View {
+       ....
+}
+--------------
+
+== Code organization:
+
+The code lies under the `src` subdir. Under that folder it's organized
+in `packages` (D lingua for a bunch of files under the same directory).
+
+The `packages` currently conforming the source are:
+
+      - *app* : The class that represents the Application.
+
+      - *config*: Some constants detected at configure time.
+
+      - *main*: The main program.
+
+      - *mode*: The representation of the data of our aligner. It holds
+        a model for the bitmap image and for the ground truth text and
+        other meta-data.
+
+      - *mvc*: Base class for the _models_ and interface for the
+        _views_.
+
+      - *ui*: Holds the UI created with htpp://glade.gnome.org[Glade].
+
+      - *utils*: Some algorithms that maybe util sometime...somewhere.
+
+      - *view*: Has the definition of the class MainWindow that acts as
+      the UI of our app.
+    
+== How to configure and compile:
 
 After installing the tools you can create the configure script the
 first time executing `autogen.sh`:
 
-[source, shell]
+[source, bash]
 ---------
 ./autogen.sh [configure options]
 ------------
@@ -38,4 +106,4 @@ The `configure` script currently understands the option
 Now you can launch the compilation with `make` or `make -jN`, where
 *N* is the number of cpus or cores that your computer has, so you can
 speed up your compilation. The resulting binary is located in
-`./src/main/`.
+`./src/main/` and it's called `d-images`.
