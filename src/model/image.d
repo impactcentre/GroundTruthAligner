@@ -72,36 +72,36 @@ import utils.statistic;
  */
 class Image {
 
-        //-- Public part --------------------------------------------------------------
+  //-- Public part --------------------------------------------------------------
 
-        public
-        {
+  public
+  {
 
-                /////////////////
-                // Constructor //
-                /////////////////
-                this () {
-                        the_pixmap = new Pixmap;        // The pixmap is alive all the time
+    /////////////////
+    // Constructor //
+    /////////////////
+    this () {
+      the_pixmap = new Pixmap;        // The pixmap is alive all the time
 
-                        init_instance_variables ();
-                }
+      init_instance_variables ();
+    }
 
-                /////////////////
-                // Destructor  //
-                /////////////////
-                ~this () {
-                        //debug writeln ("Destroying Image!");
+    /////////////////
+    // Destructor  //
+    /////////////////
+    ~this () {
+      //debug writeln ("Destroying Image!");
 
-                        the_pixmap.destroy ();
-                        //the_pixmap = null;
+      the_pixmap.destroy ();
+      //the_pixmap = null;
 
-                        //debug writeln ("After dstroying the_pixmap!");
-                }
+      //debug writeln ("After dstroying the_pixmap!");
+    }
 
-                ///////////
-                // Enums //
-                ///////////
-                enum Color { BLACK = 0, WHITE = 255 };
+    ///////////
+    // Enums //
+    ///////////
+    enum Color { BLACK = 0, WHITE = 255 };
 
     /////////////
     // Signals //
@@ -448,7 +448,7 @@ class Image {
       coord_t l                = 0; // current line of pixels being processed: 0..mh
       uint    tlc              = 0; // text line count
       bool    in_textline,
-              new_position;
+	new_position;
       coord_t        ph        = 0;     // Pixel height of current text line
       coord_t        ipxl      = 0; // Initial y-coord in pixels of the current text line
 
@@ -506,8 +506,8 @@ class Image {
         
 
         /*writefln ("px(%s) fp[%s]: %s (%s)", 
-                  mbppl[l], l, finger_print(l), 
-                  finger_print(l) >= bpx_fingerprint ? "text line" : "white line");*/
+	  mbppl[l], l, finger_print(l), 
+	  finger_print(l) >= bpx_fingerprint ? "text line" : "white line");*/
       }
 
       writefln ("This page has %s text lines.", tlc);
@@ -956,103 +956,103 @@ class Image {
 //////////////////
 
 /+
-unittest {
-  Image i = new Image;
+ unittest {
+ Image i = new Image;
 
-  writeln ("\n--- 1st round tests ---");
+ writeln ("\n--- 1st round tests ---");
 
-  assert (i.data   is null);
-  assert (!i.is_valid);
-  assert (i.width  == -1);
-  assert (i.height == -1);
+ assert (i.data   is null);
+ assert (!i.is_valid);
+ assert (i.width  == -1);
+ assert (i.height == -1);
 
-  // hard coded path for now...
-  i.load_from_file ("../../data/318982rp10.png");
-  assert (i.width  != -1);
-  assert (i.height != -1);
-  assert (i.count_color_pixels (Image.Color.WHITE) >= 0);
-  assert (i.count_color_pixels (Image.Color.BLACK) >= 0);
+ // hard coded path for now...
+ i.load_from_file ("../../data/318982rp10.png");
+ assert (i.width  != -1);
+ assert (i.height != -1);
+ assert (i.count_color_pixels (Image.Color.WHITE) >= 0);
+ assert (i.count_color_pixels (Image.Color.BLACK) >= 0);
 
-  /*
-  float m, v;
-  int l;
-  i.get_average_variance_bpixels (m, v);
-  writefln ("Max blk pixels: %d , Average bpx: %f , Variance bpx: %f", i.get_max_black_pixels_line (l), m, v);
+ /*
+ float m, v;
+ int l;
+ i.get_average_variance_bpixels (m, v);
+ writefln ("Max blk pixels: %d , Average bpx: %f , Variance bpx: %f", i.get_max_black_pixels_line (l), m, v);
 
-  writefln ("Detected Skew for +10deg is: %d degrees.", i.detect_skew ());
-  */
+ writefln ("Detected Skew for +10deg is: %d degrees.", i.detect_skew ());
+*/
 
-  i.load_from_file ("../../data/318982rm5.png");
-  writefln ("Detected Skew for -5deg is: %d degrees.", i.detect_skew ());
-  i.rotate_by (10);
+i.load_from_file ("../../data/318982rm5.png");
+writefln ("Detected Skew for -5deg is: %d degrees.", i.detect_skew ());
+i.rotate_by (10);
 
-  char r,g,b;
-  i.get_rgb (130, 534, r, g, b);
-  string s;
+char r,g,b;
+i.get_rgb (130, 534, r, g, b);
+string s;
 
-  s ~= r; s ~= g; s ~= b;
-  writefln ("Color name: ·[%d_%d_%d]· - [%s]", r,g,b, s);
+s ~= r; s ~= g; s ~= b;
+writefln ("Color name: ·[%d_%d_%d]· - [%s]", r,g,b, s);
 
-  writefln ("Image has %d different colours.", i.get_num_colours);
+writefln ("Image has %d different colours.", i.get_num_colours);
 
-  foreach (color, times; i.mcmap) {
-    writefln ("Color [%s] repeats [%d] times.", 
-              color, times);
-  }
+foreach (color, times; i.mcmap) {
+writefln ("Color [%s] repeats [%d] times.", 
+color, times);
+}
 
-  foreach ( color ; i.mcmap.byKey ) {
-    writefln ("Color [%s] repeats [%d] times.", 
-              color, i.mcmap[color]);
-  }
+foreach ( color ; i.mcmap.byKey ) {
+writefln ("Color [%s] repeats [%d] times.", 
+color, i.mcmap[color]);
+}
 
-  writeln ("\n--- 1st round tests ---\n");
+writeln ("\n--- 1st round tests ---\n");
 
 }
 +/
 
 /+unittest {
-  Image i = new Image;
-  //i.destroy ();
+ Image i = new Image;
+ //i.destroy ();
 
-  writeln ("\n--- 2nd round tests ---");
+ writeln ("\n--- 2nd round tests ---");
 
-  assert (i.raw_data is null);
-  assert (!i.is_valid);
-  assert (i.width  == -1);
-  assert (i.height == -1);
+ assert (i.raw_data is null);
+ assert (!i.is_valid);
+ assert (i.width  == -1);
+ assert (i.height == -1);
 
-  // hard coded paths for now...
-  // foreach (f ; ["../../data/318982.tif",  "../../data/439040bn.tif",  
-  //            "../../data/8048.tif", "../../data/317548.tif"]) 
-  foreach (f ; ["../../data/317548.tif"])
-    {  
-      //i = new Image;
-      writeln (" ---------===============------------- ");
-      i.load_from_file (f);
+ // hard coded paths for now...
+ // foreach (f ; ["../../data/318982.tif",  "../../data/439040bn.tif",  
+ //            "../../data/8048.tif", "../../data/317548.tif"]) 
+ foreach (f ; ["../../data/317548.tif"])
+ {  
+ //i = new Image;
+ writeln (" ---------===============------------- ");
+ i.load_from_file (f);
 
-      assert (i.is_valid);
-      assert (i.height != -1);
+ assert (i.is_valid);
+ assert (i.height != -1);
 
-      writefln ("Image width: %d height: %d colours: %d", 
-                i.width, i.height, i.get_num_colours);
+ writefln ("Image width: %d height: %d colours: %d", 
+ i.width, i.height, i.get_num_colours);
 
-      i.init_instance_variables ();
-    }
+ i.init_instance_variables ();
+ }
 
-  /*
-    writefln ("\n\tLine %d has %d blackpixels.", 
-    i.blackest_line, i.bpx_in_blackest_line);
+ /*
+ writefln ("\n\tLine %d has %d blackpixels.", 
+ i.blackest_line, i.bpx_in_blackest_line);
 
-    writefln ("\tNumber %d has %d digits.\n", 
-    i.bpx_in_blackest_line, to!string(i.bpx_in_blackest_line).length );
+ writefln ("\tNumber %d has %d digits.\n", 
+ i.bpx_in_blackest_line, to!string(i.bpx_in_blackest_line).length );
 
-    writeln ("· Counting lines...");
-    writefln ("This image has [%d] lines... I think :/", i.get_num_textlines);
+ writeln ("· Counting lines...");
+ writefln ("This image has [%d] lines... I think :/", i.get_num_textlines);
 
-    writefln ("The left/right margins are at X:[%d] , X:[%d]", i.left_margin, i.right_margin);
+ writefln ("The left/right margins are at X:[%d] , X:[%d]", i.left_margin, i.right_margin);
 
-    writeln ("\n--- 2nd round tests ---\n");
-  */
+ writeln ("\n--- 2nd round tests ---\n");
+*/
 }+/
 
 unittest {
