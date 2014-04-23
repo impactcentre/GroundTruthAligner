@@ -1,12 +1,41 @@
 
-= GroundTruthAligner (GTA)
+GroundTruthAligner (GTA)
+========================
 
-== Technologies employed
+Technologies employed
+---------------------
 
-- Programming language: http://dlang.org[D], compiler: http://dlang.org/download.html[DMD]
+- Programming language: http://dlang.org[D], compiler:
+  http://dlang.org/download.html[DMD]
 
-- Configuration done via Autotools
+- GUI toolkit: gtk.org, the adaptation taken from
+  http://gtkd.org[GtkD]
+
+- The previous tools ara packaged for Debian-like operating systems in
+  http://d-apt.sourceforge.net[d-apt].
+
+- Configuration is done via Autotools
   (http://www.gnu.org/software/autoconf/manual/autoconf.html[autoconf]
   + https://www.gnu.org/software/automake/[automake])
 
-- GUI toolkit: gtk.org, the adaptation taken from http://gtkd.org[GtkD]
+How to configure and compile:
+-----------------------------
+
+After installing the tools you can create the configure script the
+first time executing `autogen.sh`:
+
+[source, shell]
+---------
+./autogen.sh [configure options]
+------------
+
+After that, `configure` is generated and executed automatically, later
+you can run `configure` alone if you want.
+
+The `configure` script currently understands the option
+*`--enable-debug-mode`*.
+
+Now you can launch the compilation with `make` or `make -jN`, where
+*N* is the number of cpus or cores that your computer has, so you can
+speed up your compilation. The resulting binary is located in
+`./src/main/`.
