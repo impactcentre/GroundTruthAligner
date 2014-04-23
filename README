@@ -62,31 +62,37 @@ public interface View {
 
 == Code organization:
 
-The code lies under the `src` subdir. Under that folder it's organized
-in `packages` (D lingua for a bunch of files under the same directory).
+The code lies under the `src` subdir. 
+
+Under that folder, the code is organized in `packages` (a *D* term
+that represents a bunch of files under the same directory).
 
 The `packages` currently conforming the source are:
 
-      - *app* : The class that represents the Application.
-
-      - *config*: Some constants detected at configure time.
-
-      - *main*: The main program.
-
-      - *mode*: The representation of the data of our aligner. It holds
-        a model for the bitmap image and for the ground truth text and
-        other meta-data.
-
-      - *mvc*: Base class for the _models_ and interface for the
-        _views_.
-
-      - *ui*: Holds the UI created with htpp://glade.gnome.org[Glade].
-
-      - *utils*: Some algorithms that maybe util sometime...somewhere.
-
-      - *view*: Has the definition of the class MainWindow that acts as
-      the UI of our app.
+    - *app* : The class that represents the Application.
     
+    - *config*: Some constants detected at configure time.
+    
+    - *main*: The main program.
+    
+    - *mode*: The representation of the data of our aligner. It holds
+      a model for the bitmap image and for the ground truth text and
+      other meta-data.
+    
+    - *mvc*: Base class for the _models_ and interface for the
+      _views_.
+    
+    - *ui*: Holds the UI created with http://glade.gnome.org[Glade].
+    
+    - Configuration is done via Autotools
+      (http://www.gnu.org/software/autoconf/manual/autoconf.html[autoconf]
+      + https://www.gnu.org/software/automake/[automake])
+    
+    - *utils*: Some algorithms that maybe util sometime...somewhere.
+    
+    - *view*: Has the definition of the class MainWindow that acts as
+      the UI of our app.
+        
 == How to configure and compile:
 
 After installing the tools you can create the configure script the
