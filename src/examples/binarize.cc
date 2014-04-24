@@ -1,9 +1,3 @@
-
-
-== Binarize simple from ocropus:
-
-[source, d]
------------------
 int binarize_simple(bytearray &result, bytearray &image) {
     int threshold = (max(image)+min(image))/2;
     makelike(result,image);
@@ -15,4 +9,3 @@ int binarize_simple(bytearray &result, bytearray &image) {
 int binarize_simple(bytearray &image) {
     return binarize_simple(image, image);
 }
------------------
