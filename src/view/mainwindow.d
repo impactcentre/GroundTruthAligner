@@ -778,14 +778,17 @@ public:
                               Tooltip t, Widget w)
   {
 
-    if ((x < malignmodel.get_image_width()) && 
-        (y < malignmodel.get_image_height()))
+    if ( (x < malignmodel.get_image_width()) && 
+         (y < malignmodel.get_image_height()) )
       if ( (!keyboard_tt) && (malignmodel.get_image_data !is null) ) {
         auto writer = appender!string();
         char rval, gval, bval;
+        uint cv = malignmodel.image_get_composite_value(x,y);
         
         malignmodel.image_get_rgb (x, y, rval, gval, bval);
-        formattedWrite(writer, "@(%d, %d)/(R:%u , G:%u , B: %u)", x,y,rval,gval,bval);
+        formattedWrite(writer, 
+                       "@(%d, %d)/(R:%u , G:%u , B: %u)/%u",
+                       x, y, rval, gval, bval, cv);
 
         //writefln ("Tooltip @(%s,%s)", x, y);
         t.setText (writer.data);

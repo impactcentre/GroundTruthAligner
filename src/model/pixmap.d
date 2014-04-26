@@ -173,8 +173,8 @@ private:
   }
 
   union IntUnion {
-    uint i;                     // 32 bits unsigned integer
-    char[4] ca;                 // 32 bits 
+    uint     i;                 // 32 bits unsigned integer
+    ubyte[4] ca;                // 32 bits as 4 unsigned chars
   }
 
   /// Initializes instance variables of the Pixmap class

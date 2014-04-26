@@ -227,6 +227,13 @@ class Image {
     }
 
     /**
+     * Get the composite value as an uint @x,y
+     */
+    uint get_composite_value (in int x, in int y) {
+      return the_pixmap.get_composite_value (x, y);
+    }
+
+    /**
      * Set the RGB values for pixel x,y,
      */
     void set_rgb (in int x, in int y, in char r, in char g, in char b) {

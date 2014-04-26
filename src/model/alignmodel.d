@@ -114,6 +114,10 @@ public:
     mimage.get_rgb (x, y, r, g, b);
   }
 
+  public uint image_get_composite_value (in int x, in int y) {
+    return mimage.get_composite_value (x, y);
+  }
+
   //////////////////////////////
   // XmlText relative methods //
   //////////////////////////////
