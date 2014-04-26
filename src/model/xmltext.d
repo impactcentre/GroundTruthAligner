@@ -43,7 +43,7 @@ struct Point {
 struct Text {
   string  id;
   string  type;
-  Point[] points;
+  Points  points;
   string  content;
 }
 
