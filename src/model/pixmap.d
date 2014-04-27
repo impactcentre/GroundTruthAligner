@@ -107,6 +107,19 @@ public:
   }
 
   /**
+   * Get the value of pixel @x,y as an uint.
+   */
+  uint get_composite_value (in int x, in int y) {
+    IntUnion iu;
+    char r,g,b;
+    
+    get_rgb (x, y, r, g, b);
+    iu.ca[0] = r; iu.ca[1] = g; iu.ca[2] = b; iu.ca[3] = 0;
+
+    return iu.i;
+  }
+
+  /**
    * Get the RGB values from pixel x,y,
    */
   void get_rgb (in int x, in int y, out char r, out char g, out char b) 
@@ -140,6 +153,35 @@ public:
     }
   }
 
+  /**
+   * Simple binarization algorithm.
+   */
+  void binarize () {
+    uint threshold = (maxcol + mincol) / 2;
+    int w  = width;
+    int h  = height;
+
+    for (int x = 0; x < w; x++)
+      for (int y = 0; y < h; y++) {
+        uint v = get_composite_value (x, y);
+        char nv = v < threshold ? 0 : 255;
+        char r, g, b;
+
+        r = g = b = nv;
+        set_rgb (x, y, r, g, b);
+      }
+  }
+
+  /**
+   * Get the maximum rgb color expressed as an uint RGBA.
+   */
+  @property uint get_min_color_value () { return mincol; }
+
+  /**
+   * Get the minimum rgb color expressed as an uint RGBA.
+   */
+  @property uint get_max_color_value () { return maxcol; }
+
   /// Load image (pixbuf) from file 'f'
   void load_from_file (string f) {
     file_name = f;
@@ -147,22 +189,14 @@ public:
     free_resources ();
 
     the_pixbuf = new Pixbuf (file_name);
+    calc_minmax_colors ();
+    binarize ();
     /*original_pixbuf = new Pixbuf (file_name);
     if (original_pixbuf !is null)
     the_pixbuf = original_pixbuf.copy ();*/
   }
 
   @property bool is_valid_pixmap () { return (the_pixbuf !is null); }
-
-  uint get_composite_value (in int x, in int y) {
-    IntUnion iu;
-    char r,g,b;
-    
-    get_rgb (x, y, r, g, b);
-    iu.ca[0] = r; iu.ca[1] = g; iu.ca[2] = b; iu.ca[3] = 0;
-
-    return iu.i;
-  }
 
 private:
   
@@ -172,6 +206,10 @@ private:
   invariant () {
   }
 
+  /**
+   * This union is used to transform values
+   * between char[4] <-> uint.
+   */
   union IntUnion {
     uint     i;                 // 32 bits unsigned integer
     ubyte[4] ca;                // 32 bits as 4 unsigned chars
@@ -181,6 +219,8 @@ private:
   void init_instance_variables () { 
     file_name = "";
     the_pixbuf = original_pixbuf = null;
+    mincol = uint.max;
+    maxcol = 0;
     //free_resources ();
   }
 
@@ -194,11 +234,41 @@ private:
 
     //the_pixbuf = original_pixbuf = null;
   }
-  
+
+  /**
+   * Gets the 'maximum' value of all colors in the image.
+   */
+  void calc_minmax_colors () {
+    int w  = width;
+    int h  = height;
+
+    for (int x = 0; x < w; x++)
+      for (int y = 0; y < h; y++) {
+        uint v = get_composite_value (x, y);
+        mincol = v < mincol ? v : mincol;
+        maxcol = v > maxcol ? v : maxcol;
+      }
+  }
+
   //////////
   // Data //
   //////////
   Pixbuf the_pixbuf;
   Pixbuf original_pixbuf;
   string file_name;
+  uint   mincol, maxcol;
+}
+
+unittest {
+  import std.stdio;
+
+  Pixmap p = new Pixmap;
+
+  p.load_from_file ("../../data/439040.tif");
+
+  writefln ("Image is ../../data/439040.tif, width (%s), height (%s), Alpha (%s)",
+            p.width, p.height, p.has_alpha);
+  writefln ("nchannels (%s), row stride (%s).", p.nchannels, p.row_stride);
+  writefln ("maxcolor (%s), mincolor (%s).", 
+            p.get_max_color_value, p.get_min_color_value);
 }
