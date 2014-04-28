@@ -25,9 +25,16 @@ module model.pixmap;
 //-- STD + CORE ----------------------------------------
 import std.stdio;
 import core.memory: GC;         // We need to play with the garbage collector
+import std.math;
 
 //-- GDK -----------------------------------------------
 import gdk.Pixbuf;
+import gdk.Cairo;
+
+//-- CAIRO ---------------------------------------------
+import cairo.Context;
+import cairo.ImageSurface;
+import cairo.Surface;
 
 /**
  * Class Pixmap:
@@ -102,8 +109,8 @@ public:
   //@property Pixbuf data () { return the_pixbuf; }
   @property Pixbuf get_gdkpixbuf () { return the_pixbuf; }
   void set_gdkpixbuf (Pixbuf p) {
-     if (the_pixbuf !is null) { the_pixbuf.unref(); }
-     the_pixbuf = p;
+    if (the_pixbuf !is null) { the_pixbuf.unref(); }
+    the_pixbuf = p;
   }
 
   /**
@@ -130,9 +137,9 @@ public:
   body {
     if (the_pixbuf !is null) {
       if ( (x < width) && (y < height) ) {
-          char* e = cast(char*) (base + (y * row_stride) + (x * nchannels));
-          r = e[0]; g = e[1]; b = e[2];
-        } else r = g = b = 0;
+        char* e = cast(char*) (base + (y * row_stride) + (x * nchannels));
+        r = e[0]; g = e[1]; b = e[2];
+      } else r = g = b = 0;
     } else r = g = b = 0;
   }
 
@@ -147,9 +154,9 @@ public:
   body {
     if (the_pixbuf !is null) {
       if ( (x < width) && (y < height) ) {
-          char* e = cast(char*) (base + (y * row_stride) + (x * nchannels));
-          e[0] = r; e[1] = g; e[2] = b;
-        }
+        char* e = cast(char*) (base + (y * row_stride) + (x * nchannels));
+        e[0] = r; e[1] = g; e[2] = b;
+      }
     }
   }
 
@@ -173,14 +180,82 @@ public:
   }
 
   /**
-   * Get the maximum rgb color expressed as an uint RGBA.
+   * Rotate the image by 'deg' degrees.
+   * 
+   * Params:
+   *   deg = The number of degrees to rotate the image.
    */
-  @property uint get_min_color_value () { return mincol; }
+  void rotate_by (float deg) {
+    if (is_valid_pixmap) {
+      //mpxbf = mpxbf_orig;
+
+      CairoFormat  fmt = has_alpha () ? CairoFormat.ARGB32 : CairoFormat.RGB24;
+      int            w = width ();
+      int            h = height ();
+      ImageSurface ims = ImageSurface.create (fmt, w, h);
+      Context      ctx = Context.create (ims);
+      float        rad = deg * PI / 180.0;
+
+      // memory free in a much cleaner way...
+      scope (exit) {
+        ctx.destroy ();
+        ims.destroy ();
+        GC.collect();
+      }
+
+      ctx.translate (w/2.0, h/2.0);
+      ctx.rotate (rad);
+      ctx.setSourcePixbuf (get_gdkpixbuf, -w/2.0, -h/2.0);
+      ctx.paint ();
+
+      set_gdkpixbuf (Pixbuf.getFromSurface (ims, 0, 0,
+                                            ims.getWidth(),
+                                            ims.getHeight()));
+    }
+  }
 
   /**
    * Get the minimum rgb color expressed as an uint RGBA.
    */
+  @property uint get_min_color_value () { return mincol; }
+
+  /**
+   * Get the maximum rgb color expressed as an uint RGBA.
+   */
   @property uint get_max_color_value () { return maxcol; }
+
+  /**
+   * Counts and caches black pixels per line.
+   */
+  uint[] count_black_pixels_per_line () 
+    in {
+      assert (the_pixmap.is_valid_pixmap); 
+    }
+  body {
+    char   r,g,b;
+    Color  cl  = Color.BLACK;
+    uint   mbp = 0;
+    uint[] bppl;
+
+    bppl = new uint[height];
+
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        get_rgb (x, y, r, g, b);
+        if (r == cl && g == cl && b == cl)
+          ++bppl[y];
+      }
+
+      if (bppl[y] > mbp) {
+        mbp = bppl[y];
+        mlwmbp = y;
+      }
+    }
+
+    // Calculate the average and the variance of black pixels.
+    calculate_average_variance_bpixels ();
+  }
+
 
   /// Load image (pixbuf) from file 'f'
   void load_from_file (string f) {
@@ -192,8 +267,8 @@ public:
     calc_minmax_colors ();
     binarize ();
     /*original_pixbuf = new Pixbuf (file_name);
-    if (original_pixbuf !is null)
-    the_pixbuf = original_pixbuf.copy ();*/
+      if (original_pixbuf !is null)
+      the_pixbuf = original_pixbuf.copy ();*/
   }
 
   @property bool is_valid_pixmap () { return (the_pixbuf !is null); }

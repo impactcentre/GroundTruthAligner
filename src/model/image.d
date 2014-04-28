@@ -260,34 +260,8 @@ class Image {
     void rotate_by (float deg) {
 
       if (the_pixmap.is_valid_pixmap) {
-        //mpxbf = mpxbf_orig;
-
-        CairoFormat  fmt = the_pixmap.has_alpha () ? CairoFormat.ARGB32 : CairoFormat.RGB24;
-        int            w = the_pixmap.width ();
-        int            h = the_pixmap.height ();
-        ImageSurface ims = ImageSurface.create (fmt, w, h);
-        Context      ctx = Context.create (ims);
-        float        rad = deg * PI / 180.0;
-
-        // memory free in a much cleaner way...
-        scope (exit) {
-          ctx.destroy ();
-          ims.destroy ();
-          GC.collect();
-        }
-
-        ctx.translate (w/2.0, h/2.0);
-        ctx.rotate (rad);
-        ctx.setSourcePixbuf (the_pixmap.get_gdkpixbuf, -w/2.0, -h/2.0);
-        ctx.paint ();
-
-        //ims.writeToPng ("/tmp/rotated.png");
-
-        the_pixmap.set_gdkpixbuf (Pixbuf.getFromSurface (ims, 0, 0, 
-                                                         ims.getWidth(), 
-                                                         ims.getHeight ()));
+        the_pixmap.rotate_by (deg);
         get_image_parameters ();
-        //count_black_pixels_per_line ();  // <- invoked inside "get_image_parameters"
       }
     }
 
@@ -861,8 +835,8 @@ class Image {
     }
 
     /**
-     * Returns the average and the variance of the black pixels from the
-     * Image.
+     * Calculates the average and the variance of the black pixels
+     * from the Image.
      */
     void calculate_average_variance_bpixels () {
       mbpaverage = mbpvariance = 0.0;
