@@ -229,9 +229,10 @@ public:
    */
   uint[] count_black_pixels_per_line () 
     in {
-      assert (the_pixmap.is_valid_pixmap); 
+      assert (is_valid_pixmap); 
     }
   body {
+    enum Color { BLACK = 0, WHITE = 255 };
     char   r,g,b;
     Color  cl  = Color.BLACK;
     uint   mbp = 0;
@@ -248,12 +249,15 @@ public:
 
       if (bppl[y] > mbp) {
         mbp = bppl[y];
-        mlwmbp = y;
+        //mlwmbp = y;
       }
     }
 
+    // --> HERE!!!
     // Calculate the average and the variance of black pixels.
-    calculate_average_variance_bpixels ();
+    //calculate_average_variance_bpixels ();
+
+    return bppl;
   }
 
 
