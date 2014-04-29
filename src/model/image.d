@@ -811,25 +811,9 @@ class Image {
         assert (the_pixmap.is_valid_pixmap); 
       }
     body {
-      char  r,g,b;
-      Color cl = Color.BLACK;
-      uint  mbp = 0;
 
-      mbppl = new uint[the_pixmap.height];
-
-      for (int y = 0; y < the_pixmap.height; y++) {
-        for (int x = 0; x < the_pixmap.width; x++) {
-          get_rgb (x, y, r, g, b);
-          if (r == cl && g == cl && b == cl)
-            ++mbppl[y];
-        }
-
-        if (mbppl[y] > mbp) {
-          mbp = mbppl[y];
-          mlwmbp = y;
-        }
-      }
-
+      mbppl = the_pixmap.get_bppl; // The array with the count of black pixels per line
+      mlwmbp = the_pixmap.get_lwmbp; // The line with most black pixels.
       // Calculate the average and the variance of black pixels.
       calculate_average_variance_bpixels ();
     }
@@ -840,27 +824,7 @@ class Image {
      */
     void calculate_average_variance_bpixels () {
       mbpaverage = mbpvariance = 0.0;
-      if (mbppl !is null) {
-        // Average
-        for (int i = 0; i < mbppl.length ; i++) {
-          mbpaverage += mbppl[i];
-        }
-        mbpaverage /= mbppl.length;
-
-        // Variance
-        for (int i = 0; i<mbppl.length ; i++) {
-          mbpvariance += (mbppl[i]-mbpaverage)^^2.0;
-        }
-        mbpvariance /= mbppl.length;
-
-        debug {
-          writefln ("Old avg[%s] / stdvev[%s] - New avg[%s] / stdev[%s]",
-                    mbpaverage, sqrt(mbpvariance),
-                    mbppl.average(), mbppl.stdev());
-
-        }
-
-      }
+      the_pixmap.calculate_average_variance_bpixels (mbpaverage, mbpvariance);
     }
 
     /**

@@ -224,10 +224,13 @@ public:
    */
   @property uint get_max_color_value () { return maxcol; }
 
+  @property uint[] get_bppl () { return mbppl; }
+  @property int get_lwmbp () { return mlwmbp; }
+
   /**
    * Counts and caches black pixels per line.
    */
-  uint[] count_black_pixels_per_line () 
+  void count_black_pixels_per_line () 
     in {
       assert (is_valid_pixmap); 
     }
@@ -236,28 +239,56 @@ public:
     char   r,g,b;
     Color  cl  = Color.BLACK;
     uint   mbp = 0;
-    uint[] bppl;
 
-    bppl = new uint[height];
+    mbppl = new uint[height];
 
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
         get_rgb (x, y, r, g, b);
         if (r == cl && g == cl && b == cl)
-          ++bppl[y];
+          ++mbppl[y];
       }
 
-      if (bppl[y] > mbp) {
-        mbp = bppl[y];
-        //mlwmbp = y;
+      if (mbppl[y] > mbp) {
+        mbp = mbppl[y];
+        mlwmbp = y;
       }
     }
 
     // --> HERE!!!
     // Calculate the average and the variance of black pixels.
     //calculate_average_variance_bpixels ();
+  }
 
-    return bppl;
+  /**
+   * Calculates the average and the variance of the black pixels
+   * from the Image.
+   */
+  void calculate_average_variance_bpixels (out float average, 
+					   out float variance)
+  {
+    average = variance = 0.0;
+    if (mbppl !is null) {
+      // Average
+      for (int i = 0; i < mbppl.length ; i++) {
+	average += mbppl[i];
+      }
+      average /= mbppl.length;
+
+      // Variance
+      for (int i = 0; i<mbppl.length ; i++) {
+	variance += (mbppl[i] - average)^^2.0;
+      }
+      variance /= mbppl.length;
+
+      /*
+      debug {
+	writefln ("Old avg[%s] / stdvev[%s] - New avg[%s] / stdev[%s]",
+		  average, sqrt(variance),
+		  mbppl.average(), mbppl.stdev());
+		  } */
+
+    }
   }
 
 
@@ -270,6 +301,8 @@ public:
     the_pixbuf = new Pixbuf (file_name);
     calc_minmax_colors ();
     binarize ();
+
+    count_black_pixels_per_line ();
     /*original_pixbuf = new Pixbuf (file_name);
       if (original_pixbuf !is null)
       the_pixbuf = original_pixbuf.copy ();*/
@@ -300,6 +333,7 @@ private:
     the_pixbuf = original_pixbuf = null;
     mincol = uint.max;
     maxcol = 0;
+    mbppl = null;
     //free_resources ();
   }
 
@@ -336,6 +370,8 @@ private:
   Pixbuf original_pixbuf;
   string file_name;
   uint   mincol, maxcol;
+  uint[] mbppl;
+  int    mlwmbp;      // Line with most black pixels
 }
 
 unittest {
