@@ -180,6 +180,22 @@ public:
   }
 
   /**
+   * This algorithm tries to convert the image to grayscale.
+   */
+  void to_grayscale () {
+    int w  = width;
+    int h  = height;
+    char r,g,b, gray;
+
+    for (int x = 0; x < w; x++)
+      for (int y = 0; y < h; y++) {
+	get_rgb (x, y, r, g, b);
+	gray = cast (char) ((r * 0.3) + (g * 0.59) + (b * 0.11));
+	set_rgb (x, y, gray, gray, gray);
+      }
+  }
+
+  /**
    * Rotate the image by 'deg' degrees.
    * 
    * Params:
@@ -320,8 +336,11 @@ public:
     free_resources ();
 
     the_pixbuf = new Pixbuf (file_name);
+
+    to_grayscale ();
     calc_minmax_colors ();
-    binarize ();
+
+    //binarize ();
 
     count_black_pixels_per_line ();
     /*original_pixbuf = new Pixbuf (file_name);
