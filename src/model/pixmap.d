@@ -224,7 +224,28 @@ public:
    */
   @property uint get_max_color_value () { return maxcol; }
 
+  /**
+   * The luminance (weighted average, see
+   * http://en.wikipedia.org/wiki/Luminance_(colorimetry)) of a pixel
+   *
+   * Parameters: 
+   * x = x coordinate
+   * y = y coordinate
+   *
+   * Returns:
+   * the luminance of pixel at (x,y), as defined in colorimetry
+   */
+  uint luminance(in int x, in int y) {
+    char r, g, b;
+
+    get_rgb (x, y, r, g, b);
+    return cast (int) (0.2126 * r + 0.7152 * g + 0.0722 * b);
+  }
+
+  /// Get the array of black pixels per line.
   @property uint[] get_bppl () { return mbppl; }
+
+  /// Get the line that has the most black pixels in it.
   @property int get_lwmbp () { return mlwmbp; }
 
   /**
