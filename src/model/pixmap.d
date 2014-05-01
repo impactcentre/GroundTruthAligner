@@ -106,9 +106,9 @@ public:
       return -1;
   }
 
-  /// Low level access
-  //@property Pixbuf data () { return the_pixbuf; }
+  /// Low level access primitives
   @property Pixbuf get_gdkpixbuf () { return the_pixbuf; }
+  /// Ditto
   void set_gdkpixbuf (Pixbuf p) {
     if (the_pixbuf !is null) { the_pixbuf.unref(); }
     the_pixbuf = p;
@@ -163,6 +163,8 @@ public:
 
   /**
    * Simple binarization algorithm.
+   *
+   * This algorithm depends on the image being a grayscale image.
    */
   void binarize () {
     uint threshold = (maxcol + mincol) / 2;
@@ -315,10 +317,6 @@ public:
         mlwmbp = y;
       }
     }
-
-    // --> HERE!!!
-    // Calculate the average and the variance of black pixels.
-    //calculate_average_variance_bpixels ();
   }
 
   /**
@@ -372,6 +370,7 @@ public:
       the_pixbuf = original_pixbuf.copy ();*/
   }
 
+  /// Heuristic that tells us if the pixmap loaded well.
   @property bool is_valid_pixmap () { return (the_pixbuf !is null); }
 
 private:
@@ -380,6 +379,7 @@ private:
 
   /// The exported pixbuf is null iff original_pixbuf is null
   invariant () {
+    //assert (the_pixbuf !is null);
   }
 
   /**
@@ -387,8 +387,8 @@ private:
    * between char[4] <-> uint.
    */
   union IntUnion {
-    uint     i;                 // 32 bits unsigned integer
-    ubyte[4] ca;                // 32 bits as 4 unsigned chars
+    uint     i;                 // 32 bits as one unsigned integer
+    ubyte[4] ca;                // 32 bits as 4 unsigned chars (char array)
   }
 
   /// Initializes instance variables of the Pixmap class
