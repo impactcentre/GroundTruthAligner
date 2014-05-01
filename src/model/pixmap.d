@@ -26,6 +26,7 @@ module model.pixmap;
 import std.stdio;
 import core.memory: GC;         // We need to play with the garbage collector
 import std.math;
+import std.algorithm;
 
 //-- GDK -----------------------------------------------
 import gdk.Pixbuf;
@@ -190,7 +191,30 @@ public:
     for (int x = 0; x < w; x++)
       for (int y = 0; y < h; y++) {
 	get_rgb (x, y, r, g, b);
-	gray = cast (char) ((r * 0.3) + (g * 0.59) + (b * 0.11));
+
+	// 1
+	//gray = cast (char) ((r * 0.3) + (g * 0.59) + (b * 0.11));
+
+	// 2
+	//gray = cast (char) (r * 0.299 + g * 0.587 + b * 0.114);
+
+	// 3
+	//gray = cast (char) ((r + g + b)/3);
+
+	// 4 <-- ESTE?
+	//gray = cast (char) ((max(r,g,b) + min(r,g,b)) / 2);
+
+	// 5
+	//gray = cast (char) max(r,g,b);
+
+	// 6 <-- ESTE MEJOR!!!!
+	gray = cast (char) min(r,g,b);
+
+	// 7 Binariza directamente
+	//float avg = (r+g+b)/3.0;
+	//gray = cast(char) (cast(int) ( (avg / 255.0) + 0.5 ) * 255);
+	//writefln ("gray= %d", gray);
+
 	set_rgb (x, y, gray, gray, gray);
       }
   }
@@ -340,7 +364,7 @@ public:
     to_grayscale ();
     calc_minmax_colors ();
 
-    //binarize ();
+    binarize ();
 
     count_black_pixels_per_line ();
     /*original_pixbuf = new Pixbuf (file_name);
