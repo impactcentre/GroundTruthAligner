@@ -186,37 +186,58 @@ public:
    * This algorithm tries to convert the image to grayscale.
    */
   void to_grayscale () {
-    int w  = width;
-    int h  = height;
-    char r,g,b, gray;
+    int  w  = width;
+    int  h  = height;
+    char gray;
+
+    enum GrayScaleMethod {
+      AVERAGE, LUMINANCE1, LUMINANCE2, LUMINANCE3,
+      DESATURATION, DECOMPMAX, DECOMPMIN, BINARIZE
+    };
+
+    char get_gray_pixel (in int x, in int y, GrayScaleMethod m) {
+      char r,g,b, gray;
+
+      get_rgb (x, y, r, g, b);
+      final switch (m) {
+      case GrayScaleMethod.AVERAGE:
+	gray = cast (char) ((r + g + b)/3);
+	break;
+      case GrayScaleMethod.LUMINANCE1:
+	gray = cast (char) ((r * 0.3) + (g * 0.59) + (b * 0.11));
+	break;
+      case GrayScaleMethod.LUMINANCE2:
+	// RCC + Wikipedia
+	gray = cast (char) (0.2126 * r + 0.7152 * g + 0.0722 * b);
+	break;
+      case GrayScaleMethod.LUMINANCE3:
+	gray = cast (char) (r * 0.299 + g * 0.587 + b * 0.114);
+	break;
+      case GrayScaleMethod.DESATURATION:
+	gray = cast (char) ((max(r,g,b) + min(r,g,b)) / 2);
+	break;
+      case GrayScaleMethod.DECOMPMAX:
+	gray = cast (char) (max(r,g,b));
+	break;
+      case GrayScaleMethod.DECOMPMIN:
+	// Best results
+	gray = cast (char) (min(r,g,b));
+	break;
+      case GrayScaleMethod.BINARIZE:
+	// taken from Method 6 – Custom # of gray shades
+	// @ http://www.tannerhelland.com/3643/grayscale-image-algorithm-vb6
+
+	float avg = (r+g+b)/3.0;
+	gray = cast(char) (cast(int) ( (avg / 255.0) + 0.5 ) * 255);
+
+	break;
+      }
+      return gray;
+    }
 
     for (int x = 0; x < w; x++)
       for (int y = 0; y < h; y++) {
-	get_rgb (x, y, r, g, b);
-
-	// 1
-	//gray = cast (char) ((r * 0.3) + (g * 0.59) + (b * 0.11));
-
-	// 2
-	//gray = cast (char) (r * 0.299 + g * 0.587 + b * 0.114);
-
-	// 3
-	//gray = cast (char) ((r + g + b)/3);
-
-	// 4 <-- ESTE?
-	//gray = cast (char) ((max(r,g,b) + min(r,g,b)) / 2);
-
-	// 5
-	//gray = cast (char) max(r,g,b);
-
-	// 6 <-- ESTE MEJOR!!!!
-	gray = cast (char) min(r,g,b);
-
-	// 7 Binariza directamente
-	//float avg = (r+g+b)/3.0;
-	//gray = cast(char) (cast(int) ( (avg / 255.0) + 0.5 ) * 255);
-	//writefln ("gray= %d", gray);
-
+	gray = get_gray_pixel (x, y, GrayScaleMethod.DECOMPMIN);
 	set_rgb (x, y, gray, gray, gray);
       }
   }
@@ -265,24 +286,6 @@ public:
    * Get the maximum rgb color expressed as an uint RGBA.
    */
   @property uint get_max_color_value () { return maxcol; }
-
-  /**
-   * The luminance (weighted average, see
-   * http://en.wikipedia.org/wiki/Luminance_(colorimetry)) of a pixel
-   *
-   * Parameters: 
-   * x = x coordinate
-   * y = y coordinate
-   *
-   * Returns:
-   * the luminance of pixel at (x,y), as defined in colorimetry
-   */
-  uint luminance(in int x, in int y) {
-    char r, g, b;
-
-    get_rgb (x, y, r, g, b);
-    return cast (int) (0.2126 * r + 0.7152 * g + 0.0722 * b);
-  }
 
   /// Get the array of black pixels per line.
   @property uint[] get_bppl () { return mbppl; }
