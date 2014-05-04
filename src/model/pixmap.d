@@ -183,17 +183,20 @@ public:
   }
 
   /**
+   * This enum allows us to select the grayscale algorithm employed.
+   */
+  enum GrayScaleMethod {
+    AVERAGE, LUMINANCE1, LUMINANCE2, LUMINANCE3,
+    DESATURATION, DECOMPMAX, DECOMPMIN, BINARIZE
+  };
+
+  /**
    * This algorithm tries to convert the image to grayscale.
    */
-  void to_grayscale () {
+  void to_grayscale (GrayScaleMethod m = GrayScaleMethod.DECOMPMIN) {
     int  w  = width;
     int  h  = height;
     char gray;
-
-    enum GrayScaleMethod {
-      AVERAGE, LUMINANCE1, LUMINANCE2, LUMINANCE3,
-      DESATURATION, DECOMPMAX, DECOMPMIN, BINARIZE
-    };
 
     char get_gray_pixel (in int x, in int y, GrayScaleMethod m) {
       char r,g,b, gray;
@@ -237,7 +240,7 @@ public:
 
     for (int x = 0; x < w; x++)
       for (int y = 0; y < h; y++) {
-	gray = get_gray_pixel (x, y, GrayScaleMethod.DECOMPMIN);
+	gray = get_gray_pixel (x, y, m);
 	set_rgb (x, y, gray, gray, gray);
       }
   }
