@@ -188,7 +188,7 @@ public:
   enum GrayScaleMethod {
     AVERAGE, LUMINANCE1, LUMINANCE2, LUMINANCE3,
     DESATURATION, DECOMPMAX, DECOMPMIN, BINARIZE
-  };
+  }
 
   /**
    * This algorithm tries to convert the image to grayscale.
@@ -304,7 +304,7 @@ public:
       assert (is_valid_pixmap); 
     }
   body {
-    enum Color { BLACK = 0, WHITE = 255 };
+    enum Color { BLACK = 0, WHITE = 255 }
     char   r,g,b;
     Color  cl  = Color.BLACK;
     uint   mbp = 0;
