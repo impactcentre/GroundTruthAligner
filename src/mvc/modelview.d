@@ -25,24 +25,33 @@
  */
 module mvc.modelview;
 
+import mvc.set;
+
 /**
  * Base class for all models
  */
 public class Model {
   public this () {
-    m_vl = [];
+    //m_vl = [];
+    //_vs = Set!View();
   }
 
   public void add_view (View v) { 
+    /*
     for (int i = 0; i < m_vl.length; i++)
       if (m_vl[i] == v) return;
 
     m_vl ~= v;
-    v.set_model (this);
+    */
+
+    _vs ~= v;
+    //v.set_model (this);
   }
 
   public void del_view (View v) { 
-    // m_vl.remove(v);
+    _vs.remove(v);
+
+    /*
     if (m_vl.length == 0)
       return;
 
@@ -60,17 +69,21 @@ public class Model {
 
       m_vl = vaux;
     }
+    */
 
   }
   
   public void notify_views () {
-    foreach (v ; m_vl) {
+    /*foreach (v ; m_vl) {
       v.update ();
-    }
+      }*/
+
+    foreach (v, val ; _vs) v.update ();
   }
 
   //-- Data ----------------------------------
   private View[] m_vl;
+  private Set!View _vs;
 }
 
 /**

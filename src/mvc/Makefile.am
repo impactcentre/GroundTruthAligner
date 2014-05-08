@@ -7,9 +7,9 @@
 include ../d-support.mk
 
 noinst_LIBRARIES = libmvc.a
-libmvc_a_SOURCES = modelview.d
+libmvc_a_SOURCES = modelview.d set.d
 
-libmvc_a_DFLAGS  = $$(pkg-config --cflags gtkd2)
+libmvc_a_DFLAGS  = $$(pkg-config --cflags gtkd2) -I..
 libmvc_a_DOC     = -D -Dd$(top_srcdir)/src/doc
 
 AM_DFLAGS = $(libmvc_a_DFLAGS)
